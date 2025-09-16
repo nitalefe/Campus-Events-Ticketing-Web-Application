@@ -10,8 +10,9 @@
 ---
 ## Collaborators
 - **Nita Lefebvre** (40326541) — [@nitalefe] (**Team Leader**)
-- **Rakib Akter** (40317788) [@rakib-akter] (**Memeber**)
-- **Zeyu Huang** (40309463) [@Microwaved-Robot](https://github.com/Microwaved-Robot) (**Memeber**)
+- **Rakib Akter** (40317788) [@rakib-akter] (**Member**)
+- **Zeyu Huang** (40309463) [@Microwaved-Robot](https://github.com/Microwaved-Robot) (**Member**)
+- **Nicolas Nguyen** (40328914) [@NicolasNguyenReal2005] (**Member**)
 
 ---
 ## Tech Stack/Languages Used
