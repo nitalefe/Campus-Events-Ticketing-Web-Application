@@ -14,6 +14,6 @@
 - **Zeyu Huang** (40309463) [@Microwaved-Robot](https://github.com/Microwaved-Robot) (**Member**)
 - **Nicolas Nguyen** (40328914) [@NicolasNguyenReal2005](https://github.com/NicolasNguyenReal2005) (**Member**)
 - **Ayan Hoque** (40328874) [@Yankillah](https://github.com/YanKillah) (**Member**)
-- **Daniel Korman** (40313837) [@papa-shrek](https://github.com/papa-shrek) (**Member**)
+- **Daniel Korman** (40313837) [@papa-shrek](https://github.com/papa-shrek) (**Member*)
 ---
 ## Tech Stack/Languages Used
