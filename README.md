@@ -53,6 +53,7 @@ A web-based platform designed to streamline the process of organizing, promoting
 - **Zeyu Huang** (40309463) — [@Microwaved-Robot](https://github.com/Microwaved-Robot) (**Member**)
 - **Nicolas Nguyen** (40328914) — [@NicolasNguyenReal2005](https://github.com/NicolasNguyenReal2005) (**Member**)
 - **Ayan Hoque** (40328874) — [@Yankillah](https://github.com/YanKillah) (**Member**)
+- **Jeffrey Gueyie** (40315016) — [@JayjayGZ]
 
 ---
 
