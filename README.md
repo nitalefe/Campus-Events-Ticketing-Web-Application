@@ -59,6 +59,6 @@ A web-based platform designed to streamline the process of organizing, promoting
 
 ## Tech Stack / Languages Used
 - **Frontend**:
-- **Backend**:
+- **Backend**: hi from branched from readme branch
 - **Database and Hosting**: Firebase
 - **Miscellaneous**:  
