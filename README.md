@@ -6,6 +6,7 @@ A web-based platform designed to streamline the process of organizing, promoting
 ---
 
 ## Objective
+The objective of this project is to develop a Campus Events & Ticketing Web Application that centralizes event discovery, management, and participation. The system enhances student engagement through digital ticketing and QR check-in, streamlines event organization for planners, and provides administrators with analytics and oversight tools to improve campus event experiences.
 
 ---
 
@@ -58,7 +59,7 @@ A web-based platform designed to streamline the process of organizing, promoting
 ---
 
 ## Tech Stack / Languages Used
-- **Frontend**:
-- **Backend**:
+- **Frontend**: React (tbd)
+- **Backend**: Firebase
 - **Database and Hosting**: Firebase
 - **Miscellaneous**:  
