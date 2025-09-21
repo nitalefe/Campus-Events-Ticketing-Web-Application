@@ -59,7 +59,7 @@ The objective of this project is to develop a Campus Events & Ticketing Web Appl
 ---
 
 ## Tech Stack / Languages Used
-- **Frontend**: React (tbd)
-- **Backend**: Firebase
-- **Database and Hosting**: Firebase
-- **Miscellaneous**:  
+- **Frontend**: React, JavaScript (html,css) (tbd)
+- **Backend**: Node.js, Firebase (tbd)
+- **Database and Hosting**: Firebase (tbd)
+- **Miscellaneous**:  (tbd)
