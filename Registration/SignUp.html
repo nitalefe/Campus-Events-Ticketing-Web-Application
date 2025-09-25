@@ -83,7 +83,7 @@
             <img src="evently_logo.png" alt="Evently Logo" style="width:120px; height:auto;">
         </div>
         <h2>Sign Up</h2>
-        <form id="signupForm" action="#" method="post">
+        <form id="signupForm" action="#" method="POST">
             <div class="form-group">
                 <label for="fullname">Full Name</label>
                 <input type="text" id="fullname" name="fullname" required>
@@ -128,30 +128,11 @@
         <div class="login-link">
             Already have an account? <a href="SignIn.html">Sign In</a>
         </div>
-    </div>
-    <script>
-        function toggleFields() {
-            var role = document.getElementById('role').value;
-            var schoolGroup = document.getElementById('school-group');
-            var orgGroup = document.getElementById('org-group');
-            if (role === 'student') {
-                schoolGroup.style.display = 'block';
-                document.getElementById('school').required = true;
-                orgGroup.style.display = 'none';
-                document.getElementById('organization').required = false;
-            } else if (role === 'organizer') {
-                orgGroup.style.display = 'block';
-                document.getElementById('organization').required = true;
-                schoolGroup.style.display = 'none';
-                document.getElementById('school').required = false;
-            } else {
-                schoolGroup.style.display = 'none';
-                orgGroup.style.display = 'none';
-                document.getElementById('school').required = false;
-                document.getElementById('organization').required = false;
-            }
-        }
-    </script>
-    <script type="module" src="./firebase-config.js"></script>
+    </div>>
+    
+
+  <script type="module" src="./scripts/auth.js"></script>
+
+    <script type="module" src="scripts/index.js"></script>
 </body>
 </html>
