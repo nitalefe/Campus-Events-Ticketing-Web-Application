@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Website</title>
+  <link rel="icon" type="image/png" href="evently_logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Montserrat', Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f4ff;
+      margin: 0;
+      color: #222;
+      text-align: center;
+    }
+    .container {
+      background: #fff;
+      padding: 2rem 3rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      width: 400px;
+    }
+    h1 {
+      margin-bottom: 1rem;
+    }
+    p {
+      margin-bottom: 2rem;
+    }
+    .logout-btn {
+      padding: 0.7rem 1.5rem;
+      background: #6fa3ef;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .logout-btn:hover {
+      background: #a3c8f7;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome, <span id="userName"></span>!</h1>
+    <p>Your role: <span id="userRole"></span></p>
+    <button class="logout-btn" id="logoutBtn">Log Out</button>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCtCLGcR_sDwb6wDE7NpVz8vghrxLZFYB8",
+      authDomain: "campus-events-ticketing-e648f.firebaseapp.com",
+      projectId: "campus-events-ticketing-e648f",
+      storageBucket: "campus-events-ticketing-e648f.firebasestorage.app",
+      messagingSenderId: "844285609905",
+      appId: "1:844285609905:web:c8913b71b2991d128c9f90",
+      measurementId: "G-1TMVH5DRF3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const userName = document.getElementById("userName");
+    const userRole = document.getElementById("userRole");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    // Check if user is logged in
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          userName.textContent = data.fullName;
+          userRole.textContent = data.role;
+        } else {
+          userName.textContent = "User";
+          userRole.textContent = "Unknown";
+        }
+      } else {
+        // Not logged in → redirect to login
+        window.location.href = "SignIn.html";
+      }
+    });
+
+    // Logout
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      window.location.href = "SignIn.html";
+    });
+  </script>
+</body>
+</html>
