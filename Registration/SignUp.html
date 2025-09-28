@@ -78,12 +78,12 @@
     </style>
 </head>
 <body>
+    <div style="position:fixed; bottom:16px; right:32px; z-index:100;">
+        <img src="evently_logo_DT.png" alt="Evently Logo" style="width: 200px; height:auto;">
+    </div>
     <div class="signup-container">
-        <div style="text-align:center; margin-bottom: 1rem;">
-            <img src="evently_logo.png" alt="Evently Logo" style="width:120px; height:auto;">
-        </div>
         <h2>Sign Up</h2>
-        <form id="signupForm" action="#" method="POST">
+        <form id="signupForm" action="#" method="post">
             <div class="form-group">
                 <label for="fullname">Full Name</label>
                 <input type="text" id="fullname" name="fullname" required>
@@ -125,10 +125,11 @@
             </div>
             <button type="submit" class="signup-btn">Create Account</button>
         </form>
+        <div id="signup-error" style="color:red; text-align:center; margin-top:10px;"></div>
         <div class="login-link">
             Already have an account? <a href="SignIn.html">Sign In</a>
         </div>
-    </div>>
+    </div>
     
 
   <script type="module" src="./scripts/auth.js"></script>

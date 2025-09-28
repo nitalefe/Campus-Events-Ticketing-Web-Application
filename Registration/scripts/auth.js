@@ -51,6 +51,8 @@ if (signinForm) {
 
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
+        const errorMsg = document.getElementById('error-message'); 
+        errorMsg.textContent = ""; // clear old messages
 
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
@@ -59,8 +61,21 @@ if (signinForm) {
                 window.location.href = "website.html";
             })
             .catch((error) => {
-                console.error('Login error:', error);
+                console.error('Login error:', error.code); // log for devs only
+
+                // Always show a simple message to users
+                if (
+                    error.code === "auth/invalid-credential" ||
+                    error.code === "auth/wrong-password" ||
+                    error.code === "auth/user-not-found" ||
+                    error.code === "auth/invalid-email"
+                ) {
+                    errorMsg.textContent = "Invalid email or password. Please try again.";
+                } else {
+                    errorMsg.textContent = "Something went wrong. Please try again later.";
+                }
             });
     });
 }
+
 

@@ -78,10 +78,10 @@
     </style>
 </head>
 <body>
+    <div style="position:fixed; bottom:16px; right:32px; z-index:100;">
+        <img src="evently_logo_DT.png" alt="Evently Logo" style="width: 200px; height:auto;">
+    </div>
     <div class="signin-container">
-        <div style="text-align:center; margin-bottom: 1rem;">
-            <img src="evently_logo.png" alt="Evently Logo" style="width:120px; height:auto;">
-        </div>
         <h2>Sign In</h2>
         <form id="signinForm" action="#" method="post">
             <div class="form-group">
@@ -94,6 +94,8 @@
             </div>
             <button type="submit" class="signin-btn">Sign In</button>
         </form>
+            <div id="error-message" style="color:red; text-align:center; margin-top:10px;"></div>
+
         <div class="signup-link">
             Don't have an account? <a href="SignUp.html">Sign Up</a>
         </div>

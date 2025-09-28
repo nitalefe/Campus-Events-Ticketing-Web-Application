@@ -1,7 +1,10 @@
 function toggleFields() {
-    var role = document.getElementById('role').value;
-    var schoolGroup = document.getElementById('school-group');
-    var orgGroup = document.getElementById('org-group');
+    const role = document.getElementById('role')?.value;
+    const schoolGroup = document.getElementById('school-group');
+    const orgGroup = document.getElementById('org-group');
+
+    if (!schoolGroup || !orgGroup) return;
+
     if (role === 'student') {
         schoolGroup.style.display = 'block';
         document.getElementById('school').required = true;
@@ -19,6 +22,5 @@ function toggleFields() {
         document.getElementById('organization').required = false;
     }
 }
-
 // Make the function available globally
 window.toggleFields = toggleFields;
