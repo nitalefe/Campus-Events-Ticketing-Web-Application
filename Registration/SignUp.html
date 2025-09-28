@@ -125,33 +125,15 @@
             </div>
             <button type="submit" class="signup-btn">Create Account</button>
         </form>
+        <div id="signup-error" style="color:red; text-align:center; margin-top:10px;"></div>
         <div class="login-link">
             Already have an account? <a href="SignIn.html">Sign In</a>
         </div>
     </div>
-    <script>
-        function toggleFields() {
-            var role = document.getElementById('role').value;
-            var schoolGroup = document.getElementById('school-group');
-            var orgGroup = document.getElementById('org-group');
-            if (role === 'student') {
-                schoolGroup.style.display = 'block';
-                document.getElementById('school').required = true;
-                orgGroup.style.display = 'none';
-                document.getElementById('organization').required = false;
-            } else if (role === 'organizer') {
-                orgGroup.style.display = 'block';
-                document.getElementById('organization').required = true;
-                schoolGroup.style.display = 'none';
-                document.getElementById('school').required = false;
-            } else {
-                schoolGroup.style.display = 'none';
-                orgGroup.style.display = 'none';
-                document.getElementById('school').required = false;
-                document.getElementById('organization').required = false;
-            }
-        }
-    </script>
-    <script type="module" src="./firebase-config.js"></script>
+    
+
+  <script type="module" src="./scripts/auth.js"></script>
+
+    <script type="module" src="scripts/index.js"></script>
 </body>
 </html>
