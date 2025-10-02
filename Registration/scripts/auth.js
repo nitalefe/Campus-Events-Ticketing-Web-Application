@@ -2,7 +2,11 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
     import { getFirestore, setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
+    import { sendEmailVerification } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+    
 
 
 
@@ -33,7 +37,8 @@ if (signupForm) {
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('confirm-password').value;
         const role = document.getElementById('role').value; 
-        // ^ Example: radio buttons with name="role" and values "student" or "organizer"
+        
+
 
         const signupError = document.getElementById('signup-error');
         signupError.textContent = "";
@@ -52,28 +57,34 @@ if (signupForm) {
             .then(async (userCredential) => {
                 const user = userCredential.user;
                 console.log('User signed up:', user);
+              
+               // Extra info
+        let extraInfo = {};
+        if (role === "student") {
+          const school = document.getElementById('school').value;
+          extraInfo = { school };
+        } else if (role === "organizer") {
+          const organization = document.getElementById('organization').value;
+          extraInfo = { organization };
+        }
 
-                // Store additional user info in Firestore
-                await setDoc(doc(db, "users", user.uid), {
-                    fullname,
-                    email,
-                    role
-                });
+        // Save to Firestore
+        await setDoc(doc(db, "users", user.uid), {
+          fullname,
+          email,
+          role,
+          ...extraInfo
+        });
 
-                // Optionally, retrieve and log the data to confirm
-                localStorage.setItem("userRole", role);
-
-                window.location.href = "website.html";
-            })
-            .catch((error) => {
-                console.error('Signup error:', error);
-                if (error.code === "auth/email-already-in-use") {
-                    signupError.textContent = "This email is already registered. Please sign in or use a different email.";
-                } else {
-                    signupError.textContent = error.message;
-                }
-            });
-    });
+        await sendEmailVerification(user);
+        alert("Check your email to verify your account before logging in.");
+        window.location.href = "SignIn.html";
+      })
+      .catch((error) => {
+        console.error("Signup error:", error);
+        signupError.textContent = error.message;
+      });
+  });
 }
 
 
@@ -92,6 +103,11 @@ if (signinForm) {
         signInWithEmailAndPassword(auth, email, password)
             .then(async (userCredential) => {
                 const user = userCredential.user;
+
+                 if (!user.emailVerified) {
+            errorMsg.textContent = "Please verify your email before signing in.";
+            return; // Stop here, don’t let them continue
+        }
                 console.log('User logged in:', user);
 
                 // Retrieve user role from Firestore and store in localStorage
@@ -100,6 +116,14 @@ if (signinForm) {
                     const userData = userDoc.data();
                     localStorage.setItem("userRole", userData.role);
                 }
+                
+                // Optional: redirect by role
+           // if (userData.role === "organizer") {
+             //   window.location.href = "organizer-dashboard.html";
+            //} else {
+              //  window.location.href = "student-dashboard.html";
+            ///}
+
 
                 window.location.href = "website.html";
             })
@@ -134,5 +158,30 @@ if (logoutBtn) {
             });
     });
 }
+
+
+//Forgot password: 
+
+const forgotPasswordLink = document.getElementById('forgotPassword');
+if (forgotPasswordLink) {
+    forgotPasswordLink.addEventListener('click', () => {
+        const email = document.getElementById('loginEmail').value;
+        if (!email) {
+            alert("Please enter your email above first.");
+            return;
+        }
+
+        sendPasswordResetEmail(auth, email)
+            .then(() => {
+                alert("Password reset email sent! Check your inbox.");
+            })
+            .catch((error) => {
+                console.error("Error resetting password:", error);
+                alert("Could not send reset email: " + error.message);
+            });
+    });
+}
+
+
 
 

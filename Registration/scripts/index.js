@@ -24,3 +24,5 @@ function toggleFields() {
 }
 // Make the function available globally
 window.toggleFields = toggleFields;
+
+

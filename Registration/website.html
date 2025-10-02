@@ -68,21 +68,12 @@
         </p>
         <a href="SignUp.html" class="intro-btn">Sign Up</a>
         <a href="SignIn.html" class="intro-btn" style="margin-left:10px;">Sign In</a>
-        <button id="logout-btn" class="intro-btn" style="margin-top:15px; background:#e57373;">Log Out</button>
+        <button id="logout-bnt" class="intro-btn" style="margin-top:15px; background:#e57373;">Log Out</button>
     </div>
     <script type="module" src="./scripts/auth.js"></script>
     <button id="createEventBtn" style="display:none;">Create Event</button>
 
-<script type="module">
-  const role = localStorage.getItem("userRole");
-  const createBtn = document.getElementById("createEventBtn");
 
-  if (role === "organizer") {
-    createBtn.style.display = "block";
-  } else {
-    createBtn.style.display = "none";
-  }
-</script>
 
 </body>
 </html>
