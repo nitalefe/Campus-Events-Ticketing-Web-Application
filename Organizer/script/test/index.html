@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Event Attendees</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        input,
+        button {
+            padding: 8px;
+            margin: 4px 0;
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Event Attendees</h2>
+
+        <form id="attendeeForm">
+            <label for="eventId">Event ID:</label>
+            <input type="text" id="eventId" name="eventId" placeholder="Enter Event ID" required>
+
+            <h3>Add Attendee</h3>
+            <input type="text" id="firstName" name="firstName" placeholder="First Name">
+            <input type="text" id="lastName" name="lastName" placeholder="Last Name">
+            <input type="email" id="email" name="email" placeholder="Email">
+            <input type="tel" id="phone" name="phone" placeholder="Phone (optional)">
+
+            <button type="submit">Add Attendee</button>
+        </form>
+
+        <h3>Attendee List</h3>
+        <button id="loadAttendeesBtn">Load Attendees</button>
+        <table id="attendeeTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Checked In</th>
+                    <th>Registered At</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- Link external JS -->
+    <script type="module" src="attendeeList.js"></script>
+</body>
+
+</html>
