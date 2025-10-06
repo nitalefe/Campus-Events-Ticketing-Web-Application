@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>Event Attendees</title>
@@ -16,11 +15,20 @@
             margin: auto;
         }
 
-        input,
+        input[type="text"],
+        input[type="email"],
         button {
             padding: 8px;
             margin: 4px 0;
             width: 100%;
+            box-sizing: border-box;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px; /* space between checkbox and text */
+            margin: 4px 0;
         }
 
         table {
@@ -29,8 +37,7 @@
             margin-top: 20px;
         }
 
-        th,
-        td {
+        th, td {
             border: 1px solid #ccc;
             padding: 8px;
             text-align: left;
@@ -41,26 +48,28 @@
         }
     </style>
 </head>
-
 <body>
     <div class="container">
         <h2>Event Attendees</h2>
 
         <form id="attendeeForm">
-            <label for="eventId">Event ID:</label>
-            <input type="text" id="eventId" name="eventId" placeholder="Enter Event ID" required>
-
             <h3>Add Attendee</h3>
-            <input type="text" id="firstName" name="firstName" placeholder="First Name">
-            <input type="text" id="lastName" name="lastName" placeholder="Last Name">
-            <input type="email" id="email" name="email" placeholder="Email">
-            <input type="tel" id="phone" name="phone" placeholder="Phone (optional)">
+            <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
+            <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
+            <input type="email" id="email" name="email" placeholder="Email" required>
+            <input type="text" id="ticketType" name="ticketType" placeholder="Ticket Type">
+
+            <!-- Checkbox with label inline -->
+            <div class="checkbox-group">
+                <input type="checkbox" id="paymentStatus" name="paymentStatus">
+                <label for="paymentStatus">Payment Status</label>
+            </div>
 
             <button type="submit">Add Attendee</button>
         </form>
 
         <h3>Attendee List</h3>
-        <button id="loadAttendeesBtn">Load Attendees</button>
+        <button id="loadAttendeesBtn" type="button">Load Attendees</button>
         <table id="attendeeTable">
             <thead>
                 <tr>
@@ -68,17 +77,17 @@
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Email</th>
-                    <th>Phone</th>
-                    <th>Checked In</th>
+                    <th>Ticket Type</th>
+                    <th>Payment Status</th>
                     <th>Registered At</th>
                 </tr>
             </thead>
             <tbody></tbody>
         </table>
+        <button id="exportCsvBtn" type="button">Export to CSV</button>
     </div>
 
     <!-- Link external JS -->
     <script type="module" src="attendeeList.js"></script>
 </body>
-
 </html>

@@ -2,6 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getFirestore, collection, doc, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { firebaseConfig } from './firebaseConfig.js';
 // import 'dotenv/config.js';
 
 // Firebase config
@@ -10,11 +11,6 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth
 //     authDomain: process.env.FIREBASE_AUTH_DOMAIN,
 //     projectId: process.env.FIREBASE_PROJECT_ID
 // };
-const firebaseConfig = {
-    apiKey: "AIzaSyCtCLGcR_sDwb6wDE7NpVz8vghrxLZFYB8",
-    authDomain: "campus-events-ticketing-e648f.firebaseapp.com",
-    projectId: "campus-events-ticketing-e648f"
-};
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -23,14 +19,6 @@ const db = getFirestore(app);
 console.log("Firebase app initialized", app);
 
 // ----- FUNCTIONS -----
-
-// const docRef = await addDoc(attendeesRef, {
-//   eventId,
-//   ...attendeeData,
-//   checkedIn: false,
-//   registeredAt: serverTimestamp()
-// });
-// console.log("Document reference:", docRef.id);
 
 /**
  * Add a new attendee to the top-level collection "attendeeList"
@@ -58,21 +46,43 @@ export async function addAttendee(attendeeData) {
  * Get all attendees for a given event
  * @param {string} eventId
  */
-export async function getAttendees(eventId) {
-    const attendeesRef = collection(db, "attendee"); // or "attendeeList"
+export async function getAttendees() {
+    const attendeesRef = collection(db, "attendee");
     try {
         const snapshot = await getDocs(attendeesRef);
         const attendees = [];
         snapshot.forEach(doc => {
-            const data = doc.data();
-            if (data.eventId === eventId) {
-                attendees.push({ id: doc.id, ...data });
-            }
+            attendees.push({ id: doc.id, ...doc.data() });
         });
         return attendees;
     } catch (err) {
         console.error("Error fetching attendees:", err);
         return [];
+    }
+}
+
+const tableBody = document.querySelector("#attendeeTable tbody");
+async function loadAttendees() {
+    tableBody.innerHTML = ""; // clear table
+
+    try {
+        const attendees = await getAttendees();
+
+        attendees.forEach(attendee => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${attendee.id}</td>
+                <td>${attendee.firstName || ''}</td>
+                <td>${attendee.lastName || ''}</td>
+                <td>${attendee.email || ''}</td>
+                <td>${attendee.ticketType || ''}</td>
+                <td>${attendee.paymentStatus || ''}</td>
+                <td>${attendee.registeredAt ? new Date(attendee.registeredAt.seconds * 1000).toLocaleString() : ''}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    } catch (err) {
+        console.error("Error loading attendees:", err);
     }
 }
 
@@ -82,65 +92,26 @@ document.getElementById('attendeeForm').addEventListener('submit', async functio
     e.preventDefault();
 
     const form = e.target;
-    const eventId = form.eventId.value;
 
     const attendeeData = {
         firstName: form.firstName.value,
         lastName: form.lastName.value,
         email: form.email.value,
-        phone: form.phone.value,
+        ticketType: form.ticketType.value,
+        paymentStatus: form.paymentStatus.checked ? "Paid" : "Unpaid"
     };
-
-    console.log("Attendee Data:", {
-        firstName: form.firstName.value,
-        lastName: form.lastName.value,
-        email: form.email.value,
-        phone: form.phone.value
-    });
 
     const id = await addAttendee(attendeeData);
 });
 
+const form = document.getElementById('loadAttendeesBtn').addEventListener('click', async (e) => {
+    console.log("Button clicked");
+
+    // Refresh table after adding
+    loadAttendees();
+});
+
 // When the form is submitted, call addAttendee()
-// document.addEventListener('DOMContentLoaded', () => {
-//   const addBtn = document.getElementById('addAttendeeBtn');
-
-//   addBtn.addEventListener('click', async () => {
-//     // Example hardcoded eventId — replace with your real event document ID
-//     const eventId = "event123";
-
-//     // Collect attendee info (you can replace these with actual input fields)
-//     const attendeeData = {
-//       firstName: prompt("Enter first name:"),
-//       lastName: prompt("Enter last name:"),
-//       email: prompt("Enter email:")
-//     };
-
-//     try {
-//       const id = await addAttendee(eventId, attendeeData);
-//       alert(`✅ Attendee added with ID: ${id}`);
-//     } catch (err) {
-//       console.error("Error adding attendee:", err);
-//       alert(`❌ Failed to add attendee: ${err.message}`);
-//     }
-//   });
-// });
-
-
-// /**
-//  * Check in an attendee
-//  * @param {string} attendeeId
-//  */
-// export async function checkInAttendee(attendeeId) {
-//     const attendeeDoc = doc(db, "attendee", attendeeId);
-//     try {
-//         await updateDoc(attendeeDoc, { checkedIn: true, checkInTime: serverTimestamp() });
-//         console.log(`Attendee ${attendeeId} checked in`);
-//     } catch (err) {
-//         console.error("Error checking in attendee:", err);
-//     }
-// }
-
 
 // --------------------------------------------- Test Connection to DB ---------------------------------------------
 

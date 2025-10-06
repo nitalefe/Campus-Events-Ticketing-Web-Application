@@ -74,3 +74,8 @@ Desktop.ini
 *.tar
 *.tar.gz
 *.rar
+
+
+# ----------------------------
+# Private api keys
+firebaseConfig.js
