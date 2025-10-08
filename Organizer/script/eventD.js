@@ -56,7 +56,9 @@ document.getElementById('eventForm').addEventListener('submit', async function(e
             ticketPrice,
             createdBy: currentUser.uid,
             createdAt: serverTimestamp(),
-            ticketsSold: 0
+            ticketsSold: 0,
+            //ATTENDEE INFO STORE HERE-REMOVE COMMENT LATER
+            attendees: {}
         });
         alert('Event created successfully! Document ID: ' + docRef.id);
         form.reset();
