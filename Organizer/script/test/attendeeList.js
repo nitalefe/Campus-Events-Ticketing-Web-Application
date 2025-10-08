@@ -5,13 +5,6 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth
 import { firebaseConfig } from './firebaseConfig.js';
 // import 'dotenv/config.js';
 
-// Firebase config
-// const firebaseConfig = {
-//     apiKey: process.env.FIREBASE_API_KEY,
-//     authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-//     projectId: process.env.FIREBASE_PROJECT_ID
-// };
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -86,6 +79,46 @@ async function loadAttendees() {
     }
 }
 
+function exportToCsv(data, filename = 'attendees.csv') {
+    if (!data.length) {
+        alert("No attendee data to export.");
+        return;
+    }
+
+    const columns = [
+        { key: "id", label: "ID" },
+        { key: "firstName", label: "First Name" },
+        { key: "lastName", label: "Last Name" },
+        { key: "email", label: "Email" },
+        { key: "ticketType", label: "Ticket Type" },
+        { key: "paymentStatus", label: "Payment Status" },
+        { key: "registeredAt", label: "Registered At" }
+    ];
+
+    const headerRow = columns.map(col => col.label).join(",");
+    const rows = data.map(obj =>
+        columns.map(col => {
+            let value = obj[col.key];
+            if (col.key === "registeredAt" && value?.seconds) {
+                value = new Date(value.seconds * 1000).toLocaleString();
+            }
+            return JSON.stringify(value ?? ""); // safely quote strings
+        }).join(",")
+    );
+
+    const csvContent = [headerRow, ...rows].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+
+    URL.revokeObjectURL(url);
+}
+
+
 // ---- Button / Form Integration ----
 
 document.getElementById('attendeeForm').addEventListener('submit', async function (e) {
@@ -109,6 +142,20 @@ const form = document.getElementById('loadAttendeesBtn').addEventListener('click
 
     // Refresh table after adding
     loadAttendees();
+});
+
+document.getElementById('exportCsvBtn').addEventListener('click', async () => {
+    try {
+        const attendees = await getAttendees();
+        if (attendees.length === 0) {
+            alert("No data to export.");
+            return;
+        }
+        exportToCsv(attendees);
+    } catch (err) {
+        console.error("Error exporting CSV:", err);
+        alert("Failed to export CSV.");
+    }
 });
 
 // When the form is submitted, call addAttendee()
