@@ -1,30 +1,16 @@
-// Import only what you need, from CDN
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import { getFirestore, setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-    import { sendEmailVerification } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
-    
+import { auth, db } from "../../Shared/firebase-config.js";
 
+import { 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signOut,
+  sendEmailVerification,
+  sendPasswordResetEmail,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-
-     const firebaseConfig = {
-    apiKey: "AIzaSyCtCLGcR_sDwb6wDE7NpVz8vghrxLZFYB8",
-    authDomain: "campus-events-ticketing-e648f.firebaseapp.com",
-    projectId: "campus-events-ticketing-e648f",
-    storageBucket: "campus-events-ticketing-e648f.firebasestorage.app",
-    messagingSenderId: "844285609905",
-    appId: "1:844285609905:web:c8913b71b2991d128c9f90",
-    measurementId: "G-1TMVH5DRF3"
-  };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    
 
 // Sign Up Form
 const signupForm = document.getElementById('signupForm');
