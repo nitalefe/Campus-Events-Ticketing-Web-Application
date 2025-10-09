@@ -1,24 +1,45 @@
 // Import Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getFirestore, collection, doc, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 import { firebaseConfig } from './firebaseConfig.js';
 // import 'dotenv/config.js';
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth();
+
+let currentUserRole = null;
 
 console.log("Firebase app initialized", app);
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        console.log("User is signed in:", user);
+
+        const userSnap = await getDocs(doc(db, "users", user.uid));
+        if (!userSnap.exists()) return console.log("User record not found");
+    
+        const { role } = userSnap.data();
+        currentUserRole = role; 
+    } else {
+        console.log("No user signed in.");
+    }
+
+});
+
 
 // ----- FUNCTIONS -----
 
 /**
  * Add a new attendee to the top-level collection "attendeeList"
- * @param {string} eventId - ID of the event
- * @param {Object} attendeeData - { firstName, lastName, email, phone (optional) }
+ * @param {Object} attendeeData - { ID, firstName, lastName, email ticketType, paymentStatus, registeredAt}
  */
 export async function addAttendee(attendeeData) {
+    if (currentUserRole !== "organizer") {
+        return console.log("🚫 Access denied");
+    }
 
     const attendeesRef = collection(db, "attendee"); // or "attendeeList"
     try {
@@ -35,11 +56,11 @@ export async function addAttendee(attendeeData) {
     }
 }
 
-/**
- * Get all attendees for a given event
- * @param {string} eventId
- */
 export async function getAttendees() {
+    if (currentUserRole !== "organizer") {
+        return console.log("🚫 Access denied");
+    }
+
     const attendeesRef = collection(db, "attendee");
     try {
         const snapshot = await getDocs(attendeesRef);
@@ -56,6 +77,9 @@ export async function getAttendees() {
 
 const tableBody = document.querySelector("#attendeeTable tbody");
 async function loadAttendees() {
+    if (currentUserRole !== "organizer") {
+        return console.log("🚫 Access denied");
+    }
     tableBody.innerHTML = ""; // clear table
 
     try {
@@ -79,7 +103,15 @@ async function loadAttendees() {
     }
 }
 
+/**
+ * Add a new attendee to the top-level collection "attendeeList"
+ * @param {Object} data - { ID, firstName, lastName, email ticketType, paymentStatus, registeredAt}
+ */
 function exportToCsv(data, filename = 'attendees.csv') {
+    if (currentUserRole !== "organizer") {
+        return console.log("🚫 Access denied");
+    }
+
     if (!data.length) {
         alert("No attendee data to export.");
         return;
@@ -122,6 +154,10 @@ function exportToCsv(data, filename = 'attendees.csv') {
 // ---- Button / Form Integration ----
 
 document.getElementById('attendeeForm').addEventListener('submit', async function (e) {
+    if (currentUserRole !== "organizer") {
+        return console.log("🚫 Access denied");
+    }
+
     e.preventDefault();
 
     const form = e.target;
@@ -138,13 +174,15 @@ document.getElementById('attendeeForm').addEventListener('submit', async functio
 });
 
 const form = document.getElementById('loadAttendeesBtn').addEventListener('click', async (e) => {
-    console.log("Button clicked");
-
     // Refresh table after adding
     loadAttendees();
 });
 
 document.getElementById('exportCsvBtn').addEventListener('click', async () => {
+    if (currentUserRole !== "organizer") {
+        return console.log("🚫 Access denied");
+    }
+    
     try {
         const attendees = await getAttendees();
         if (attendees.length === 0) {
