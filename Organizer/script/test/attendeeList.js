@@ -10,7 +10,8 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth();
 
-let currentUserRole = null;
+let currentUserRole = "organizer";
+// let currentUserRole = null;
 
 console.log("Firebase app initialized", app);
 
@@ -38,6 +39,7 @@ onAuthStateChanged(auth, async (user) => {
  */
 export async function addAttendee(attendeeData) {
     if (currentUserRole !== "organizer") {
+        alert("🚫 Access denied! You do not have permission to perform this action.");
         return console.log("🚫 Access denied");
     }
 
@@ -58,6 +60,7 @@ export async function addAttendee(attendeeData) {
 
 export async function getAttendees() {
     if (currentUserRole !== "organizer") {
+        alert("🚫 Access denied! You do not have permission to perform this action.");
         return console.log("🚫 Access denied");
     }
 
@@ -78,6 +81,7 @@ export async function getAttendees() {
 const tableBody = document.querySelector("#attendeeTable tbody");
 async function loadAttendees() {
     if (currentUserRole !== "organizer") {
+        alert("🚫 Access denied! You do not have permission to perform this action.");
         return console.log("🚫 Access denied");
     }
     tableBody.innerHTML = ""; // clear table
@@ -109,6 +113,7 @@ async function loadAttendees() {
  */
 function exportToCsv(data, filename = 'attendees.csv') {
     if (currentUserRole !== "organizer") {
+        alert("🚫 Access denied! You do not have permission to perform this action.");
         return console.log("🚫 Access denied");
     }
 
@@ -155,6 +160,7 @@ function exportToCsv(data, filename = 'attendees.csv') {
 
 document.getElementById('attendeeForm').addEventListener('submit', async function (e) {
     if (currentUserRole !== "organizer") {
+        alert("🚫 Access denied! You do not have permission to perform this action.");
         return console.log("🚫 Access denied");
     }
 
@@ -180,6 +186,7 @@ const form = document.getElementById('loadAttendeesBtn').addEventListener('click
 
 document.getElementById('exportCsvBtn').addEventListener('click', async () => {
     if (currentUserRole !== "organizer") {
+        alert("🚫 Access denied! You do not have permission to perform this action.");
         return console.log("🚫 Access denied");
     }
     
