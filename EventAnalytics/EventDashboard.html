@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Firebase Database Test</title>
+    <title>Firebase Database Test - No Auth Required</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap"
@@ -11,111 +11,916 @@
     <style>
       body {
         font-family: "Montserrat", Arial, sans-serif;
-        background: #f5f5f5;
+        background: linear-gradient(135deg, #4169E1, #0000CD);
         margin: 0;
         padding: 2rem;
+        min-height: 100vh;
       }
       .container {
-        max-width: 1000px;
+        max-width: 1200px;
         margin: 0 auto;
         background: white;
-        padding: 2rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      }
+      input[type="date"], input[type="number"] {
+        padding: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-family: "Montserrat", Arial, sans-serif;
+        color: #2d3748;
+        background-color: #fff;
+      }
+      input[type="date"]:focus, input[type="number"]:focus {
+        outline: none;
+        border-color: #4169E1;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+      }
+      input[type="number"] {
+        text-align: center;
       }
       .test-section {
         margin-bottom: 2rem;
-        padding: 1rem;
-        border: 1px solid #ddd;
-        border-radius: 4px;
+        padding: 1.5rem;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
       }
       .test-section h3 {
         margin-top: 0;
-        color: #333;
+        color: #2c3e50;
+        font-size: 1.25rem;
+        margin-bottom: 1.5rem;
+      }
+      .filter-group {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        align-items: center;
+      }
+      .filter-group label {
+        min-width: 120px;
+        color: #4a5568;
+      }
+      select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-family: "Montserrat", Arial, sans-serif;
+        color: #2d3748;
+        background-color: #fff;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234a5568' viewBox='0 0 16 16'%3E%3Cpath d='M8 10.5l4-4H4l4 4z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+      }
+      select:focus {
+        outline: none;
+        border-color: #4169E1;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
       }
       .status {
-        padding: 0.5rem;
-        border-radius: 4px;
-        margin: 0.5rem 0;
+        padding: 0.75rem;
+        border-radius: 6px;
+        margin: 0.75rem 0;
+        font-weight: 500;
       }
       .status.success {
-        background: #d4edda;
-        color: #155724;
+        background: #e6fffa;
+        color: #047857;
+        border: 1px solid #99f6e4;
       }
       .status.error {
-        background: #f8d7da;
-        color: #721c24;
+        background: #fee2e2;
+        color: #b91c1c;
+        border: 1px solid #fecaca;
       }
       .status.info {
-        background: #d1ecf1;
-        color: #0c5460;
+        background: #e0f2fe;
+        color: #0369a1;
+        border: 1px solid #bae6fd;
+      }
+      .button-container {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+      .export-button {
+        background: #10B981;
+      }
+      .export-button:hover {
+        background: #059669;
       }
       button {
-        background: #6fa3ef;
+        background: #4169E1;
         color: white;
         border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 4px;
+        padding: 0.875rem 1.75rem;
+        border-radius: 6px;
         cursor: pointer;
-        margin: 0.5rem;
         font-family: "Montserrat", Arial, sans-serif;
+        font-weight: 600;
+        transition: background-color 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
       button:hover {
-        background: #a3c8f7;
+        background: #1E40AF;
       }
       .event-item {
-        background: #f8f9fa;
-        border: 1px solid #e9ecef;
-        padding: 1rem;
-        margin: 0.5rem 0;
-        border-radius: 4px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      .event-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       }
       .event-item h4 {
-        margin-top: 0;
-        color: #333;
+        margin: 0 0 1rem 0;
+        color: #2c3e50;
+        font-size: 1.25rem;
       }
       .event-stats {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         gap: 1rem;
-        margin-top: 1rem;
+        margin-top: 1.5rem;
       }
       .stat-box {
-        background: white;
-        padding: 0.75rem;
-        border-radius: 4px;
+        background: #f8fafc;
+        padding: 1rem;
+        border-radius: 8px;
         text-align: center;
-        border-left: 4px solid #6fa3ef;
+        border: 1px solid #e2e8f0;
+        transition: transform 0.2s ease;
+      }
+      .stat-box:hover {
+        transform: translateY(-2px);
       }
       .stat-value {
-        font-size: 1.5rem;
+        font-size: 1.75rem;
         font-weight: bold;
-        color: #333;
+        color: #4169E1;
+        margin-bottom: 0.5rem;
       }
       .stat-label {
-        font-size: 0.8rem;
-        color: #666;
+        font-size: 0.875rem;
+        color: #64748b;
         text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      h1 {
+        color: #1a365d;
+        margin-bottom: 1.5rem;
+        font-size: 2rem;
+      }
+      p {
+        color: #4a5568;
+        margin-bottom: 2rem;
+      }
+      .logo-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+      }
+      .logo-container img {
+        width: 150px;
+        height: auto;
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        transition: transform 0.3s ease;
+      }
+      .logo-container img:hover {
+        transform: scale(1.05);
       }
     </style>
   </head>
   <body>
+    
     <div class="container">
+      <h1>Event Analytics Dashboard</h1>
+      <p>Analyze and track event performance across all universities</p>
+
       <div class="test-section">
-        <h3>Fetch All Events</h3>
-        <div id="eventsStatus" class="status info">
-          Ready to fetch all events...
+        <h3>Event Filters</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div class="filter-group">
+            <label for="eventFilter">Category:</label>
+            <select id="eventFilter" onchange="applyFilters()">
+              <option value="all">All Categories</option>
+              <option value="Academic">Academic</option>
+              <option value="Music">Music</option>
+              <option value="Sports">Sports</option>
+              <option value="Technology">Technology</option>
+              <option value="Cultural">Cultural</option>
+              <option value="Social">Social</option>
+              <option value="Networking">Networking</option>
+              <option value="Career">Career</option>
+              <option value="Workshop">Workshop</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="schoolFilter">Events Available to:</label>
+            <select id="schoolFilter" onchange="applyFilters()">
+              <option value="all">All Universities</option>
+              <option value="concordia">Concordia University</option>
+              <option value="mcgill">McGill University</option>
+              <option value="udem">Université de Montréal</option>
+              <option value="polytechnique">Polytechnique Montréal</option>
+              <option value="hec">HEC Montréal</option>
+              <option value="uqam">UQAM</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="ticketTypeFilter">Ticket Type:</label>
+            <select id="ticketTypeFilter" onchange="applyFilters()">
+              <option value="all">All Tickets</option>
+              <option value="free">Free Events</option>
+              <option value="paid">Paid Events</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Price Range:</label>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <input type="number" id="minPrice" placeholder="Min $" style="width: 80px;" onchange="applyFilters()">
+              <span>-</span>
+              <input type="number" id="maxPrice" placeholder="Max $" style="width: 80px;" onchange="applyFilters()">
+            </div>
+          </div>
+          <div class="filter-group">
+            <label>Date Range:</label>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <input type="date" id="startDate" onchange="applyFilters()">
+              <span>-</span>
+              <input type="date" id="endDate" onchange="applyFilters()">
+            </div>
+          </div>
         </div>
-        <button onclick="fetchAllEvents()">Fetch All Events</button>
+        <div id="eventsStatus" class="status info">
+          Loading events...
+        </div>
       </div>
 
       <div class="test-section">
         <h3>Events Found</h3>
+        <div class="button-container">
+          <button class="export-button" onclick="exportToCSV()">
+            Export to CSV
+          </button>
+        </div>
         <div id="eventsList"></div>
       </div>
     </div>
 
-    <script type="module" src="app.js"></script>
-  </body>
+    <!-- Firebase SDK -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+      import { getFirestore, collection, getDocs, query, orderBy, where, onSnapshot } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
+      // Firebase project config
+      const firebaseConfig = {
+        apiKey: "AIzaSyCtCLGcR_sDwb6wDE7NpVz8vghrxLZFYB8",
+        authDomain: "campus-events-ticketing-e648f.firebaseapp.com",
+        projectId: "campus-events-ticketing-e648f",
+        storageBucket: "campus-events-ticketing-e648f.firebasestorage.app",
+        messagingSenderId: "844285609905",
+        appId: "1:844285609905:web:c8913b71b2991d128c9f90",
+        measurementId: "G-1TMVH5DRF3"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      let unsubscribe = null;
+
+      // Format date utility function
+      function formatDate(date) {
+        if (!date) return "No date";
+        return date.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      // Display events function
+      function displayEvents(events) {
+        const eventsList = document.getElementById('eventsList');
+        eventsList.innerHTML = '';
+        
+        if (events.length === 0) {
+          eventsList.innerHTML = '<div class="status info">No events found.</div>';
+          return;
+        }
+        
+        events.forEach(event => {
+          const div = document.createElement('div');
+          div.className = 'event-item';
+          div.innerHTML = `
+            <h4>${event.eventName || 'Unnamed Event'}</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+              <div>
+                <p><strong>Category:</strong> ${event.eventCategory || 'No category'}</p>
+                <p><strong>Hosted By:</strong> ${event.school || 'No school specified'}</p>
+                <p><strong>Date:</strong> ${formatDate(event.eventDateTime)}</p>
+              </div>
+              <div>
+                <p><strong>Location:</strong> ${event.eventLocation || 'No location'}</p>
+                <p><strong>Organizer:</strong> ${event.createdBy || 'Unknown'}</p>
+                <p><strong>Price:</strong> $${(event.ticketPrice || 0).toFixed(2)}</p>
+              </div>
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <p><strong>Open to:</strong> ${Array.isArray(event.openTo) ? event.openTo.map(school => {
+                const schools = {
+                  'concordia': 'Concordia University',
+                  'mcgill': 'McGill University',
+                  'udem': 'Université de Montréal',
+                  'polytechnique': 'Polytechnique Montréal',
+                  'hec': 'HEC Montréal',
+                  'uqam': 'UQAM'
+                };
+                return schools[school] || school;
+              }).join(', ') : 'All Universities'}</p>
+            </div>
+            <div class="event-stats">
+              <div class="stat-box">
+                <div class="stat-value">${event.capacity || 0}</div>
+                <div class="stat-label">Total Capacity</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-value">${event.ticketsSold || 0}</div>
+                <div class="stat-label">Tickets Sold</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-value">${Math.max(0, (event.capacity || 0) - (event.ticketsSold || 0))}</div>
+                <div class="stat-label">Available</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-value">${((event.ticketsSold || 0) / (event.capacity || 1) * 100).toFixed(1)}%</div>
+                <div class="stat-label">Fill Rate</div>
+              </div>
+            </div>`;
+          eventsList.appendChild(div);
+        });
+      }
+
+      // Apply filters function
+      async function applyFilters() {
+        const categoryValue = document.getElementById('eventFilter').value;
+        const schoolValue = document.getElementById('schoolFilter').value;
+        const ticketType = document.getElementById('ticketTypeFilter').value;
+        const minPrice = document.getElementById('minPrice').value;
+        const maxPrice = document.getElementById('maxPrice').value;
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+
+        document.getElementById('eventsStatus').textContent = 'Filtering events...';
+        document.getElementById('eventsStatus').className = 'status info';
+
+        try {
+          // Create base query with eventDateTime ordering
+          let q = query(collection(db, 'events'), orderBy('eventDateTime', 'desc'));
+          let querySnapshot = await getDocs(q);
+          
+          // Apply filters in memory for complex queries to avoid index requirements
+          let filteredEvents = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            eventDateTime: doc.data().eventDateTime?.toDate()
+          })).filter(event => {
+            // Category filter
+            if (categoryValue !== 'all' && event.eventCategory !== categoryValue) {
+              return false;
+            }
+            
+            // School filter - check if the event is open to the selected school
+            if (schoolValue !== 'all' && !event.openTo?.includes(schoolValue)) {
+              return false;
+            }
+
+            // Date range filter
+            if (startDate && new Date(startDate) > event.eventDateTime) {
+              return false;
+            }
+            
+            if (endDate) {
+              const endDatePlusOne = new Date(endDate);
+              endDatePlusOne.setDate(endDatePlusOne.getDate() + 1);
+              if (endDatePlusOne <= event.eventDateTime) {
+                return false;
+              }
+            }
+
+            // Ticket type filter
+            if (ticketType === 'free' && event.ticketPrice !== 0) {
+              return false;
+            } else if (ticketType === 'paid' && event.ticketPrice === 0) {
+              return false;
+            }
+
+            // Price range filter
+            if (minPrice !== '' && event.ticketPrice < Number(minPrice)) {
+              return false;
+            }
+            if (maxPrice !== '' && event.ticketPrice > Number(maxPrice)) {
+              return false;
+            }
+
+            return true;
+          });
+
+          // Store the filtered events for export
+          window.currentFilteredEvents = filteredEvents;
+          
+          displayEvents(filteredEvents);
+          document.getElementById('eventsStatus').textContent = `Found ${filteredEvents.length} events`;
+          document.getElementById('eventsStatus').className = 'status success';
+        } catch (error) {
+          console.error('Error filtering events:', error);
+          document.getElementById('eventsStatus').textContent = 'Error: ' + error.message;
+          document.getElementById('eventsStatus').className = 'status error';
+        }
+      }
+
+      // Function to export events data to CSV
+      function exportToCSV() {
+        // Get the current filtered events from the last query
+        const events = window.currentFilteredEvents || [];
+        
+        if (events.length === 0) {
+          document.getElementById('eventsStatus').textContent = 'No data to export';
+          document.getElementById('eventsStatus').className = 'status error';
+          return;
+        }
+
+        // Define the fields to export
+        const fields = [
+          'eventName',
+          'eventCategory',
+          'school',
+          'eventLocation',
+          'createdBy',
+          'ticketPrice',
+          'capacity',
+          'ticketsSold',
+          'eventDateTime'
+        ];
+
+        // Create CSV header
+        let csv = fields.join(',') + '\\n';
+
+        // Add data rows
+        events.forEach(event => {
+          const row = fields.map(field => {
+            let value = event[field];
+            
+            // Format special fields
+            if (field === 'eventDateTime') {
+              value = formatDate(value);
+            } else if (field === 'ticketPrice') {
+              value = (value || 0).toFixed(2);
+            } else if (value === undefined || value === null) {
+              value = '';
+            }
+
+            // Escape commas and quotes in the value
+            value = String(value).replace(/"/g, '""');
+            if (value.includes(',') || value.includes('"') || value.includes('\\n')) {
+              value = `"${value}"`;
+            }
+            
+            return value;
+          });
+          csv += row.join(',') + '\\n';
+        });
+
+        // Create blob and download link
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `events_analytics_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        document.getElementById('eventsStatus').textContent = 'CSV file exported successfully';
+        document.getElementById('eventsStatus').className = 'status success';
+      }
+
+      // Make functions globally available
+      window.displayEvents = displayEvents;
+      window.applyFilters = applyFilters;
+      window.exportToCSV = exportToCSV;
+
+      // Initialize event loading when page loads
+      document.addEventListener('DOMContentLoaded', () => {
+        applyFilters();
+      });
+    </script>
+    <div class="logo-container">
+      <img src="../Organizer/evently_logo_DT.png" alt="Evently Logo">
+    </div>
+  </body>
 </html>
+
+      <!-- // Firebase project config
+      const firebaseConfig = {
+        apiKey: "AIzaSyCtCLGcR_sDwb6wDE7NpVz8vghrxLZFYB8",
+        authDomain: "campus-events-ticketing-e648f.firebaseapp.com",
+        projectId: "campus-events-ticketing-e648f",
+        storageBucket: "campus-events-ticketing-e648f.firebasestorage.app",
+        messagingSenderId: "844285609905",
+        appId: "1:844285609905:web:c8913b71b2991d128c9f90",
+        measurementId: "G-1TMVH5DRF3"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      // Format date utility function
+      function formatDate(date) {
+        if (!date) return "No date";
+        return date.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      // Apply filters function
+      window.applyFilters = async function() {
+        const categoryValue = document.getElementById('eventFilter').value;
+        const schoolValue = document.getElementById('schoolFilter').value;
+        const ticketType = document.getElementById('ticketTypeFilter').value;
+        const minPrice = document.getElementById('minPrice').value;
+        const maxPrice = document.getElementById('maxPrice').value;
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+
+      // Firebase project config
+      const firebaseConfig = {
+        apiKey: "AIzaSyCtCLGcR_sDwb6wDE7NpVz8vghrxLZFYB8",
+        authDomain: "campus-events-ticketing-e648f.firebaseapp.com",
+        projectId: "campus-events-ticketing-e648f",
+        storageBucket: "campus-events-ticketing-e648f.firebasestorage.app",
+        messagingSenderId: "844285609905",
+        appId: "1:844285609905:web:c8913b71b2991d128c9f90",
+        measurementId: "G-1TMVH5DRF3"
+      };
+      
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      window.allEvents = [];
+
+      // Display events function
+      window.displayEvents = function(events) {
+        const eventsList = document.getElementById('eventsList');
+        eventsList.innerHTML = '';
+        if (events.length === 0) {
+          eventsList.innerHTML = '<div class="status info">No events found.</div>';
+          return;
+        }
+        events.forEach(event => {
+          const div = document.createElement('div');
+          div.className = 'event-item';
+          div.innerHTML = ` -->
+            <!-- <h4>${event.eventName || 'Unnamed Event'}</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+              <div>
+                <p><strong>Category:</strong> ${event.eventCategory || 'No category'}</p>
+                <p><strong>Hosted By:</strong> ${event.school || 'No school specified'}</p>
+                <p><strong>Date:</strong> ${formatDate(event.eventDateTime)}</p>
+              </div>
+              <div>
+                <p><strong>Location:</strong> ${event.eventLocation || 'No location'}</p>
+                <p><strong>Organizer:</strong> ${event.createdBy || 'Unknown'}</p>
+                <p><strong>Price:</strong> $${(event.ticketPrice || 0).toFixed(2)}</p>
+              </div>
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <p><strong>Open to:</strong> ${Array.isArray(event.openTo) ? event.openTo.map(school => {
+                const schools = {
+                  'concordia': 'Concordia University',
+                  'mcgill': 'McGill University',
+                  'udem': 'Université de Montréal',
+                  'polytechnique': 'Polytechnique Montréal',
+                  'hec': 'HEC Montréal',
+                  'uqam': 'UQAM'
+                };
+                return schools[school] || school;
+              }).join(', ') : 'All Universities'}</p>
+            </div>
+            <div class="event-stats">
+              <div class="stat-box">
+                <div class="stat-value">${event.capacity || 0}</div>
+                <div class="stat-label">Total Capacity</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-value">${event.ticketsSold || 0}</div>
+                <div class="stat-label">Tickets Sold</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-value">${Math.max(0, (event.capacity || 0) - (event.ticketsSold || 0))}</div>
+                <div class="stat-label">Available</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-value">${((event.ticketsSold || 0) / (event.capacity || 1) * 100).toFixed(1)}%</div>
+                <div class="stat-label">Fill Rate</div>
+              </div>
+            </div>`;
+          eventsList.appendChild(div);
+        });
+      };
+
+      // Apply filters function
+      window.applyFilters = async function() {
+        const categoryValue = document.getElementById('eventFilter').value;
+        const schoolValue = document.getElementById('schoolFilter').value;
+        const ticketType = document.getElementById('ticketTypeFilter').value;
+        const minPrice = document.getElementById('minPrice').value;
+        const maxPrice = document.getElementById('maxPrice').value;
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        // Unsubscribe from previous listener if it exists
+        if (unsubscribe) {
+          unsubscribe();
+        }
+
+        const eventsRef = collection(db, 'events');
+        const constraints = queryConstraints.length > 0 
+          ? [...queryConstraints, orderBy('eventDateTime', 'desc')]
+          : [orderBy('eventDateTime', 'desc')];
+        
+        const q = query(eventsRef, ...constraints);
+        
+        // Set up real-time listener
+        unsubscribe = onSnapshot(q, 
+          (snapshot) => {
+            const events = [];
+            snapshot.forEach((doc) => {
+              const data = doc.data();
+              events.push({
+                id: doc.id,
+                ...data,
+                eventDateTime: data.eventDateTime?.toDate()
+              });
+            });
+            window.allEvents = events;
+            displayEvents(events);
+            document.getElementById('eventsStatus').textContent = 
+              `Showing ${events.length} events (Live)`;
+            document.getElementById('eventsStatus').className = 'status success';
+          },
+          (error) => {
+            console.error('Error listening to events:', error);
+            document.getElementById('eventsStatus').textContent = 
+              'Error: ' + error.message;
+            document.getElementById('eventsStatus').className = 'status error';
+          }
+        );
+      }
+
+      // Initialize the listener when the page loads
+      initializeRealTimeUpdates();
+        document.getElementById('eventsStatus').textContent = 'Fetching events...';
+        try {
+          const eventsRef = collection(db, 'events');
+          const querySnapshot = await getDocs(query(eventsRef, orderBy('eventDateTime', 'desc')));
+          const events = [];
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            events.push({
+              id: doc.id,
+              ...data,
+              eventDateTime: data.eventDateTime?.toDate() // Convert Timestamp to Date
+            });
+          });
+          window.allEvents = events;
+          displayEvents(events);
+          document.getElementById('eventsStatus').textContent = `Found ${events.length} events`;
+          document.getElementById('eventsStatus').className = 'status success';
+        } catch (error) {
+          console.error('Error fetching events:', error);
+          document.getElementById('eventsStatus').textContent = 'Error fetching events: ' + error.message;
+          document.getElementById('eventsStatus').className = 'status error';
+        }
+      }
+
+      // Make functions available globally
+      window.fetchAllEvents = fetchAllEvents;
+
+      function displayEvents(events) {
+        const eventsList = document.getElementById('eventsList');
+        eventsList.innerHTML = '';
+        if (events.length === 0) {
+          eventsList.innerHTML = '<div class="status info">No events found.</div>';
+          return;
+        }
+        events.forEach(event => {
+          const div = document.createElement('div');
+          div.className = 'event-item';
+          div.innerHTML = `
+            <h4>${event.eventName || 'Unnamed Event'}</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+              <div>
+                <p><strong>Category:</strong> ${event.eventCategory || 'No category'}</p>
+                <p><strong>Hosted By:</strong> ${event.school || 'No school specified'}</p>
+                <p><strong>Date:</strong> ${formatDate(event.eventDateTime) || 'No date'}</p>
+              </div>
+              <div>
+                <p><strong>Location:</strong> ${event.eventLocation || 'No location'}</p>
+                <p><strong>Organizer:</strong> ${event.createdBy || 'Unknown'}</p>
+                <p><strong>Price:</strong> $${(event.ticketPrice || 0).toFixed(2)}</p>
+              </div>
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <p><strong>Open to:</strong> ${Array.isArray(event.openTo) ? event.openTo.map(school => {
+                const schools = {
+                  'concordia': 'Concordia University',
+                  'mcgill': 'McGill University',
+                  'udem': 'Université de Montréal',
+                  'polytechnique': 'Polytechnique Montréal',
+                  'hec': 'HEC Montréal',
+                  'uqam': 'UQAM'
+                };
+                return schools[school] || school;
+              }).join(', ') : 'All Universities'}</p>
+            </div>
+            <div class="event-stats">
+              <div class="stat-box">
+                <div class="stat-value">${event.capacity || 0}</div>
+                <div class="stat-label">Total Capacity</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-value">${event.ticketsSold || 0}</div>
+                <div class="stat-label">Tickets Sold</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-value">${Math.max(0, (event.capacity || 0) - (event.ticketsSold || 0))}</div>
+                <div class="stat-label">Available</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-value">${((event.ticketsSold || 0) / (event.capacity || 1) * 100).toFixed(1)}%</div>
+                <div class="stat-label">Fill Rate</div>
+              </div>
+            </div>`;
+          eventsList.appendChild(div);
+        });
+      }
+
+      window.applyFilters = async function() {
+        const categoryValue = document.getElementById('eventFilter').value;
+        const schoolValue = document.getElementById('schoolFilter').value;
+        const ticketType = document.getElementById('ticketTypeFilter').value;
+        const minPrice = document.getElementById('minPrice').value;
+        const maxPrice = document.getElementById('maxPrice').value;
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+
+        document.getElementById('eventsStatus').textContent = 'Filtering events...';
+        document.getElementById('eventsStatus').className = 'status info';
+        
+        try {
+          const eventsRef = collection(db, 'events');
+          let conditions = [];
+          
+          // Add category filter
+          if (categoryValue !== 'all') {
+            conditions.push(where('eventCategory', '==', categoryValue));
+          }
+          
+          // Add school filter
+          if (schoolValue !== 'all') {
+            // Check if the school is in the openTo array
+            conditions.push(where('openTo', 'array-contains', schoolValue));
+          }
+
+          // Get date range values
+          const startDate = document.getElementById('startDate').value;
+          const endDate = document.getElementById('endDate').value;
+          if (startDate) {
+            // Convert to Firestore Timestamp
+            const startTimestamp = Timestamp.fromDate(new Date(startDate));
+            conditions.push(where('eventDateTime', '>=', startTimestamp));
+          }
+          if (endDate) {
+            // Add one day to include the entire end date
+            const endDatePlusOne = new Date(endDate);
+            endDatePlusOne.setDate(endDatePlusOne.getDate() + 1);
+            const endTimestamp = Timestamp.fromDate(endDatePlusOne);
+            conditions.push(where('eventDateTime', '<', endTimestamp));
+          }
+
+          // Get ticket type and price range
+          const ticketType = document.getElementById('ticketTypeFilter').value;
+          const minPrice = document.getElementById('minPrice').value;
+          const maxPrice = document.getElementById('maxPrice').value;
+
+          // Add ticket type conditions
+          if (ticketType === 'free') {
+            conditions.push(where('ticketPrice', '==', 0));
+          } else if (ticketType === 'paid') {
+            conditions.push(where('ticketPrice', '>', 0));
+          }
+
+          // Add price range conditions
+          if (minPrice !== '') {
+            conditions.push(where('ticketPrice', '>=', Number(minPrice)));
+          }
+          if (maxPrice !== '') {
+            conditions.push(where('ticketPrice', '<=', Number(maxPrice)));
+          }
+
+          console.log('Applying filters with conditions:', conditions);
+          
+          try {
+            document.getElementById('eventsStatus').textContent = 'Filtering events...';
+            document.getElementById('eventsStatus').className = 'status info';
+
+            // Create base query with eventDateTime ordering
+            let q = query(collection(db, 'events'), orderBy('eventDateTime', 'desc'));
+            let querySnapshot = await getDocs(q);
+            
+            // Apply filters in memory for complex queries to avoid index requirements
+            let filteredEvents = querySnapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data(),
+              eventDateTime: doc.data().eventDateTime?.toDate()
+            })).filter(event => {
+              // Category filter
+              if (categoryValue !== 'all' && event.eventCategory !== categoryValue) {
+                return false;
+              }
+              
+              // School filter
+              if (schoolValue !== 'all' && !event.openTo?.includes(schoolValue)) {
+                return false;
+              }
+
+              // Date range filter
+              if (startDate && new Date(startDate) > event.eventDateTime) {
+                return false;
+              }
+              
+              if (endDate) {
+                const endDatePlusOne = new Date(endDate);
+                endDatePlusOne.setDate(endDatePlusOne.getDate() + 1);
+                if (endDatePlusOne <= event.eventDateTime) {
+                  return false;
+                }
+              }
+
+              // Ticket type filter
+              if (ticketType === 'free' && event.ticketPrice !== 0) {
+                return false;
+              } else if (ticketType === 'paid' && event.ticketPrice === 0) {
+                return false;
+              }
+
+              // Price range filter
+              if (minPrice !== '' && event.ticketPrice < Number(minPrice)) {
+                return false;
+              }
+              if (maxPrice !== '' && event.ticketPrice > Number(maxPrice)) {
+                return false;
+              }
+
+              return true;
+            });
+            
+            window.allEvents = filteredEvents;
+            displayEvents(filteredEvents);
+            document.getElementById('eventsStatus').textContent = `Found ${events.length} events`;
+            document.getElementById('eventsStatus').className = 'status success';
+          } catch (error) {
+            console.error('Error filtering events:', error);
+            document.getElementById('eventsStatus').textContent = 'Error: ' + error.message;
+            document.getElementById('eventsStatus').className = 'status error';
+          }
+      }
+
+    } // End of applyFilters function
+
+    // Initialize event loading when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      applyFilters(); // Load all events when page loads
+    });
+    </script>
+  </body>
+</html>
+    </script>
+  </body>
+</html> -->
