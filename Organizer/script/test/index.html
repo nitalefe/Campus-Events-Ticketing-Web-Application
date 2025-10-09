@@ -4,70 +4,230 @@
     <meta charset="UTF-8">
     <title>Event Attendees</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Montserrat font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            background: linear-gradient(135deg, #367bfc 0%, #002976 100%);
+            font-family: 'Montserrat', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
         }
-
+        .toolbar {
+            width: 100%;
+            background: rgba(0,51,102,0.95);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            padding: 0 32px;
+            height: 56px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .toolbar-logo {
+            height: 36px;
+            margin-right: 24px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.18));
+            transition: transform 0.2s;
+        }
+        .toolbar-logo:hover {
+            transform: scale(1.08) rotate(-2deg);
+        }
+        .toolbar-btn, .auth-btn {
+            background: linear-gradient(90deg, #6fa3ef 60%, #367bfc 100%);
+            border: none;
+            color: #fff;
+            font-size: 0.98em;
+            margin-right: 12px;
+            cursor: pointer;
+            padding: 0 20px;
+            height: 36px;
+            min-width: 80px;
+            line-height: normal;
+            border-radius: 5px;
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            box-shadow: 0 1px 4px rgba(54,123,252,0.12);
+            transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+        }
+        .toolbar-btn:last-child, .auth-btn:last-child {
+            margin-right: 0;
+        }
+        .toolbar-btn:hover, .auth-btn:hover {
+            background: linear-gradient(90deg, #a3c8f7 60%, #367bfc 100%);
+            box-shadow: 0 2px 8px rgba(54,123,252,0.22);
+            transform: scale(1.05);
+        }
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+        }
+        .toolbar-right {
+            display: flex;
+            align-items: center;
+        }
+        .toolbar-spacer {
+            flex: 1;
+        }
         .container {
-            max-width: 600px;
-            margin: auto;
+            max-width: 700px;
+            margin: 56px auto 40px auto;
+            background: rgba(255,255,255,0.98);
+            padding: 40px 36px 32px 36px;
+            border-radius: 22px;
+            box-shadow: 0 8px 32px rgba(54,123,252,0.10), 0 2px 8px rgba(0,0,0,0.08);
+            color: #222;
+            font-family: 'Montserrat', Arial, sans-serif;
+            position: relative;
+            animation: fadeIn 0.8s cubic-bezier(.4,0,.2,1);
         }
-
+        h2 {
+            text-align: center;
+            margin-bottom: 28px;
+            color: #222;
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 8px rgba(54,123,252,0.08);
+        }
+        h3 {
+            margin-top: 32px;
+            margin-bottom: 18px;
+            color: #367bfc;
+            font-weight: 600;
+            font-size: 1.25em;
+            letter-spacing: 0.5px;
+        }
+        label {
+            display: block;
+            margin-top: 16px;
+            color: #222;
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-weight: 500;
+        }
         input[type="text"],
         input[type="email"],
-        button {
-            padding: 8px;
-            margin: 4px 0;
+        input[type="number"],
+        button,
+        select {
             width: 100%;
+            padding: 13px;
+            margin-top: 7px;
+            margin-bottom: 14px;
+            border: 1.5px solid #dcdde1;
+            border-radius: 6px;
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 1.04em;
+            background: #f6f6f6;
             box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-
+        input:focus, select:focus {
+            border-color: #6fa3ef;
+            outline: none;
+            box-shadow: 0 2px 8px rgba(54,123,252,0.10);
+        }
+        button[type="submit"], #loadAttendeesBtn, #exportCsvBtn {
+            background: linear-gradient(90deg, #6fa3ef 60%, #367bfc 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.08em;
+            cursor: pointer;
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(54,123,252,0.12);
+            transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+            margin-bottom: 12px;
+        }
+        button[type="submit"]:hover, #loadAttendeesBtn:hover, #exportCsvBtn:hover {
+            background: linear-gradient(90deg, #a3c8f7 60%, #367bfc 100%);
+            box-shadow: 0 4px 16px rgba(54,123,252,0.22);
+            transform: scale(1.03);
+        }
         .checkbox-group {
             display: flex;
             align-items: center;
-            gap: 8px; /* space between checkbox and text */
+            gap: 8px;
             margin: 4px 0;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            background: #f6f6f6;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(54,123,252,0.08);
         }
-
         th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
+            border: 1px solid #e3eafc;
+            padding: 12px 8px;
             text-align: left;
+            font-size: 1em;
         }
-
         th {
-            background-color: #f4f4f4;
+            background-color: #e3eafc;
+            color: #367bfc;
+            font-weight: 700;
+            font-size: 1.08em;
+        }
+        tr:nth-child(even) td {
+            background: #f0f6ff;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-16px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        @media (max-width: 800px) {
+            .container { max-width: 98vw; padding: 24px 4vw; }
+        }
+        @media (max-width: 600px) {
+            .container { padding: 12px 2vw; }
+            h2 { font-size: 1.4em; }
+            th, td { font-size: 0.95em; }
         }
     </style>
 </head>
 <body>
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <img src="../../evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo">
+            <button class="toolbar-btn" onclick="location.href='../../home.html'">Home</button>
+            <button class="toolbar-btn" onclick="location.href='../../eventCreation.html'">Create New Event</button>
+        </div>
+        <div class="toolbar-spacer"></div>
+        <div class="toolbar-right" id="toolbarRight"></div>
+    </div>
     <div class="container">
         <h2>Event Attendees</h2>
-
         <form id="attendeeForm">
             <h3>Add Attendee</h3>
             <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
             <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
             <input type="email" id="email" name="email" placeholder="Email" required>
             <input type="text" id="ticketType" name="ticketType" placeholder="Ticket Type">
-
-            <!-- Checkbox with label inline -->
             <div class="checkbox-group">
                 <input type="checkbox" id="paymentStatus" name="paymentStatus">
                 <label for="paymentStatus">Payment Status</label>
             </div>
-
             <button type="submit">Add Attendee</button>
         </form>
-
         <h3>Attendee List</h3>
         <button id="loadAttendeesBtn" type="button">Load Attendees</button>
         <table id="attendeeTable">
@@ -86,8 +246,33 @@
         </table>
         <button id="exportCsvBtn" type="button">Export to CSV</button>
     </div>
+    <script type="module">
+        // Dynamic right toolbar buttons
+        const toolbarRight = document.getElementById('toolbarRight');
+        const settingsBtn = document.createElement('button');
+        settingsBtn.textContent = "Settings";
+        settingsBtn.className = "toolbar-btn";
+        settingsBtn.onclick = () => location.href = "../../settings.html";
+        toolbarRight.appendChild(settingsBtn);
 
-    <!-- Link external JS -->
+        const isSignedIn = !!localStorage.getItem("userRole");
+        if (isSignedIn) {
+            const logoutBtn = document.createElement('button');
+            logoutBtn.textContent = "Log Out";
+            logoutBtn.className = "toolbar-btn";
+            logoutBtn.onclick = () => {
+                localStorage.removeItem("userRole");
+                location.reload();
+            };
+            toolbarRight.appendChild(logoutBtn);
+        } else {
+            const signInBtn = document.createElement('button');
+            signInBtn.textContent = "Sign In";
+            signInBtn.className = "toolbar-btn";
+            signInBtn.onclick = () => location.href = "../../SignIn.html";
+            toolbarRight.appendChild(signInBtn);
+        }
+    </script>
     <script type="module" src="attendeeList.js"></script>
 </body>
 </html>
