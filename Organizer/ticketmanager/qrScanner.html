@@ -1,56 +1,63 @@
-<!--
-To do:
--ui for organizer to launch qr scanner
--read qr code to database
--validate user as event organizer
--confirm ticket scan
--mark ticket as scanned
--->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <script src="https://unpkg.com/html5-qrcode"></script>
+  <meta charset="UTF-8">
+  <title>QR Code Scanner</title>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background-color: #000; /* black background to match camera feed */
+      font-family: Arial, sans-serif;
+      overflow: hidden; /* remove scrollbars */
+    }
+
+    /* Container fills entire screen */
+    #reader {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #000;
+      position: relative;
+    }
+
+    /* Add an overlay box to mimic a focus area */
+    .scan-box {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border: 4px solid rgba(255,255,255,0.8);
+      border-radius: 8px;
+      box-shadow: 0 0 25px rgba(255,255,255,0.3);
+    }
+
+    #result {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: white;
+      font-size: 1.3em;
+      font-weight: bold;
+      text-align: center;
+      background: rgba(0,0,0,0.5);
+      padding: 10px 20px;
+      border-radius: 6px;
+    }
+  </style>
 </head>
 <body>
-  <div id="reader"></div>
-  <div id="result"></div>
+  <div id="reader">
+    <div class="scan-box"></div>
+    <div id="result">Align QR code within the box</div>
+  </div>
 
-  <script>
-    // Create a new instance of Html5Qrcode
-  const html5QrCode = new Html5Qrcode("reader");
+  <!-- QR code library -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
 
-  // Callback when a QR code is successfully scanned
-  const onScanSuccess = (decodedText, decodedResult) => {
-    // Show the result
-    document.getElementById("result").innerText = `Scanned: ${decodedText}`;
-
-    // Stop the scanner after success (optional)
-    html5QrCode.stop().then(() => {
-      console.log("Scanner stopped");
-    }).catch(err => {
-      console.error("Error stopping scanner:", err);
-    });
-  };
-
-  // Get the list of available cameras and start scanning
-  Html5Qrcode.getCameras().then(devices => {
-    if (devices && devices.length) {
-      const cameraId = devices[0].id; // Use the first camera
-
-      html5QrCode.start(
-        cameraId,
-        {
-          fps: 10,       // frames per second
-          qrbox: 250     // size of the scanning box (square)
-        },
-        onScanSuccess
-      ).catch(err => {
-        console.error("Failed to start scanner:", err);
-      });
-    }
-  }).catch(err => {
-    console.error("Camera access error:", err);
-  });
-  </script>
+  <!-- Your script -->
+  <script src="../script/QRcode.js"></script>
 </body>
 </html>

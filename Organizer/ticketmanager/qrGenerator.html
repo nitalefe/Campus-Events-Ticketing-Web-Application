@@ -4,16 +4,6 @@
   <title>Standalone QR Code Generator</title>
 
   <!-- QRCode.js Library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    const firebaseConfig = {
-    apiKey: "AIzaSyCtCLGcR_sDwb6wDE7NpVz8vghrxLZFYB8",
-    authDomain: "campus-events-ticketing-e648f.firebaseapp.com",
-    projectId: "campus-events-ticketing-e648f",
-    storageBucket: "campus-events-ticketing-e648f.firebasestorage.app",
-    messagingSenderId: "844285609905",
-    appId: "1:844285609905:web:c8913b71b2991d128c9f90",
-    measurementId: "G-1TMVH5DRF3"
-  };
   <style>
     #qrcode {
       margin-top: 20px;
@@ -26,27 +16,6 @@
 
   <!-- QR Code container -->
   <div id="qrcode"></div>
-
-  <script>
-    function generateQRCode() {
-      //Ticket ID goes here. concantenation of attendeeID and eventID. This should read from the firebase event object
-        const qrText = "test";
-      const qrContainer = document.getElementById("qrcode");
-
-      // Clear previous QR code if any
-      //qrContainer.innerHTML = "";
-
-      new QRCode(qrContainer, {
-        text: qrText,
-        width: 256,
-        height: 256,
-        correctLevel: QRCode.CorrectLevel.H
-      });
-    }
-
-    // Call the function to generate the QR code
-    generateQRCode();
-  </script>
 
 </body>
 </html>
