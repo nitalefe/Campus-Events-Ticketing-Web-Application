@@ -22,17 +22,27 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        # cache: 'npm'
+
+    - name: Check Node version
+      run: node -v
+
+    - name: Check NPM version
+      run: npm -v
 
     # - run: npm ci
-    - run: npm install # Use npm ci if you don't need to update package-lock.json
+    # - run: npm install # Use npm ci if you don't need to update package-lock.json
 
     - name: Build if applicable
       run: npm run build --if-present
+
+    - name: Dummy build
+      run: echo "No project yet, workflow is testing Node.js setup"
 
     # - name: Run tests
     #   run: npm test
