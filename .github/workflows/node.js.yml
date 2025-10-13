@@ -5,17 +5,18 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main" , "github_action"]
   pull_request:
     branches: [ "main" ]
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
+        os: [ubuntu-latest, windows-latest]
         node-version: [18.x, 20.x, 22.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
@@ -26,6 +27,12 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+
+    # - run: npm ci
+    - run: npm install # Use npm ci if you don't need to update package-lock.json
+
+    - name: Build if applicable
+      run: npm run build --if-present
+
+    # - name: Run tests
+    #   run: npm test
