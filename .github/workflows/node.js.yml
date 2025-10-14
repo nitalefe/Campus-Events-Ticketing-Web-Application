@@ -38,8 +38,8 @@ jobs:
     # - run: npm ci
     # - run: npm install # Use npm ci if you don't need to update package-lock.json
 
-    - name: Build if applicable
-      run: npm run build --if-present
+    # - name: Build if applicable
+    #   run: npm run build --if-present
 
     - name: Dummy build
       run: echo "No project yet, workflow is testing Node.js setup"
