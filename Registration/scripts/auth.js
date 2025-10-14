@@ -1,4 +1,3 @@
-
 import { auth, db } from "../../Shared/firebase-config.js";
 
 import { 
@@ -11,40 +10,36 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 import { setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-
-// Sign Up Form
+/* ---------------- SIGN UP ---------------- */
 const signupForm = document.getElementById('signupForm');
 if (signupForm) {
-    signupForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+  signupForm.addEventListener('submit', (e) => {
+    e.preventDefault();
 
-        const fullname = document.getElementById('fullname').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirm-password').value;
-        const role = document.getElementById('role').value; 
-        
+    const fullname = document.getElementById('fullname').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+    const role = document.getElementById('role').value; 
 
+    const signupError = document.getElementById('signup-error');
+    signupError.textContent = "";
 
-        const signupError = document.getElementById('signup-error');
-        signupError.textContent = "";
+    if (password.length < 6) {
+      signupError.textContent = "Password must be at least 6 characters long.";
+      return;
+    }
 
-        if (password.length < 6) {
-            signupError.textContent = "Password must be at least 6 characters long.";
-            return;
-        }
+    if (password !== confirmPassword) {
+      signupError.textContent = "Passwords do not match.";
+      return;
+    }
 
-        if (password !== confirmPassword) {
-            signupError.textContent = "Passwords do not match.";
-            return;
-        }
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(async (userCredential) => {
+        const user = userCredential.user;
 
-        createUserWithEmailAndPassword(auth, email, password)
-            .then(async (userCredential) => {
-                const user = userCredential.user;
-                console.log('User signed up:', user);
-              
-               // Extra info
+        // Extra info
         let extraInfo = {};
         if (role === "student") {
           const school = document.getElementById('school').value;
@@ -62,6 +57,7 @@ if (signupForm) {
           ...extraInfo
         });
 
+        // Send verification email
         await sendEmailVerification(user);
         alert("Check your email to verify your account before logging in.");
         window.location.href = "SignIn.html";
@@ -73,101 +69,125 @@ if (signupForm) {
   });
 }
 
-
-// Sign In Form
-// Sign In Form
+/* ---------------- SIGN IN ---------------- */
 const signinForm = document.getElementById('signinForm');
 if (signinForm) {
-    signinForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+  signinForm.addEventListener('submit', (e) => {
+    e.preventDefault();
 
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        const errorMsg = document.getElementById('error-message'); 
-        errorMsg.textContent = "";
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const errorMsg = document.getElementById('error-message'); 
+    errorMsg.textContent = "";
 
-        signInWithEmailAndPassword(auth, email, password)
-            .then(async (userCredential) => {
-                const user = userCredential.user;
+    signInWithEmailAndPassword(auth, email, password)
+      .then(async (userCredential) => {
+        const user = userCredential.user;
 
-                 if (!user.emailVerified) {
-            errorMsg.textContent = "Please verify your email before signing in.";
-            return; // Stop here, don’t let them continue
+        if (!user.emailVerified) {
+          errorMsg.textContent = "Please verify your email before signing in.";
+          await signOut(auth);
+          return;
         }
-                console.log('User logged in:', user);
 
-                // Retrieve user role from Firestore and store in localStorage
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    localStorage.setItem("userRole", userData.role);
-                }
-                
-                // Optional: redirect by role
-           // if (userData.role === "organizer") {
-             //   window.location.href = "organizer-dashboard.html";
-            //} else {
-              //  window.location.href = "student-dashboard.html";
-            ///}
+        // Get user role from Firestore
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          localStorage.setItem("userRole", userData.role);
 
-
-                window.location.href = "website.html";
-            })
-            .catch((error) => {
-                console.error('Login error:', error.code);
-
-                if (
-                    error.code === "auth/invalid-credential" ||
-                    error.code === "auth/wrong-password" ||
-                    error.code === "auth/user-not-found" ||
-                    error.code === "auth/invalid-email"
-                ) {
-                    errorMsg.textContent = "Invalid email or password. Please try again.";
-                } else {
-                    errorMsg.textContent = "Something went wrong. Please try again later.";
-                }
-            });
-    });
+          // Redirect by role
+          if (userData.role === "organizer") {
+            window.location.href = "website.html"; // Change to organizer-dashboard.html if needed
+          } else if (userData.role === "student") {
+            window.location.href = "website.html"; // Change to student-dashboard.html if needed
+          } else {
+            window.location.href = "website.html"; // fallback
+          }
+        } else {
+          errorMsg.textContent = "User record not found.";
+        }
+      })
+      .catch((error) => {
+        console.error('Login error:', error.code);
+        if (
+          error.code === "auth/invalid-credential" ||
+          error.code === "auth/wrong-password" ||
+          error.code === "auth/user-not-found" ||
+          error.code === "auth/invalid-email"
+        ) {
+          errorMsg.textContent = "Invalid email or password. Please try again.";
+        } else {
+          errorMsg.textContent = "Something went wrong. Please try again later.";
+        }
+      });
+  });
 }
 
-
-// Logout Button
-const logoutBtn = document.getElementById('logout-btn');
-if (logoutBtn) {
-    logoutBtn.addEventListener('click', () => {
-        signOut(auth)
-            .then(() => {
-                window.location.href = "SignIn.html";
-            })
-            .catch((error) => {
-                alert("Error logging out. Please try again.");
-            });
+/* ---------------- LOGOUT ---------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await signOut(auth);
+        window.location.href = "SignIn.html";
+      } catch (error) {
+        alert("Error logging out. Please try again.");
+      }
     });
-}
+  }
+});
 
-
-//Forgot password: 
-
+/* ---------------- FORGOT PASSWORD ---------------- */
 const forgotPasswordLink = document.getElementById('forgotPassword');
 if (forgotPasswordLink) {
-    forgotPasswordLink.addEventListener('click', () => {
-        const email = document.getElementById('loginEmail').value;
-        if (!email) {
-            alert("Please enter your email above first.");
-            return;
-        }
+  forgotPasswordLink.addEventListener('click', () => {
+    const email = document.getElementById('loginEmail').value;
+    if (!email) {
+      alert("Please enter your email above first.");
+      return;
+    }
 
-        sendPasswordResetEmail(auth, email)
-            .then(() => {
-                alert("Password reset email sent! Check your inbox.");
-            })
-            .catch((error) => {
-                console.error("Error resetting password:", error);
-                alert("Could not send reset email: " + error.message);
-            });
-    });
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        alert("Password reset email sent! Check your inbox.");
+      })
+      .catch((error) => {
+        console.error("Error resetting password:", error);
+        alert("Could not send reset email: " + error.message);
+      });
+  });
 }
 
+/* ---------------- AUTH STATE HANDLER ---------------- */
+// Optional: This runs on every page that includes auth.js
+// It detects if someone is logged in and can auto-redirect them
+onAuthStateChanged(auth, async (user) => {
+  const currentPage = window.location.pathname.split("/").pop();
 
+  if (!user) {
+    // Not logged in — kick them out of protected pages
+    if (
+      currentPage === "student-dashboard.html" || 
+      currentPage === "organizer-dashboard.html" || 
+      currentPage === "website.html"
+    ) {
+      window.location.href = "SignIn.html";
+    }
+    return;
+  }
 
-
+  // If logged in and on SignIn/SignUp page, redirect away
+  if (currentPage === "SignIn.html" || currentPage === "SignUp.html") {
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    if (userDoc.exists()) {
+      const role = userDoc.data().role;
+      if (role === "organizer") {
+        window.location.href = "website.html"; // Change to organizer-dashboard.html if needed
+      } else {
+        window.location.href = "website.html"; // Change to student-dashboard.html if needed
+      }
+    }
+  }
+});
