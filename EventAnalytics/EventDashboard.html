@@ -11,9 +11,10 @@
     <style>
       body {
         font-family: "Montserrat", Arial, sans-serif;
-        background: #f5f5f5;
+        background-image: radial-gradient(circle farthest-corner at 10% 20%, rgba(54,123,252,1) 16.3%, rgba(0,41,118,1) 100.2%);
         margin: 0;
         padding: 2rem;
+        padding-top: calc(2rem + 72px);
       }
       .container {
         max-width: 1000px;
@@ -97,9 +98,77 @@
         color: #666;
         text-transform: uppercase;
       }
+      /* Toolbar styles */
+      .toolbar {
+        width: 100%;
+        background: rgba(0,51,102,0.95);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        padding: 0 32px;
+        height: 72px;
+        box-sizing: border-box;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+      }
+      .toolbar-logo {
+        height: 48px;
+        margin-right: 36px;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.18));
+        transition: transform 0.2s;
+      }
+      .toolbar-logo:hover {
+        transform: scale(1.08) rotate(-2deg);
+      }
+      .toolbar-btn {
+        background: rgba(255,255,255,0.08);
+        border: none;
+        color: #fff;
+        font-size: 1.08em;
+        margin-right: 24px;
+        cursor: pointer;
+        padding: 10px 22px;
+        border-radius: 6px;
+        font-family: 'Montserrat', Arial, sans-serif;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        transition: background 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      }
+      .toolbar-btn:hover {
+        background: #367bfc;
+        box-shadow: 0 4px 12px rgba(54,123,252,0.18);
+      }
+      .toolbar-spacer { flex: 1; }
+      .auth-btn {
+        background: linear-gradient(90deg, #6fa3ef 60%, #367bfc 100%);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 1em;
+        cursor: pointer;
+        font-family: 'Montserrat', Arial, sans-serif;
+        padding: 10px 22px;
+        margin-left: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        transition: background 0.2s, box-shadow 0.2s;
+      }
     </style>
   </head>
   <body>
+    <div class="toolbar">
+        <img src="../Organizer/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo">
+        <button class="toolbar-btn" onclick="location.href='../Organizer/home.html'">Home</button>
+        <button class="toolbar-btn" onclick="location.href='../Organizer/eventCreation.html'">Create New Event</button>
+        <div class="toolbar-spacer"></div>
+        <button class="toolbar-btn" onclick="location.href='../Organizer/settings.html'">Settings</button>
+        <div id="authBtnContainer"></div>
+    </div>
+
     <div class="container">
       <div class="test-section">
         <h3>Fetch All Events</h3>
@@ -116,6 +185,24 @@
     </div>
 
     <script type="module" src="app.js"></script>
+    <script>
+      // Dynamic auth button logic for toolbar
+      const authBtnContainer = document.getElementById('authBtnContainer');
+      const isSignedIn = !!localStorage.getItem('userRole');
+      if (isSignedIn) {
+        const logoutBtn = document.createElement('button');
+        logoutBtn.textContent = 'Log Out';
+        logoutBtn.className = 'auth-btn';
+        logoutBtn.onclick = () => { localStorage.removeItem('userRole'); location.reload(); };
+        authBtnContainer.appendChild(logoutBtn);
+      } else {
+        const signInBtn = document.createElement('button');
+        signInBtn.textContent = 'Sign In';
+        signInBtn.className = 'auth-btn';
+        signInBtn.onclick = () => location.href = '../Organizer/SignIn.html';
+        authBtnContainer.appendChild(signInBtn);
+      }
+    </script>
   </body>
 
 </html>
