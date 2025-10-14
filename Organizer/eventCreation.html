@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Event</title>
+    <!-- Favicon for the page -->
+    <link rel="icon" type="image/png" href="evently_logo_LT.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Montserrat font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap" rel="stylesheet">
+    <style>
+        /* Page background and font styling */
+        body{
+            background-image: radial-gradient(circle farthest-corner at 10% 20%, rgba(54,123,252,1) 16.3%, rgba(0,41,118,1) 100.2%);
+            font-family: 'Montserrat', Arial, sans-serif;
+            text-shadow: 1px 1px 2px #e0e6f6;
+            margin: 0;
+            padding: 0;
+        }
+        /* Container for the form */
+        .container { 
+            max-width: 500px; 
+            margin: 40px auto; 
+            background: #fff;
+            padding: 24px;
+            border-radius: 8px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            color: #222;
+            font-family: 'Montserrat', Arial, sans-serif;
+        }
+        /* Heading styling */
+        h2 { 
+            text-align: center; 
+            margin-bottom: 24px; 
+            color: #222;
+            font-family: 'Montserrat', Arial, sans-serif;
+        }
+        /* Label styling */
+        label { 
+            display: block; 
+            margin-top: 16px; 
+            color: #222;
+            font-family: 'Montserrat', Arial, sans-serif;
+        }
+        /* Input, textarea, select styling */
+        input, textarea, select { 
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            margin-bottom: 12px;
+            border: 1px solid #dcdde1; 
+            border-radius: 4px; 
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 1rem;
+            background: #f6f6f6;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+        /* Focus effect for inputs */
+        input:focus, textarea:focus, select:focus {
+            border-color: #6fa3ef;
+            outline: none;
+        }
+        /* Allow textarea resizing */
+        textarea {
+            resize: vertical;
+        }
+        /* Button styling */
+        button { 
+            margin-top: 24px;
+            width: 100%; 
+            padding: 12px; 
+            background: #6fa3ef; 
+            color: #fff; 
+            border: none; 
+            border-radius: 4px; 
+            font-size: 1rem; 
+            cursor: pointer;
+            font-family: 'Montserrat', Arial, sans-serif;
+            transition: background 0.2s;
+        }
+        button:hover { background: #a3c8f7; }
+    </style>
+</head>
+<body>
+    <!-- Logo in the bottom right corner -->
+    <div style="position:fixed; bottom:16px; right:32px; z-index:100;">
+        <img src="evently_logo_DT.png" alt="Evently Logo" style="width: 200px; height:auto;">
+    </div>
+    <div class="container">
+        <h2>Create New Event</h2>
+        <!-- Event creation form -->
+        <form id="eventForm">
+            <!-- Event name input -->
+            <label for="eventName">Event Name</label>
+            <input type="text" id="eventName" name="eventName" required>
+
+            <!-- Event description textarea -->
+            <label for="eventDescription">Description</label>
+            <textarea id="eventDescription" name="eventDescription" rows="4" required></textarea>
+
+            <!-- Event date input -->
+            <label for="eventDate">Date</label>
+            <input type="date" id="eventDate" name="eventDate" required>
+
+            <!-- Event time input -->
+            <label for="eventTime">Time</label>
+            <input type="time" id="eventTime" name="eventTime" required>
+
+            <!-- Event location input -->
+            <label for="eventLocation">Location</label>
+            <input type="text" id="eventLocation" name="eventLocation" required>
+
+            <!-- Event category select -->
+            <label for="eventCategory">Category</label>
+            <select id="eventCategory" name="eventCategory" required>
+                <option value="">Select Category</option>
+                <option value="Workshop">Workshop</option>
+                <option value="Seminar">Seminar</option>
+                <option value="Concert">Concert</option>
+                <option value="Sports">Sports</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <!-- Open to universities (multiple select) -->
+            <label for="openTo">Open to <span style="font-weight:normal; color:#888;">(optional, select multiple)</span></label>
+            <select id="openTo" name="openTo" multiple size="6" style="height:auto;">
+                <option value="Concordia">Concordia University</option>
+                <option value="McGill">McGill University</option>
+                <option value="UdeM">Université de Montréal</option>
+                <option value="Polytechnique">Polytechnique Montréal</option>
+                <option value="HEC">HEC Montréal</option>
+                <option value="UQAM">UQAM</option>
+            </select>
+            <small style="color:#888;">Hold Ctrl (Windows) or Command (Mac) to select multiple universities.</small>
+
+            <!-- Number of tickets input -->
+            <label for="capacity">Number of Tickets</label>
+            <input type="number" id="capacity" name="capacity" min="1" required>
+
+            <!-- Ticket price input -->
+            <label for="ticketPrice">Ticket Price ($)</label>
+            <input type="number" id="ticketPrice" name="ticketPrice" min="0" step="0.01" required>
+
+            <!-- Submit button -->
+            <button type="submit">Create Event</button>
+        </form>
+    </div>
+    <script>
+        // Handle form submission
+        document.getElementById('eventForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Event created successfully!');
+            // Add your event creation logic here (e.g., send data to backend)
+        });
+    </script>
+</body>
+</html>
