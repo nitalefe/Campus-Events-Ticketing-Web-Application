@@ -1,76 +1,33 @@
-<!--<!DOCTYPE html>
-<html>
-<head>
-  <title>Standalone QR Code Generator</title>
-
-   QRCode.js Library 
-  <style>
-    #qrcode {
-      margin-top: 20px;
-    }
-  </style>
-</head>
-<body>
-
-  <h2>QR Code Generator</h2>
-
-  <QR Code container 
-  <div id="qrcode"></div>
-
-</body>
-</html>
--->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>QR Generator</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root { --gap: 16px; }
-    body { font-family: Arial, sans-serif; padding: 24px; color:#111; }
-    h1 { margin: 0 0 16px; }
-    .row { display:flex; gap: var(--gap); flex-wrap:wrap; align-items:center; }
-    input { padding: 8px; min-width: 220px; }
-    button { padding: 8px 12px; cursor: pointer; }
-    button[disabled] { opacity: .6; cursor: not-allowed; }
-    .status { margin: 14px 0 0; font-weight: 700; }
-    .status.info { color:#555; } .status.ok { color:#0a7; } .status.err { color:#b00; } .status.warn { color:#b8860b; }
-    .grid { margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(256px, 1fr)); gap: var(--gap); }
-    .card { border: 1px solid #ddd; border-radius: 10px; background: #fff; padding: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
-    .title { font-weight: 700; margin-bottom: 8px; }
-    .qr { width: 256px; height: 256px; display:flex; align-items:center; justify-content:center; }
-    .qr > img, .qr > canvas, .qr > table { max-width:100%; max-height:100%; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixed String QR Code</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+        #qrcode {
+            /* Basic styling for the container */
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Generate QR codes for an event</h1>
 
-  <div class="row">
-    <input id="eventId" placeholder="Event ID (e.g., CodeJam)" value="CodeJam" />
-    <input id="attendeeId" placeholder="Attendee ID / UID (e.g., 40318877)" value="40318877" />
-    <button id="genOne">Generate for ONE attendee</button>
-  </div>
+    <h1>Your Fixed QR Code</h1>
 
-  <div class="row" style="margin-top:10px;">
-    <button id="genAll">Generate for ALL registered attendees</button>
-  </div>
+    <div id="qrcode"></div>
 
-  <div id="status" class="status info"></div>
-  <div id="out" class="grid"></div>
+    <script type="module" src="Script/generator.js"></script>
 
-  <!-- QR library MUST load before the module that calls new QRCode(...) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script>
-    if (typeof QRCode === "undefined") {
-      console.error("qrcode.min.js failed to load");
-    } else {
-      console.log("QRCode lib OK");
-    }
-  </script>
-
-  <!-- Your module (path/case must be correct for your project) -->
-  <script type="module" src="script/Qrcode.js"></script>
 </body>
 </html>
