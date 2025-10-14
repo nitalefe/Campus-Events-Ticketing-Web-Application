@@ -79,3 +79,4 @@ Desktop.ini
 # ----------------------------
 # Private api keys
 firebaseConfig.js
+firebase-config.js
