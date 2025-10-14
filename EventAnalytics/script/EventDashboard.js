@@ -1,7 +1,7 @@
 // Import Firebase modules and shared config
 
 import { collection, getDocs, query, orderBy, where, onSnapshot } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
-import { db } from './shared.js';
+import { auth, db } from "../../Shared/firebase-config.js";
 let unsubscribe = null;
 
       // Format date utility function
