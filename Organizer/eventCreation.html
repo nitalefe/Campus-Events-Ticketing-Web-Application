@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Create Event</title>
     <!-- Favicon for the page -->
-    <link rel="icon" type="image/png" href="evently_logo_LT.png">
+    <link rel="icon" type="image/png" href="./evently_logo_LT.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Montserrat font from Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap" rel="stylesheet">
@@ -85,7 +85,7 @@
 <body>
     <!-- Logo in the bottom right corner -->
     <div style="position:fixed; bottom:16px; right:32px; z-index:100;">
-        <img src="evently_logo_DT.png" alt="Evently Logo" style="width: 200px; height:auto;">
+        <img src="./evently_logo_DT.png" alt="Evently Logo" style="width: 200px; height:auto;">
     </div>
     <div class="container">
         <h2>Create New Event</h2>
@@ -146,13 +146,6 @@
             <button type="submit">Create Event</button>
         </form>
     </div>
-    <script>
-        // Handle form submission
-        document.getElementById('eventForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Event created successfully!');
-            // Add your event creation logic here (e.g., send data to backend)
-        });
-    </script>
+    <script type="module" src="./script/eventD.js"></script>
 </body>
 </html>
