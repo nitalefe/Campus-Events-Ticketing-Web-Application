@@ -22,7 +22,27 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth();
 
+let currentUserRole = "organizer";
+// let currentUserRole = null;
+
+console.log("Firebase app initialized", app);
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        console.log("User is signed in:", user);
+
+        const userSnap = await getDocs(doc(db, "users", user.uid));
+        if (!userSnap.exists()) return console.log("User record not found");
+    
+        const { role } = userSnap.data();
+        currentUserRole = role; 
+    } else {
+        console.log("No user signed in.");
+    }
+
+});
 // Fetch all events from the database
 window.fetchAllEvents = async function () {
   try {
@@ -132,3 +152,4 @@ function formatDate(date) {
     minute: "2-digit",
   });
 }
+
