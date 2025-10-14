@@ -1,0 +1,81 @@
+# ----------------------------
+# VSCode
+# ----------------------------
+.vscode/
+.history/
+*.code-workspace
+
+# ----------------------------
+# Node.js / Backend
+# ----------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.env
+.env.local
+.env.*.local
+dist/
+build/
+
+# ----------------------------
+# React / Frontend
+# ----------------------------
+build/
+*.log
+.cache/
+*.env
+.DS_Store
+*.local
+
+# ----------------------------
+# Firebase
+# ----------------------------
+firebase-debug.log
+.firebaserc
+firebase.json
+.firebaserc.local
+/storage/
+*.cache
+*.tmp
+*.bak
+
+# ----------------------------
+# Miscellaneous
+# ----------------------------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+*.iml
+*.orig
+*.bak
+*.tmp
+*.log
+
+# ----------------------------
+# Optional OS files
+# ----------------------------
+# Windows
+ehthumbs.db
+Icon?
+Desktop.ini
+
+# macOS
+.AppleDouble
+.LSOverride
+
+# ----------------------------
+# Other files
+# ----------------------------
+*.zip
+*.tar
+*.tar.gz
+*.rar
+
+
+# ----------------------------
+# Private api keys
+firebaseConfig.js
