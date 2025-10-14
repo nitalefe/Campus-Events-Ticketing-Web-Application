@@ -1,6 +1,6 @@
 // Import Firebase modules
 // import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { /*getFirestore, */collection, doc, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { /*getFirestore, */collection, doc, addDoc, updateDoc, getDocs, serverTimestamp, arrayUnion} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 import { /*getAuth, */onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 // import { firebaseConfig } from './firebaseConfig.js';
 import { auth, db, app} from "../../../Shared/firebase-config.js";
@@ -33,82 +33,83 @@ onAuthStateChanged(auth, async (user) => {
 // ----- FUNCTIONS -----
 
 /**
- * Add a new attendee to the top-level collection "attendeeList"
+ * Add a new attendee to the attendee list in collection "events"
  * @param {Object} attendeeData - { ID, firstName, lastName, email, Scan status, registeredAt}
  */
-export async function addAttendee(attendeeData) {
+export async function addAttendee(attendeeData, eventID) {
     if (currentUserRole !== "organizer") {
         alert("🚫 Access denied! You do not have permission to perform this action.");
         return console.log("🚫 Access denied");
     }
 
-    const attendeesRef = collection(db, "attendee"); // or "attendeeList"
+    const eventRef = doc(db, "events", eventID);
     try {
-        const docRef = await addDoc(attendeesRef, {
+        await updateDoc(eventRef, {
+            attendees: arrayUnion({
             ...attendeeData,
-            registeredAt: serverTimestamp()
+            })
         });
-        console.log(`Attendee added with ID: ${docRef.id}`);
-        return docRef.id;
+        console.log(`Attendee added with ID: ${eventID}`);
+        return eventID;
     } catch (err) {
         console.error("Error adding attendee:", err);
         throw err;
     }
 }
 
-export async function getAttendees() {
-    if (currentUserRole !== "organizer") {
-        alert("🚫 Access denied! You do not have permission to perform this action.");
-        return console.log("🚫 Access denied");
-    }
+// export async function getAttendees() {
+//     if (currentUserRole !== "organizer") {
+//         alert("🚫 Access denied! You do not have permission to perform this action.");
+//         return console.log("🚫 Access denied");
+//     }
 
-    const attendeesRef = collection(db, "attendee");
-    try {
-        const snapshot = await getDocs(attendeesRef);
-        const attendees = [];
-        snapshot.forEach(doc => {
-            attendees.push({ id: doc.id, ...doc.data() });
-        });
-        return attendees;
-    } catch (err) {
-        console.error("Error fetching attendees:", err);
-        return [];
-    }
-}
+//     const attendeesRef = collection(db, "attendee");
+//     try {
+//         const snapshot = await getDocs(attendeesRef);
+//         const attendees = [];
+//         snapshot.forEach(doc => {
+//             attendees.push({ id: doc.id, ...doc.data() });
+//         });
+//         return attendees;
+//     } catch (err) {
+//         console.error("Error fetching attendees:", err);
+//         return [];
+//     }
+// }
 
-const tableBody = document.querySelector("#attendeeTable tbody");
-async function loadAttendees() {
-    if (currentUserRole !== "organizer") {
-        alert("🚫 Access denied! You do not have permission to perform this action.");
-        return console.log("🚫 Access denied");
-    }
-    tableBody.innerHTML = ""; // clear table
+// const tableBody = document.querySelector("#attendeeTable tbody");
+// async function loadAttendees() {
+//     if (currentUserRole !== "organizer") {
+//         alert("🚫 Access denied! You do not have permission to perform this action.");
+//         return console.log("🚫 Access denied");
+//     }
+//     tableBody.innerHTML = ""; // clear table
 
-    try {
-        const attendees = await getAttendees();
+//     try {
+//         const attendees = await getAttendees();
 
-        attendees.forEach(attendee => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${attendee.id}</td>
-                <td>${attendee.firstName || ''}</td>
-                <td>${attendee.lastName || ''}</td>
-                <td>${attendee.email || ''}</td>
-                <td>${attendee.isScanned || ''}</td>
-                <td>${attendee.registeredAt ? new Date(attendee.registeredAt.seconds * 1000).toLocaleString() : ''}</td>
-            `;
-            tableBody.appendChild(row);
-        });
-    } catch (err) {
-        console.error("Error loading attendees:", err);
-    }
-}
+//         attendees.forEach(attendee => {
+//             const row = document.createElement('tr');
+//             row.innerHTML = `
+//                 <td>${attendee.id}</td>
+//                 <td>${attendee.firstName || ''}</td>
+//                 <td>${attendee.lastName || ''}</td>
+//                 <td>${attendee.email || ''}</td>
+//                 <td>${attendee.isScanned || ''}</td>
+//                 <td>${attendee.registeredAt ? new Date(attendee.registeredAt.seconds * 1000).toLocaleString() : ''}</td>
+//             `;
+//             tableBody.appendChild(row);
+//         });
+//     } catch (err) {
+//         console.error("Error loading attendees:", err);
+//     }
+// }
 
 /**
  * Add a new attendee to the top-level collection "attendeeList"
  * @param {Object} data - { ID, firstName, lastName, email, Scan Status, registeredAt}
  */
-function exportToCsv(data, filename = 'attendees.csv') {
+function exportToCsv(data, eventName) {
     if (currentUserRole !== "organizer") {
         alert("🚫 Access denied! You do not have permission to perform this action.");
         return console.log("🚫 Access denied");
@@ -119,13 +120,15 @@ function exportToCsv(data, filename = 'attendees.csv') {
         return;
     }
 
+    // const rawEventName = eventName || "attendees";
+    // const safeEventName = rawEventName.replace(/[^\w\-]/g, "_"); // replace spaces & special chars
+
     const columns = [
         { key: "id", label: "ID" },
         { key: "firstName", label: "First Name" },
         { key: "lastName", label: "Last Name" },
         { key: "email", label: "Email" },
         { key: "isScanned", label: "Scan Status" },
-        { key: "registeredAt", label: "Registered At" }
     ];
 
     const headerRow = columns.map(col => col.label).join(",");
@@ -145,7 +148,8 @@ function exportToCsv(data, filename = 'attendees.csv') {
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = filename;
+    // a.download = `${safeEventName}_attendee.csv`;
+    a.download = `attendee.csv`;
     a.click();
 
     URL.revokeObjectURL(url);
@@ -171,7 +175,9 @@ document.getElementById('attendeeForm').addEventListener('submit', async functio
         isScanned: form.isScanned.checked ? "True" : "False"
     };
 
-    const id = await addAttendee(attendeeData);
+    const eventID = form.eventID.value;
+
+    const id = await addAttendee(attendeeData, eventID);
 });
 
 const form = document.getElementById('loadAttendeesBtn').addEventListener('click', async (e) => {
