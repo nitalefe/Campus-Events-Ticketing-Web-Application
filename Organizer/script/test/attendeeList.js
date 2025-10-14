@@ -1,14 +1,15 @@
 // Import Firebase modules
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getFirestore, collection, doc, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { firebaseConfig } from './firebaseConfig.js';
+// import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { /*getFirestore, */collection, doc, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { /*getAuth, */onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+// import { firebaseConfig } from './firebaseConfig.js';
+import { auth, db, app} from "../../../Shared/firebase-config.js";
 // import 'dotenv/config.js';
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth();
+// const app = initializeApp(firebaseConfig);
+// const db = getFirestore(app);
+// const auth = getAuth();
 
 let currentUserRole = "organizer";
 // let currentUserRole = null;
@@ -27,15 +28,13 @@ onAuthStateChanged(auth, async (user) => {
     } else {
         console.log("No user signed in.");
     }
-
 });
-
 
 // ----- FUNCTIONS -----
 
 /**
  * Add a new attendee to the top-level collection "attendeeList"
- * @param {Object} attendeeData - { ID, firstName, lastName, email ticketType, paymentStatus, registeredAt}
+ * @param {Object} attendeeData - { ID, firstName, lastName, email, Scan status, registeredAt}
  */
 export async function addAttendee(attendeeData) {
     if (currentUserRole !== "organizer") {
@@ -47,7 +46,6 @@ export async function addAttendee(attendeeData) {
     try {
         const docRef = await addDoc(attendeesRef, {
             ...attendeeData,
-            // checkedIn: false,
             registeredAt: serverTimestamp()
         });
         console.log(`Attendee added with ID: ${docRef.id}`);
@@ -96,8 +94,7 @@ async function loadAttendees() {
                 <td>${attendee.firstName || ''}</td>
                 <td>${attendee.lastName || ''}</td>
                 <td>${attendee.email || ''}</td>
-                <td>${attendee.ticketType || ''}</td>
-                <td>${attendee.paymentStatus || ''}</td>
+                <td>${attendee.isScanned || ''}</td>
                 <td>${attendee.registeredAt ? new Date(attendee.registeredAt.seconds * 1000).toLocaleString() : ''}</td>
             `;
             tableBody.appendChild(row);
@@ -109,7 +106,7 @@ async function loadAttendees() {
 
 /**
  * Add a new attendee to the top-level collection "attendeeList"
- * @param {Object} data - { ID, firstName, lastName, email ticketType, paymentStatus, registeredAt}
+ * @param {Object} data - { ID, firstName, lastName, email, Scan Status, registeredAt}
  */
 function exportToCsv(data, filename = 'attendees.csv') {
     if (currentUserRole !== "organizer") {
@@ -127,8 +124,7 @@ function exportToCsv(data, filename = 'attendees.csv') {
         { key: "firstName", label: "First Name" },
         { key: "lastName", label: "Last Name" },
         { key: "email", label: "Email" },
-        { key: "ticketType", label: "Ticket Type" },
-        { key: "paymentStatus", label: "Payment Status" },
+        { key: "isScanned", label: "Scan Status" },
         { key: "registeredAt", label: "Registered At" }
     ];
 
@@ -172,8 +168,7 @@ document.getElementById('attendeeForm').addEventListener('submit', async functio
         firstName: form.firstName.value,
         lastName: form.lastName.value,
         email: form.email.value,
-        ticketType: form.ticketType.value,
-        paymentStatus: form.paymentStatus.checked ? "Paid" : "Unpaid"
+        isScanned: form.isScanned.checked ? "True" : "False"
     };
 
     const id = await addAttendee(attendeeData);
