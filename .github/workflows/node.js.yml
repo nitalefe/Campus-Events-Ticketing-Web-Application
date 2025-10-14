@@ -1,0 +1,48 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "main", "Organizer", "Student", "Administrator" ]
+  pull_request:
+    branches: [ "main", "Organizer", "Student", "Administrator" ]
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node-version: [18.x, 20.x, 22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        # cache: 'npm'
+
+    - name: Check Node version
+      run: node -v
+
+    - name: Check NPM version
+      run: npm -v
+
+    # - run: npm ci
+    # - run: npm install # Use npm ci if you don't need to update package-lock.json
+
+    # - name: Build if applicable
+    #   run: npm run build --if-present
+
+    - name: Dummy build
+      run: echo "No project yet, workflow is testing Node.js setup"
+
+    # - name: Run tests
+    #   run: npm test
