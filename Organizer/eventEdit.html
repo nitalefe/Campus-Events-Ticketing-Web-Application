@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Event</title>
+  <link rel="icon" type="image/png" href="evently_logo_DT.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #367bfc 0%, #002976 100%);
+      font-family: 'Montserrat', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      width: 100%;
+      background: rgba(0,51,102,0.95);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 32px;
+      height: 72px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .toolbar-logo {
+      height: 48px;
+      margin-right: 36px;
+      cursor: pointer;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.18));
+      transition: transform 0.2s;
+    }
+    .toolbar-logo:hover {
+      transform: scale(1.08) rotate(-2deg);
+    }
+    .toolbar-btn {
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: #fff;
+      font-size: 1.08em;
+      margin-right: 24px;
+      cursor: pointer;
+      padding: 10px 22px;
+      border-radius: 6px;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+      transition: background 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .toolbar-btn:hover {
+      background: #367bfc;
+      box-shadow: 0 4px 12px rgba(54,123,252,0.18);
+    }
+    .toolbar-spacer { flex: 1; }
+    .auth-btn {
+      background: linear-gradient(90deg, #6fa3ef 60%, #367bfc 100%);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      cursor: pointer;
+      padding: 10px 22px;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(54,123,252,0.12);
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .auth-btn:hover {
+      background: linear-gradient(90deg, #a3c8f7 60%, #367bfc 100%);
+      box-shadow: 0 4px 12px rgba(54,123,252,0.22);
+    }
+
+    /* Form Container */
+    .container { 
+      max-width: 520px; 
+      margin: 56px auto; 
+      background: rgba(255,255,255,0.98);
+      padding: 32px 28px;
+      border-radius: 18px; 
+      box-shadow: 0 8px 32px rgba(54,123,252,0.10);
+      color: #222;
+    }
+    h2 { 
+      text-align: center; 
+      font-weight: 700; 
+      margin-bottom: 24px;
+    }
+    label { 
+      display: block; 
+      margin-top: 16px; 
+      color: #222;
+    }
+    input, textarea, select { 
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      margin-bottom: 12px;
+      border: 1px solid #dcdde1; 
+      border-radius: 4px; 
+      font-size: 1rem;
+      background: #f6f6f6;
+      box-sizing: border-box;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: #6fa3ef;
+      outline: none;
+    }
+    textarea { resize: vertical; }
+    button[type="submit"] { 
+      margin-top: 24px;
+      width: 100%; 
+      padding: 14px; 
+      background: linear-gradient(90deg, #6fa3ef 60%, #367bfc 100%);
+      color: #fff; 
+      border: none; 
+      border-radius: 6px; 
+      font-size: 1.08em; 
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(54,123,252,0.12);
+      transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+    }
+    button[type="submit"]:hover { 
+      background: linear-gradient(90deg, #a3c8f7 60%, #367bfc 100%);
+      box-shadow: 0 4px 16px rgba(54,123,252,0.22);
+      transform: scale(1.03);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <img src="evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='organizer-dashboard.html'">
+    <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
+    <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
+    <div class="toolbar-spacer"></div>
+    <button class="toolbar-btn" onclick="location.href='settings.html'">Settings</button>
+    <div id="authBtnContainer">
+      <button id="logout-btn" class="auth-btn">Log Out</button>
+    </div>
+  </div>
+
+  <!-- Edit Event Form -->
+  <div class="container">
+    <h2>Edit Event</h2>
+    <form id="eventForm">
+      <label for="eventName">Event Name</label>
+      <input type="text" id="eventName" name="eventName" required>
+
+      <label for="eventDescription">Description</label>
+      <textarea id="eventDescription" name="eventDescription" rows="4" required></textarea>
+
+      <label for="eventBanner">Event Banner</label>
+      <select id="eventBanner" name="eventBanner" required onchange="previewBanner()">
+        <option value="">Select Banner Image</option>
+        <option value="banners/event1.jpeg">Event Banner 1</option>
+        <option value="banners/event2.jpg">Event Banner 2</option>
+        <option value="banners/event 3.jpeg">Event Banner 3</option>
+        <option value="banners/event4.jpeg">Event Banner 4</option>
+        <option value="banners/event5.jpg">Event Banner 5</option>
+        <option value="banners/event6.jpg">Event Banner 6</option>
+        <option value="banners/event7.jpg">Event Banner 7</option>
+        <option value="banners/event8.jpg">Event Banner 8</option>
+        <option value="banners/event9.jpg">Event Banner 9</option>
+        <option value="banners/event10.jpg">Event Banner 10</option>
+      </select>
+      <div id="bannerPreview" style="margin-top: 10px; text-align: center;">
+        <img id="previewImage" src="" alt="Banner Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: none;">
+        <p id="previewText" style="color: #888; font-style: italic;">Select a banner to see preview</p>
+      </div>
+
+      <label for="eventDate">Date</label>
+      <input type="date" id="eventDate" name="eventDate" required>
+
+      <label for="eventTime">Time</label>
+      <input type="time" id="eventTime" name="eventTime" required>
+
+      <label for="eventLocation">Location</label>
+      <input type="text" id="eventLocation" name="eventLocation" required>
+
+      <label for="eventCategory">Category</label>
+      <select id="eventCategory" name="eventCategory" required>
+        <option value="">Select Category</option>
+        <option value="Workshop">Workshop</option>
+        <option value="Seminar">Seminar</option>
+        <option value="Concert">Concert</option>
+        <option value="Sports">Sports</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label for="capacity">Number of Tickets</label>
+      <input type="number" id="capacity" name="capacity" min="1" required>
+
+      <label for="ticketPrice">Ticket Price ($)</label>
+      <input type="number" id="ticketPrice" name="ticketPrice" min="0" step="0.01" required>
+
+      <button type="submit">Save Changes</button>
+    </form>
+  </div>
+
+  <!-- Banner Preview Script -->
+  <script>
+    function previewBanner() {
+      const bannerSelect = document.getElementById('eventBanner');
+      const previewImage = document.getElementById('previewImage');
+      const previewText = document.getElementById('previewText');
+      
+      if (bannerSelect.value) {
+        previewImage.src = bannerSelect.value;
+        previewImage.style.display = 'block';
+        previewText.style.display = 'none';
+        
+        // Handle image load error
+        previewImage.onerror = function() {
+          previewImage.style.display = 'none';
+          previewText.textContent = 'Error loading banner preview';
+          previewText.style.display = 'block';
+          previewText.style.color = '#e74c3c';
+        };
+        
+        // Reset error styling on successful load
+        previewImage.onload = function() {
+          previewText.style.color = '#888';
+        };
+      } else {
+        previewImage.style.display = 'none';
+        previewText.textContent = 'Select a banner to see preview';
+        previewText.style.display = 'block';
+        previewText.style.color = '#888';
+      }
+    }
+  </script>
+
+  <!-- Firebase + Auth -->
+  <script type="module" src="../Shared/firebase-config.js"></script>
+  <script type="module" src="../Registration/scripts/auth.js"></script>
+
+  <!-- Combined Events Script -->
+  <script type="module" src="script/events.js"></script>
+</body>
+</html>
