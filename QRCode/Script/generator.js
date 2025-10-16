@@ -1,21 +1,24 @@
-import { auth, db } from "../../Shared/firebase-config.js";
-import {signInWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { setDoc, doc, getDoc, getDocs, collection, updateDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { auth, db, app} from "../../Shared/firebase-config.js";
+// import {signInWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { setDoc, doc, getDoc, getDocs, collection, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 const eventID = "";
 const attendeeID = "";
 
-async function readEvent(eventID){
+console.log("Firebase app initialized", app);
+
+async function readEvent(eventID, attendeeID){ //I may be stupid but wouldnt we have attendeeID already? since we are generating the qr as the attendee
 //read event, need to validate
-  const eventRef = doc(db, "events", eventID);
-  const eventSnap = await getDoc(eventRef);
-  if(!eventSnap.exists()){return -1;}
-  const eventData = snap.data();
+//   const eventRef = doc(db, "events", eventID);
+//   const eventSnap = await getDoc(eventRef);
+//   if(!eventSnap.exists()){return -1;}
+//   const eventData = snap.data();
 
 
-//read attendee
-  attendeeMap = eventData.attendees;
-  if(!(attendeeMap.hasOwnProperty(attendeeID))){return -1;}
+// //read attendee
+//   // attendeeMap = eventData.attendees;
+//   const attendeesRef = collection(db, "events", eventID, "attendees");
+//   if(!(attendeeMap.hasOwnProperty(attendeeID))){return -1;}
   
   qrText = eventID+'/'+attendeeID;
   qrText = initializeQRCode(qrText, 7);
