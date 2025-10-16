@@ -60,6 +60,8 @@ if (signupForm) {
         // Send verification email
         await sendEmailVerification(user);
         alert("Check your email to verify your account before logging in.");
+      
+
         window.location.href = "SignIn.html";
       })
       .catch((error) => {
@@ -179,15 +181,22 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   // If logged in and on SignIn/SignUp page, redirect away
-  if (currentPage === "SignIn.html" || currentPage === "SignUp.html") {
-    const userDoc = await getDoc(doc(db, "users", user.uid));
-    if (userDoc.exists()) {
-      const role = userDoc.data().role;
-      if (role === "organizer") {
-        window.location.href = "website.html"; // Change to organizer-dashboard.html if needed
-      } else {
-        window.location.href = "website.html"; // Change to student-dashboard.html if needed
-      }
+if (currentPage === "SignIn.html" || currentPage === "SignUp.html") {
+  // 👇 Skip redirect if email not verified
+  if (!user.emailVerified) {
+    console.log("User is signed in but not verified — staying on SignUp/SignIn page.");
+    return; // stop here — do NOT redirect
+  }
+
+  // 👇 Get user role and redirect accordingly
+  const userDoc = await getDoc(doc(db, "users", user.uid));
+  if (userDoc.exists()) {
+    const role = userDoc.data().role;
+    if (role === "organizer") {
+      window.location.href = "website.html";
+    } else {
+      window.location.href = "website.html";
     }
   }
+}
 });
