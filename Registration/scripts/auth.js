@@ -98,9 +98,9 @@ if (signinForm) {
 
           // Redirect by role
           if (userData.role === "organizer") {
-            window.location.href = "website.html"; // Change to organizer-dashboard.html if needed
+            window.location.href = "../../Organizer/organizer-dashboard.html";
           } else if (userData.role === "student") {
-            window.location.href = "website.html"; // Change to student-dashboard.html if needed
+            window.location.href = "website.html";
           } else {
             window.location.href = "website.html"; // fallback
           }
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     logoutBtn.addEventListener('click', async () => {
       try {
         await signOut(auth);
-        window.location.href = "SignIn.html";
+        window.location.href = "../Registration/SignIn.html";
       } catch (error) {
         alert("Error logging out. Please try again.");
       }
@@ -161,32 +161,35 @@ if (forgotPasswordLink) {
 }
 
 /* ---------------- AUTH STATE HANDLER ---------------- */
-// Optional: This runs on every page that includes auth.js
-// It detects if someone is logged in and can auto-redirect them
 onAuthStateChanged(auth, async (user) => {
   const currentPage = window.location.pathname.split("/").pop();
 
+  // 🚫 If user not logged in → redirect away from protected pages
   if (!user) {
-    // Not logged in — kick them out of protected pages
     if (
       currentPage === "student-dashboard.html" || 
       currentPage === "organizer-dashboard.html" || 
       currentPage === "website.html"
     ) {
-      window.location.href = "SignIn.html";
+      window.location.href = "../Registration/SignIn.html";
     }
     return;
   }
 
-  // If logged in and on SignIn/SignUp page, redirect away
+  // ✅ If logged in and on SignIn/SignUp → redirect to dashboard
   if (currentPage === "SignIn.html" || currentPage === "SignUp.html") {
+    if (!user.emailVerified) {
+    console.log("User is signed in but not verified — staying on SignUp/SignIn page.");
+    return; // stop here — do NOT redirect
+  }
+
     const userDoc = await getDoc(doc(db, "users", user.uid));
     if (userDoc.exists()) {
       const role = userDoc.data().role;
       if (role === "organizer") {
-        window.location.href = "website.html"; // Change to organizer-dashboard.html if needed
+        window.location.href = "../../Organizer/organizer-dashboard.html";
       } else {
-        window.location.href = "website.html"; // Change to student-dashboard.html if needed
+        window.location.href = "website.html";
       }
     }
   }

@@ -3,7 +3,7 @@
 import { /*getFirestore, */collection, doc, addDoc, updateDoc, getDocs, setDoc, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 import { /*getAuth, */onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 // import { firebaseConfig } from './firebaseConfig.js';
-import { auth, db, app } from "../../../Shared/firebase-config.js";
+import { auth, db, app } from "../../Shared/firebase-config.js";
 // import 'dotenv/config.js';
 
 // Initialize Firebase

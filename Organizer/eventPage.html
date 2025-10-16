@@ -1,199 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Event Details</title>
-    <link rel="icon" type="image/png" href="evently_logo_DT.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Google Fonts for a modern look -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Montserrat', Arial, sans-serif;
-            background: linear-gradient(135deg, #367bfc 0%, #002976 100%);
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-        }
-        .toolbar {
-            width: 100%;
-            background: rgba(0,51,102,0.95);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            padding: 0 32px;
-            height: 72px;
-            box-sizing: border-box;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .toolbar-logo {
-            height: 48px;
-            margin-right: 36px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.18));
-            transition: transform 0.2s;
-        }
-        .toolbar-logo:hover {
-            transform: scale(1.08) rotate(-2deg);
-        }
-        .toolbar-btn {
-            background: rgba(255,255,255,0.08);
-            border: none;
-            color: #fff;
-            font-size: 1.08em;
-            margin-right: 24px;
-            cursor: pointer;
-            padding: 10px 22px;
-            border-radius: 6px;
-            font-family: 'Montserrat', Arial, sans-serif;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            transition: background 0.2s, box-shadow 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-        .toolbar-btn:hover {
-            background: #367bfc;
-            box-shadow: 0 4px 12px rgba(54,123,252,0.18);
-        }
-        .toolbar-spacer {
-            flex: 1;
-        }
-        .auth-btn {
-            background: linear-gradient(90deg, #6fa3ef 60%, #367bfc 100%);
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            font-size: 1em;
-            cursor: pointer;
-            font-family: 'Montserrat', Arial, sans-serif;
-            text-decoration: none;
-            padding: 10px 22px;
-            margin-left: 20px;
-            font-weight: 600;
-            box-shadow: 0 2px 8px rgba(54,123,252,0.12);
-            transition: background 0.2s, box-shadow 0.2s;
-        }
-        .auth-btn:hover {
-            background: linear-gradient(90deg, #a3c8f7 60%, #367bfc 100%);
-            box-shadow: 0 4px 12px rgba(54,123,252,0.22);
-        }
-        .container {
-            max-width: 1000px;
-            margin: 48px auto;
-            background: rgba(255,255,255,0.98);
-            border-radius: 18px;
-            box-shadow: 0 8px 32px rgba(54,123,252,0.10), 0 2px 8px rgba(0,0,0,0.08);
-            padding: 40px 36px 32px 36px;
-            position: relative;
-        }
-        .event-image {
-            width: 100%;
-            height: 340px;
-            object-fit: cover;
-            border-radius: 12px;
-            margin-bottom: 28px;
-            box-shadow: 0 4px 16px rgba(54,123,252,0.10);
-        }
-        .event-title {
-            font-size: 2.5em;
-            margin-bottom: 12px;
-            color: #222;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-shadow: 0 2px 8px rgba(54,123,252,0.08);
-        }
-        .event-date-location {
-            color: #367bfc;
-            margin-bottom: 24px;
-            font-size: 1.15em;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }
-        .event-description {
-            margin-bottom: 32px;
-            color: #333;
-            line-height: 1.7;
-            font-size: 1.08em;
-            background: rgba(54,123,252,0.04);
-            padding: 18px 20px;
-            border-radius: 8px;
-        }
-        .buy-ticket-btn {
-            background: linear-gradient(90deg, #0078d4 60%, #367bfc 100%);
-            color: #fff;
-            border: none;
-            padding: 16px 38px;
-            font-size: 1.18em;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: 'Montserrat', Arial, sans-serif;
-            font-weight: 700;
-            letter-spacing: 1px;
-            box-shadow: 0 2px 8px rgba(54,123,252,0.12);
-            transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
-        }
-        .buy-ticket-btn:hover {
-            background: linear-gradient(90deg, #005fa3 60%, #367bfc 100%);
-            box-shadow: 0 4px 16px rgba(54,123,252,0.22);
-            transform: scale(1.04);
-        }
-        /* Add a subtle fade-in animation */
-        .container, .toolbar {
-            animation: fadeIn 0.8s cubic-bezier(.4,0,.2,1);
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-16px);}
-            to { opacity: 1; transform: translateY(0);}
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Event Details</title>
+  <link rel="icon" type="image/png" href="evently_logo_DT.png">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Montserrat', Arial, sans-serif;
+      background: linear-gradient(135deg, #367bfc 0%, #002976 100%);
+      margin: 0; padding: 0;
+    }
+    .toolbar {
+      width: 100%; background: rgba(0,51,102,0.95);
+      color: #fff; display: flex; align-items: center;
+      padding: 0 32px; height: 72px; box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
+    .toolbar-logo { height: 48px; margin-right: 36px; cursor: pointer; }
+    .toolbar-btn { background: rgba(255,255,255,0.08); border: none; color: #fff; padding: 10px 22px; margin-right: 20px; border-radius: 6px; cursor: pointer; }
+    .container { max-width: 900px; margin: 48px auto; background: #fff; border-radius: 12px; padding: 36px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+    .event-image { width: 100%; height: 340px; object-fit: cover; border-radius: 12px; margin-bottom: 24px; }
+    .event-title { font-size: 2em; color: #002976; margin-bottom: 12px; }
+    .event-date-location { color: #367bfc; font-size: 1.1em; margin-bottom: 16px; }
+    .event-description { font-size: 1.05em; color: #333; background: rgba(54,123,252,0.05); padding: 16px; border-radius: 8px; }
+    .buy-ticket-btn { background: linear-gradient(90deg, #0078d4 60%, #367bfc 100%); color: #fff; border: none; border-radius: 8px; padding: 14px 28px; font-size: 1.1em; cursor: pointer; margin-top: 20px; margin-right: 12px; }
+  </style>
 </head>
 <body>
-    <div class="toolbar">
-        <img src="evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo">
-        <button class="toolbar-btn" onclick="location.href='home.html'">Home</button>
-        <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
-        <div class="toolbar-spacer"></div>
-        <button class="toolbar-btn" onclick="location.href='settings.html'">Settings</button>
-        <div id="authBtnContainer"></div>
-    </div>
-    <div class="container">
-        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" alt="Event Banner" class="event-image">
-        <h1 class="event-title">Campus Music Festival 2024</h1>
-        <div class="event-date-location">
-            <span>Saturday, April 20, 2024 &nbsp;|&nbsp; 6:00 PM - 11:00 PM</span><br>
-            <span>Concordia University, Loyola Campus</span>
-        </div>
-        <div class="event-description">
-            Join us for an unforgettable night of live music, food trucks, and fun activities! Featuring performances by local bands and special guests.<br>
-            <strong>All students and staff are welcome.</strong> Don't miss out on the biggest campus event of the year!
-        </div>
-        <button class="buy-ticket-btn" onclick="location.href='eventCreation.html'">Edit Event</button>
-        <button class="buy-ticket-btn" onclick="location.href='scanTicket.html'">Scan Ticket</button>
-        <button class="buy-ticket-btn" onclick="location.href='../EventAnalytics/EventDashboard.html'">View Analytics</button>
-        <button class="buy-ticket-btn" onclick="location.href='index.html'">View Attendees</button>
-    </div>
-    <script type="module">
-        // Example: Use localStorage to check if signed in
-        const authBtnContainer = document.getElementById('authBtnContainer');
-        const isSignedIn = !!localStorage.getItem("userRole");
-        if (isSignedIn) {
-            const logoutBtn = document.createElement('button');
-            logoutBtn.textContent = "Log Out";
-            logoutBtn.className = "auth-btn";
-            logoutBtn.onclick = () => {
-                localStorage.removeItem("userRole");
-                location.reload();
-            };
-            authBtnContainer.appendChild(logoutBtn);
-        } else {
-            const signInBtn = document.createElement('button');
-            signInBtn.textContent = "Sign In";
-            signInBtn.className = "auth-btn";
-            signInBtn.onclick = () => location.href = "SignIn.html";
-            authBtnContainer.appendChild(signInBtn);
-        }
-    </script>
+
+  <div class="toolbar">
+    <img src="evently_logo_DT.png" alt="Logo" class="toolbar-logo" onclick="location.href='organizer-dashboard.html'">
+    <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
+    <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create Event</button>
+  </div>
+
+  <div class="container">
+    <img id="eventBanner" src="https://via.placeholder.com/900x340" class="event-image" alt="Event Banner">
+    <h1 class="event-title">Loading...</h1>
+    <div class="event-date-location"></div>
+    <div class="event-description">Loading event details...</div>
+   <button class="buy-ticket-btn" onclick="location.href='eventEdit.html?id=' + new URLSearchParams(window.location.search).get('id')">
+  Edit Event
+</button>
+    <button class="buy-ticket-btn" onclick="location.href='scanTicket.html'">Scan Ticket</button>
+    <button class="buy-ticket-btn" onclick="location.href='../EventAnalytics/script/EventDashboard.html'">View Analytics</button>
+  </div>
+
+  <!-- Firebase + Auth -->
+  <script type="module" src="../Shared/firebase-config.js"></script>
+  <script type="module" src="../Registration/scripts/auth.js"></script>
+
+  <!-- Load Event Details -->
+  <script type="module">
+  import { auth, db } from "../Shared/firebase-config.js";
+  import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+  const params = new URLSearchParams(window.location.search);
+  const eventId = params.get("id");
+
+  const titleEl = document.querySelector(".event-title");
+  const descEl = document.querySelector(".event-description");
+  const dateLocEl = document.querySelector(".event-date-location");
+  const bannerEl = document.getElementById("eventBanner");
+
+  const editBtn = document.querySelector('.buy-ticket-btn:nth-of-type(1)');
+  const scanBtn = document.querySelector('.buy-ticket-btn:nth-of-type(2)');
+  const analyticsBtn = document.querySelector('.buy-ticket-btn:nth-of-type(3)');
+
+  async function loadEventDetails(user) {
+    if (!eventId) {
+      titleEl.textContent = "Event not found.";
+      return;
+    }
+
+    const docRef = doc(db, "events", eventId);
+    const snap = await getDoc(docRef);
+
+    if (!snap.exists()) {
+      titleEl.textContent = "Event not found.";
+      descEl.textContent = "";
+      return;
+    }
+
+    const data = snap.data();
+    titleEl.textContent = data.eventName || "Untitled Event";
+    descEl.innerHTML = data.eventDescription || "No description available.";
+
+    const dateObj = data.eventDateTime?.toDate?.();
+    const dateStr = dateObj ? dateObj.toDateString() : "Unknown date";
+    dateLocEl.innerHTML = `
+      <span>${dateStr}</span><br>
+      <span>${data.eventLocation || "Unknown location"}</span>
+    `;
+
+    if (data.eventBannerURL) bannerEl.src = data.eventBannerURL;
+
+    // 🚫 Hide organizer-only buttons if not owner
+    if (!user || user.uid !== data.createdBy) {
+      editBtn.style.display = "none";
+      scanBtn.style.display = "none";
+      analyticsBtn.style.display = "none";
+    } else {
+      // ✅ Organizer can edit, scan, view analytics
+      editBtn.onclick = () => location.href = `eventEdit.html?id=${eventId}`;
+      scanBtn.onclick = () => location.href = `scanTicket.html?id=${eventId}`;
+      analyticsBtn.onclick = () => location.href = `../EventAnalytics/script/EventDashboard.html?id=${eventId}`;
+    }
+  }
+
+  // Wait for auth to load, then fetch event
+  onAuthStateChanged(auth, (user) => {
+    loadEventDetails(user);
+  });
+</script>
+
+
 </body>
 </html>

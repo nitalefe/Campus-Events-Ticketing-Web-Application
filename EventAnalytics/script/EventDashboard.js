@@ -245,4 +245,3 @@ if (typeof document !== 'undefined') {
         applyFilters();
     });
 }
-
