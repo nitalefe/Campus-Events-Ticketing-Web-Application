@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Firebase Database Test - No Auth Required</title>
+    <link rel="icon" type="image/png" href="evently_logo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Montserrat", Arial, sans-serif;
+        background: linear-gradient(135deg, #4169E1, #0000CD);
+        background-image: radial-gradient(circle farthest-corner at 10% 20%, rgba(54,123,252,1) 16.3%, rgba(0,41,118,1) 100.2%);
+        margin: 0;
+        padding: 2rem;
+        min-height: 100vh;
+        padding-top: calc(2rem + 72px);
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      }
+      input[type="date"], input[type="number"] {
+        padding: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-family: "Montserrat", Arial, sans-serif;
+        color: #2d3748;
+        background-color: #fff;
+      }
+      input[type="date"]:focus, input[type="number"]:focus {
+        outline: none;
+        border-color: #4169E1;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+      }
+      input[type="number"] {
+        text-align: center;
+      }
+      .test-section {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+      .test-section h3 {
+        margin-top: 0;
+        color: #2c3e50;
+        font-size: 1.25rem;
+        margin-bottom: 1.5rem;
+      }
+      .filter-group {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        align-items: center;
+      }
+      .filter-group label {
+        min-width: 120px;
+        color: #4a5568;
+      }
+      select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-family: "Montserrat", Arial, sans-serif;
+        color: #2d3748;
+        background-color: #fff;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234a5568' viewBox='0 0 16 16'%3E%3Cpath d='M8 10.5l4-4H4l4 4z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+      }
+      select:focus {
+        outline: none;
+        border-color: #4169E1;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+      }
+      .status {
+        padding: 0.75rem;
+        border-radius: 6px;
+        margin: 0.75rem 0;
+        font-weight: 500;
+      }
+      .status.success {
+        background: #e6fffa;
+        color: #047857;
+        border: 1px solid #99f6e4;
+      }
+      .status.error {
+        background: #fee2e2;
+        color: #b91c1c;
+        border: 1px solid #fecaca;
+      }
+      .status.info {
+        background: #e0f2fe;
+        color: #0369a1;
+        border: 1px solid #bae6fd;
+      }
+      .button-container {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+      .export-button {
+        background: #10B981;
+      }
+      .export-button:hover {
+        background: #059669;
+      }
+      button {
+        background: #4169E1;
+        color: white;
+        border: none;
+        padding: 0.875rem 1.75rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-family: "Montserrat", Arial, sans-serif;
+        font-weight: 600;
+        transition: background-color 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      button:hover {
+        background: #1E40AF;
+      }
+      .event-item {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      .event-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+      .event-item h4 {
+        margin: 0 0 1rem 0;
+        color: #2c3e50;
+        font-size: 1.25rem;
+      }
+      .event-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+      .stat-box {
+        background: #f8fafc;
+        padding: 1rem;
+        border-radius: 8px;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+        transition: transform 0.2s ease;
+      }
+      .stat-box:hover {
+        transform: translateY(-2px);
+      }
+      .stat-value {
+        font-size: 1.75rem;
+        font-weight: bold;
+        color: #4169E1;
+        margin-bottom: 0.5rem;
+      }
+      .stat-label {
+        font-size: 0.875rem;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      h1 {
+        color: #1a365d;
+        margin-bottom: 1.5rem;
+        font-size: 2rem;
+      }
+      p {
+        color: #4a5568;
+        margin-bottom: 2rem;
+      }
+      .logo-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+      }
+      .logo-container img {
+        width: 150px;
+        height: auto;
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        transition: transform 0.3s ease;
+      }
+      .logo-container img:hover {
+        transform: scale(1.05);
+      }
+      /* Toolbar styles */
+      .toolbar {
+        width: 100%;
+        background: rgba(0,51,102,0.95);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        padding: 0 32px;
+        height: 72px;
+        box-sizing: border-box;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+      }
+      .toolbar-logo {
+        height: 48px;
+        margin-right: 36px;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.18));
+        transition: transform 0.2s;
+      }
+      .toolbar-logo:hover {
+        transform: scale(1.08) rotate(-2deg);
+      }
+      .toolbar-btn {
+        background: rgba(255,255,255,0.08);
+        border: none;
+        color: #fff;
+        font-size: 1.08em;
+        margin-right: 24px;
+        cursor: pointer;
+        padding: 10px 22px;
+        border-radius: 6px;
+        font-family: 'Montserrat', Arial, sans-serif;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        transition: background 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      }
+      .toolbar-btn:hover {
+        background: #367bfc;
+        box-shadow: 0 4px 12px rgba(54,123,252,0.18);
+      }
+      .toolbar-spacer { flex: 1; }
+      .auth-btn {
+        background: linear-gradient(90deg, #6fa3ef 60%, #367bfc 100%);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 1em;
+        cursor: pointer;
+        font-family: 'Montserrat', Arial, sans-serif;
+        padding: 10px 22px;
+        margin-left: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        transition: background 0.2s, box-shadow 0.2s;
+      }
+    </style>
+  </head>
+  <body>
+    
+    <div class="toolbar">
+        <img src="../Organizer/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo">
+        <button class="toolbar-btn" onclick="location.href='../Organizer/home.html'">Home</button>
+        <button class="toolbar-btn" onclick="location.href='../Organizer/eventCreation.html'">Create New Event</button>
+        <div class="toolbar-spacer"></div>
+        <button class="toolbar-btn" onclick="location.href='../Organizer/settings.html'">Settings</button>
+        <div id="authBtnContainer"></div>
+    </div>
+
+    <div class="container">
+      <h1>Event Analytics Dashboard</h1>
+      <p>Analyze and track event performance across all universities</p>
+
+      <div class="test-section">
+        <h3>Event Filters</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div class="filter-group">
+            <label for="eventFilter">Category:</label>
+            <select id="eventFilter" onchange="applyFilters()">
+              <option value="all">All Categories</option>
+              <option value="Academic">Academic</option>
+              <option value="Music">Music</option>
+              <option value="Sports">Sports</option>
+              <option value="Technology">Technology</option>
+              <option value="Cultural">Cultural</option>
+              <option value="Social">Social</option>
+              <option value="Networking">Networking</option>
+              <option value="Career">Career</option>
+              <option value="Workshop">Workshop</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="schoolFilter">Events Available to:</label>
+            <select id="schoolFilter" onchange="applyFilters()">
+              <option value="all">All Universities</option>
+              <option value="concordia">Concordia University</option>
+              <option value="mcgill">McGill University</option>
+              <option value="udem">Université de Montréal</option>
+              <option value="polytechnique">Polytechnique Montréal</option>
+              <option value="hec">HEC Montréal</option>
+              <option value="uqam">UQAM</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="ticketTypeFilter">Ticket Type:</label>
+            <select id="ticketTypeFilter" onchange="applyFilters()">
+              <option value="all">All Tickets</option>
+              <option value="free">Free Events</option>
+              <option value="paid">Paid Events</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Price Range:</label>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <input type="number" id="minPrice" placeholder="Min $" style="width: 80px;" onchange="applyFilters()">
+              <span>-</span>
+              <input type="number" id="maxPrice" placeholder="Max $" style="width: 80px;" onchange="applyFilters()">
+            </div>
+          </div>
+          <div class="filter-group">
+            <label>Date Range:</label>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <input type="date" id="startDate" onchange="applyFilters()">
+              <span>-</span>
+              <input type="date" id="endDate" onchange="applyFilters()">
+            </div>
+          </div>
+        </div>
+        <div id="eventsStatus" class="status info">
+          Loading events...
+        </div>
+      </div>
+
+      <div class="test-section">
+        <h3>Events Found</h3>
+        <div class="button-container">
+          <button class="export-button" onclick="exportToCSV()">
+            Export to CSV
+          </button>
+        </div>
+        <div id="eventsList"></div>
+      </div>
+    </div>
+    <script type="module">
+      import './shared.js';
+      import { displayEvents, applyFilters, exportToCSV } from './EventDashboard.js';
+      window.displayEvents = displayEvents;
+      window.applyFilters = applyFilters;
+      window.exportToCSV = exportToCSV;
+      document.addEventListener('DOMContentLoaded', () => {
+        applyFilters();
+      });
+    </script>
+  </body>
+</html>
