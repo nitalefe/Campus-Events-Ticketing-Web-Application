@@ -19,18 +19,8 @@ if (!formEl) {
   console.error("[eventD] #eventForm not found. Is the script path correct and tag at end of <body>?");
 }
 
-// Listen for form submit
-formEl?.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  console.log("[eventD] submit fired");
-
   // TEMPORARY: skip auth requirement for testing
   const currentUser = auth.currentUser || { uid: "testUser123" };
-// Handle form submission
-const formEl = document.getElementById('eventForm');
-if (!formEl) {
-  console.error("[eventD] #eventForm not found. Is the script path correct and tag at end of <body>?");
-}
 
 // Listen for form submit
 formEl?.addEventListener('submit', async (e) => {
@@ -108,16 +98,8 @@ document.getElementById('addUniversity')?.addEventListener('click', () => {
       sel.add(opt);
     }
   }
-//Optional helper (safe if the button isn't present)
-document.getElementById('addUniversity')?.addEventListener('click', () => {
-  const university = prompt("Enter the name of the university:");
-  if (university) {
-    const sel = document.getElementById('openTo');
-    if (sel) {
-      const opt = document.createElement('option');
-      opt.value = university;
-      opt.text  = university;
-      sel.add(opt);
-    }
-  }
 });
+
+//Sanity check
+console.log("[eventD] eventD.js loaded; Firebase init ok");
+  
