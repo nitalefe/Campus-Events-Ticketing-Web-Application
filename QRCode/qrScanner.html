@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Scan Ticket</title>
+  <style>
+    body { font-family: system-ui, Arial; margin: 24px; }
+    #reader { width: 340px; max-width: 100%; }
+    .row { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+    .status { margin-top: 12px; font-weight: 600; }
+    .ok { color: #0a6; } .err { color: #b00; }
+    select, input, button, textarea { font-size: 14px; }
+  </style>
+  <!-- Camera scanner library -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+</head>
+<body>
+  <h2>Scan Ticket</h2>
+
+  <div class="row">
+    <label for="increment">Encryption increment:</label>
+    <input id="increment" type="number" value="7" min="1" max="64" />
+    <label for="cameraSel">Camera:</label>
+    <select id="cameraSel"></select>
+    <button id="startBtn">Start</button>
+    <button id="stopBtn">Stop</button>
+  </div>
+
+  <div id="reader" style="margin-top:12px;"></div>
+  <div id="scanStatus" class="status"></div>
+
+  <h3>Manual test (optional)</h3>
+  <p>Paste <b>encrypted</b> QR text to simulate a scan:</p>
+  <textarea id="manualEncrypted" rows="3" cols="60"></textarea><br/>
+  <button id="simulateBtn">Simulate Scan</button>
+  <div id="manualStatus" class="status"></div>
+
+  <script type="module">
+    // -------- Decrypt & parse (matches your team’s format) ----------
+    function decryptString(encryptedText, increment = 7) {
+      let out = "";
+      for (let i = 0; i < encryptedText.length; i++) {
+        out += String.fromCharCode(encryptedText.charCodeAt(i) - increment);
+      }
+      return out;
+    }
+    function parseEventAndAttendee(decryptedText) {
+      const parts = (decryptedText || "").split("/");
+      if (parts.length !== 2 || !parts[0] || !parts[1]) {
+        return { ok:false, message:"Invalid QR format. Expected eventID/attendeeID." };
+      }
+      return { ok:true, eventId: parts[0], attendeeId: parts[1] };
+    }
+
+    // -------- Mock validator (so you can test NOW) ----------
+    const MOCK = { "myEvent123": new Set(["alice001","bob002","carol003"]) };
+    const USED_KEY = "ticket_used_set_v1";
+    const loadUsed = () => new Set(JSON.parse(localStorage.getItem(USED_KEY) || "[]"));
+    const saveUsed = s => localStorage.setItem(USED_KEY, JSON.stringify([...s]));
+    async function validateMock(eventId, attendeeId) {
+      if (!MOCK[eventId]) return { ok:false, message:"❌ Event not found (mock)." };
+      if (!MOCK[eventId].has(attendeeId)) return { ok:false, message:"❌ Not registered (mock)." };
+      const used = loadUsed(), key = `${eventId}/${attendeeId}`;
+      if (used.has(key)) return { ok:false, message:"❌ Ticket already used (mock)." };
+      used.add(key); saveUsed(used);
+      return { ok:true, message:"✅ Ticket validated (mock). Entry granted." };
+    }
+
+    // -------- Camera setup & scanning ----------
+    const statusEl = document.getElementById("scanStatus");
+    const setStatus = (msg, ok=null) => {
+      statusEl.textContent = msg;
+      statusEl.className = "status" + (ok===null ? "" : ok ? " ok" : " err");
+    };
+
+    const cameraSel = document.getElementById("cameraSel");
+    const startBtn = document.getElementById("startBtn");
+    const stopBtn  = document.getElementById("stopBtn");
+    const incInput = document.getElementById("increment");
+    const readerId = "reader";
+    const scanner  = new Html5Qrcode(readerId);
+
+    // Populate cameras
+    Html5Qrcode.getCameras().then(devices => {
+      cameraSel.innerHTML = "";
+      devices.forEach(d => {
+        const opt = document.createElement("option");
+        opt.value = d.id; opt.textContent = d.label || `Camera ${cameraSel.length+1}`;
+        cameraSel.appendChild(opt);
+      });
+      if (devices.length === 0) setStatus("No cameras found.", false);
+    }).catch(() => setStatus("Could not list cameras. Check permissions.", false));
+
+    async function onDecoded(encryptedText) {
+      const inc = Number(incInput.value || 7);
+      const decrypted = decryptString(encryptedText, inc);
+      const parsed = parseEventAndAttendee(decrypted);
+      if (!parsed.ok) return setStatus(parsed.message, false);
+
+      const result = await validateMock(parsed.eventId, parsed.attendeeId); // swap later for Firestore
+      setStatus(result.message, result.ok);
+    }
+
+    startBtn.addEventListener("click", async () => {
+      try {
+        await scanner.start(
+          cameraSel.value || { facingMode: "environment" },
+          { fps: 10, qrbox: { width: 260, height: 260 } },
+          onDecoded,
+          () => {} // ignore stream decode errors
+        );
+        setStatus("Camera started. Aim at QR code…");
+      } catch (e) {
+        setStatus("Failed to start camera. Allow permission & use https/localhost.", false);
+        console.error(e);
+      }
+    });
+
+    stopBtn.addEventListener("click", async () => {
+      try { await scanner.stop(); setStatus("Camera stopped."); }
+      catch (e) { console.error(e); }
+    });
+
+    // Manual simulate
+    document.getElementById("simulateBtn").addEventListener("click", async () => {
+      const inc = Number(incInput.value || 7);
+      const encryptedText = (document.getElementById("manualEncrypted").value || "").trim();
+      const decrypted = decryptString(encryptedText, inc);
+      const parsed = parseEventAndAttendee(decrypted);
+      const out = document.getElementById("manualStatus");
+      if (!parsed.ok) { out.textContent = parsed.message; out.className = "status err"; return; }
+      const result = await validateMock(parsed.eventId, parsed.attendeeId);
+      out.textContent = result.message; out.className = "status " + (result.ok ? "ok" : "err");
+    });
+  </script>
+</body>
+</html>
