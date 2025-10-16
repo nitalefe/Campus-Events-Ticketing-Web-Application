@@ -1,15 +1,9 @@
 // Use the same Firebase CDN version as your Registration page
-/*
-// import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-import { /*getFirestore, */collection, addDoc, serverTimestamp, Timestamp }
-*/
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-import { getFirestore, collection, addDoc, serverTimestamp, Timestamp, query, where, getDocs, doc, updateDoc }
-
+import { auth, db } from "../../Shared/firebase-config.js";
+import {collection, addDoc, serverTimestamp, Timestamp }
   from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-import { /*getAuth, */onAuthStateChanged }
+import {onAuthStateChanged }
   from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { auth, db, app} from "../../Shared/firebase-config.js";
 
 //Sanity check
 console.log("[eventD] loaded; Firebase init ok");
@@ -24,6 +18,9 @@ const formEl = document.getElementById('eventForm');
 if (!formEl) {
   console.error("[eventD] #eventForm not found. Is the script path correct and tag at end of <body>?");
 }
+
+  // TEMPORARY: skip auth requirement for testing
+  const currentUser = auth.currentUser || { uid: "testUser123" };
 
 // Listen for form submit
 formEl?.addEventListener('submit', async (e) => {
@@ -57,62 +54,12 @@ formEl?.addEventListener('submit', async (e) => {
 
   // Combine date + time → Date → Firestore Timestamp
   const eventDateObj = new Date(`${eventDate}T${eventTime}:00`);
-  const eventTimestamp = Timestamp.fromDate(eventDateObj);
 
   try {
-    // Check for duplicate events with same name, date/time, and location
-    const duplicateQuery = query(
-      collection(db, "events"),
-      where("eventName", "==", eventName),
-      where("eventDateTime", "==", eventTimestamp),
-      where("eventLocation", "==", eventLocation)
-    );
-
-    const duplicateSnapshot = await getDocs(duplicateQuery);
-    
-    if (!duplicateSnapshot.empty) {
-      // Event with same name, date/time, and location exists
-      const existingDoc = duplicateSnapshot.docs[0];
-      const existingData = existingDoc.data();
-      
-      // Ask user if they want to update the existing event
-      const updateConfirmed = confirm(
-        `An event with the same name "${eventName}" at "${eventLocation}" on ${eventDate} at ${eventTime} already exists.\n\n` +
-        `Current description: "${existingData.eventDescription}"\n` +
-        `Current category: ${existingData.eventCategory}\n` +
-        `Current capacity: ${existingData.capacity}\n` +
-        `Current ticket price: $${existingData.ticketPrice}\n\n` +
-        `Do you want to update this existing event with the new information?`
-      );
-
-      if (updateConfirmed) {
-        // Update the existing event
-        await updateDoc(doc(db, "events", existingDoc.id), {
-          eventDescription,
-          eventCategory,
-          openTo,
-          capacity,
-          ticketPrice,
-          updatedBy: currentUser.uid,
-          updatedAt: serverTimestamp()
-        });
-
-        alert("Event updated successfully!");
-        console.log("[eventD] updated existing doc:", existingDoc.id);
-        f.reset();
-        return;
-      } else {
-        // User chose not to update, don't create duplicate
-        alert("Event creation cancelled. No changes were made.");
-        return;
-      }
-    }
-
-    // No duplicate found, create new event
     const docRef = await addDoc(collection(db, "events"), {
       eventName,
       eventDescription,
-      eventDateTime: eventTimestamp,
+      eventDateTime: Timestamp.fromDate(eventDateObj),
       eventLocation,
       eventCategory,
       openTo,
@@ -134,7 +81,7 @@ formEl?.addEventListener('submit', async (e) => {
     if (error?.code === "permission-denied") {
       alert("Permission denied. Make sure your user has role=organizer or the rules allow your user to write.");
     } else {
-      alert("Error creating/updating event. Please try again.");
+      alert("Error creating event. Please try again.");
     }
   }
 });
@@ -152,3 +99,7 @@ document.getElementById('addUniversity')?.addEventListener('click', () => {
     }
   }
 });
+
+//Sanity check
+console.log("[eventD] eventD.js loaded; Firebase init ok");
+  
