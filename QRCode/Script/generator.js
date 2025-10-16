@@ -1,13 +1,15 @@
-import { auth, db, app} from "../../Shared/firebase-config.js";
+import { auth, db, /*app*/} from "../../Shared/firebase-config.js";
 // import {signInWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 import { setDoc, doc, getDoc, getDocs, collection, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-const eventID = "";
-const attendeeID = "";
+var eventID = "6w3Q4k4LRLazZzJnHjil";
+var attendeeID = "ze-yu-huang-benoyo8489_reifide_com";
+eventID = eventID.slice(0,15);
+attendeeID = attendeeID.slice(0,15);
 
-console.log("Firebase app initialized", app);
+/*console.log("Firebase app initialized", app);*/
 
-async function readEvent(eventID, attendeeID){ //I may be stupid but wouldnt we have attendeeID already? since we are generating the qr as the attendee
+async function readEvent(eventID, attendeeID) { //I may be stupid but wouldnt we have attendeeID already? since we are generating the qr as the attendee
 //read event, need to validate
 //   const eventRef = doc(db, "events", eventID);
 //   const eventSnap = await getDoc(eventRef);
@@ -20,12 +22,14 @@ async function readEvent(eventID, attendeeID){ //I may be stupid but wouldnt we 
 //   const attendeesRef = collection(db, "events", eventID, "attendees");
 //   if(!(attendeeMap.hasOwnProperty(attendeeID))){return -1;}
   
-  qrText = eventID+'/'+attendeeID;
+
+  var qrText = eventID+'/'+attendeeID;
   qrText = initializeQRCode(qrText, 7);
   
   return qrText;
 }
 
+//ok so easy way to bypass overflow is only read first 16 characters, could be changed later on
 function encryption(str, increment) {
   let result = '';
 
@@ -66,3 +70,14 @@ function initializeQRCode(FIXED_DATA_STRING) {
 
 // 3. Call the function to run when the script loads
 initializeQRCode(readEvent(eventID));
+
+window.setIdsAndRenderQR = async function (eventID, attendeeID, options = {}) {
+  const { encrypt } = options;
+  let qrText = `${eventID}/${attendeeID}`;
+
+  if (encrypt) {
+    qrText = encryption(qrText, 7);
+  }
+
+  initializeQRCode(qrText);
+};
