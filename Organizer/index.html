@@ -258,10 +258,10 @@
             <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
             <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
             <input type="email" id="email" name="email" placeholder="Email" required>
-            <input type="text" id="ticketType" name="ticketType" placeholder="Ticket Type">
+            <input type="text" id="eventID" name="eventID" placeholder="Event ID" required>
             <div class="checkbox-group">
-                <input type="checkbox" id="paymentStatus" name="paymentStatus">
-                <label for="paymentStatus">Payment Status</label>
+                <input type="checkbox" id="isScanned" name="isScanned">
+                <label for="isScanned">Scan Status</label>
             </div>
             <button type="submit">Add Attendee</button>
         </form>
@@ -274,8 +274,7 @@
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Email</th>
-                    <th>Ticket Type</th>
-                    <th>Payment Status</th>
+                    <th>Scan Status</th>
                     <th>Registered At</th>
                 </tr>
             </thead>

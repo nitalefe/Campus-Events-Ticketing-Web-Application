@@ -1,24 +1,15 @@
 // Use the same Firebase CDN version as your Registration page
+/*
+// import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import { /*getFirestore, */collection, addDoc, serverTimestamp, Timestamp }
+*/
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import { getFirestore, collection, addDoc, serverTimestamp, Timestamp, query, where, getDocs, doc, updateDoc }
+
   from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-import { getAuth, onAuthStateChanged }
+import { /*getAuth, */onAuthStateChanged }
   from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-
-//Firebase configuration 
-const firebaseConfig = {
-  apiKey: "AIzaSyCtCLGcR_sDwb6wDE7NpVz8vghrxLZFYB8",
-  authDomain: "campus-events-ticketing-e648f.firebaseapp.com",
-  projectId: "campus-events-ticketing-e648f",
-  storageBucket: "campus-events-ticketing-e648f.appspot.com", // ✅ must be appspot.com
-  messagingSenderId: "844285609905",
-  appId: "1:844285609905:web:72005bbb5915856e8c9f90",
-  measurementId: "G-RCMW33FV3L"
-};
-
-const app  = initializeApp(firebaseConfig);
-const db   = getFirestore(app);
-const auth = getAuth(app);
+import { auth, db, app} from "../../Shared/firebase-config.js";
 
 //Sanity check
 console.log("[eventD] loaded; Firebase init ok");
