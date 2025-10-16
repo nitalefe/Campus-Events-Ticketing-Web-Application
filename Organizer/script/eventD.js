@@ -1,24 +1,15 @@
 // Use the same Firebase CDN version as your Registration page
+/*
+// import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import { /*getFirestore, */collection, addDoc, serverTimestamp, Timestamp }
+*/
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-import { getFirestore, collection, addDoc, serverTimestamp, Timestamp }
+import { getFirestore, collection, addDoc, serverTimestamp, Timestamp, query, where, getDocs, doc, updateDoc }
+
   from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-import { getAuth, onAuthStateChanged }
+import { /*getAuth, */onAuthStateChanged }
   from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-
-//Firebase configuration 
-const firebaseConfig = {
-  apiKey: "AIzaSyCtCLGcR_sDwb6wDE7NpVz8vghrxLZFYB8",
-  authDomain: "campus-events-ticketing-e648f.firebaseapp.com",
-  projectId: "campus-events-ticketing-e648f",
-  storageBucket: "campus-events-ticketing-e648f.appspot.com", // ✅ must be appspot.com
-  messagingSenderId: "844285609905",
-  appId: "1:844285609905:web:72005bbb5915856e8c9f90",
-  measurementId: "G-RCMW33FV3L"
-};
-
-const app  = initializeApp(firebaseConfig);
-const db   = getFirestore(app);
-const auth = getAuth(app);
+import { auth, db, app} from "../../Shared/firebase-config.js";
 
 //Sanity check
 console.log("[eventD] loaded; Firebase init ok");
@@ -66,12 +57,62 @@ formEl?.addEventListener('submit', async (e) => {
 
   // Combine date + time → Date → Firestore Timestamp
   const eventDateObj = new Date(`${eventDate}T${eventTime}:00`);
+  const eventTimestamp = Timestamp.fromDate(eventDateObj);
 
   try {
+    // Check for duplicate events with same name, date/time, and location
+    const duplicateQuery = query(
+      collection(db, "events"),
+      where("eventName", "==", eventName),
+      where("eventDateTime", "==", eventTimestamp),
+      where("eventLocation", "==", eventLocation)
+    );
+
+    const duplicateSnapshot = await getDocs(duplicateQuery);
+    
+    if (!duplicateSnapshot.empty) {
+      // Event with same name, date/time, and location exists
+      const existingDoc = duplicateSnapshot.docs[0];
+      const existingData = existingDoc.data();
+      
+      // Ask user if they want to update the existing event
+      const updateConfirmed = confirm(
+        `An event with the same name "${eventName}" at "${eventLocation}" on ${eventDate} at ${eventTime} already exists.\n\n` +
+        `Current description: "${existingData.eventDescription}"\n` +
+        `Current category: ${existingData.eventCategory}\n` +
+        `Current capacity: ${existingData.capacity}\n` +
+        `Current ticket price: $${existingData.ticketPrice}\n\n` +
+        `Do you want to update this existing event with the new information?`
+      );
+
+      if (updateConfirmed) {
+        // Update the existing event
+        await updateDoc(doc(db, "events", existingDoc.id), {
+          eventDescription,
+          eventCategory,
+          openTo,
+          capacity,
+          ticketPrice,
+          updatedBy: currentUser.uid,
+          updatedAt: serverTimestamp()
+        });
+
+        alert("Event updated successfully!");
+        console.log("[eventD] updated existing doc:", existingDoc.id);
+        f.reset();
+        return;
+      } else {
+        // User chose not to update, don't create duplicate
+        alert("Event creation cancelled. No changes were made.");
+        return;
+      }
+    }
+
+    // No duplicate found, create new event
     const docRef = await addDoc(collection(db, "events"), {
       eventName,
       eventDescription,
-      eventDateTime: Timestamp.fromDate(eventDateObj),
+      eventDateTime: eventTimestamp,
       eventLocation,
       eventCategory,
       openTo,
@@ -93,7 +134,7 @@ formEl?.addEventListener('submit', async (e) => {
     if (error?.code === "permission-denied") {
       alert("Permission denied. Make sure your user has role=organizer or the rules allow your user to write.");
     } else {
-      alert("Error creating event. Please try again.");
+      alert("Error creating/updating event. Please try again.");
     }
   }
 });
