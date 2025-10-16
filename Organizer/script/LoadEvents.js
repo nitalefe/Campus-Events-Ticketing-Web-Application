@@ -11,8 +11,12 @@ const discoverSection = document.getElementById("discover-events");
 function createEventCard(eventData, eventId) {
   const card = document.createElement("div");
   card.className = "event-card";
+  
+  // Use the banner from Firebase or fallback to placeholder
+  const bannerSrc = eventData.banner || "https://via.placeholder.com/260x140";
+  
   card.innerHTML = `
-    <img src="https://via.placeholder.com/260x140" class="event-banner" alt="Event Banner">
+    <img src="${bannerSrc}" class="event-banner" alt="Event Banner" onerror="this.src='https://via.placeholder.com/260x140'">
     <div class="event-title">${eventData.eventName}</div>
     <div class="event-date">${eventData.eventDateTime?.toDate().toDateString()}</div>
     <div class="event-location">${eventData.eventLocation}</div>
