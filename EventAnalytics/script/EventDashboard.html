@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>Firebase Database Test - No Auth Required</title>
+    <link rel="icon" type="image/png" href="evently_logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap"
@@ -348,6 +349,7 @@
       </div>
     </div>
     <script type="module">
+      import '../../Shared/firebase-config.js';
       import { displayEvents, applyFilters, exportToCSV } from './EventDashboard.js';
       window.displayEvents = displayEvents;
       window.applyFilters = applyFilters;
