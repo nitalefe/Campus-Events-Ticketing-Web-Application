@@ -1,7 +1,7 @@
 // Import Firebase modules and shared config
 
 import { collection, getDocs, query, orderBy, where, onSnapshot } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
-import { auth, db } from "../../Shared/firebase-config.js";
+import { db, auth } from '../../Shared/firebase-config.js';
 let unsubscribe = null;
 
       // Format date utility function
@@ -92,6 +92,8 @@ let unsubscribe = null;
         document.getElementById('eventsStatus').className = 'status info';
 
         try {
+          // Debug: ensure db is the Firestore instance
+          console.log('applyFilters: db ->', db);
           // Create base query with eventDateTime ordering
           let q = query(collection(db, 'events'), orderBy('eventDateTime', 'desc'));
           let querySnapshot = await getDocs(q);
