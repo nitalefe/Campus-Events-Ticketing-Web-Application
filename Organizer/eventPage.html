@@ -17,7 +17,26 @@
       padding: 0 32px; height: 72px; box-shadow: 0 4px 16px rgba(0,0,0,0.12);
     }
     .toolbar-logo { height: 48px; margin-right: 36px; cursor: pointer; }
-    .toolbar-btn { background: rgba(255,255,255,0.08); border: none; color: #fff; padding: 10px 22px; margin-right: 20px; border-radius: 6px; cursor: pointer; }
+    .toolbar-btn { 
+      background: rgba(255,255,255,0.08); 
+      border: none; 
+      color: #fff; 
+      font-size: 1.08em;
+      padding: 10px 22px; 
+      margin-right: 20px; 
+      border-radius: 6px; 
+      cursor: pointer; 
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+      transition: background 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
     .container { max-width: 900px; margin: 48px auto; background: #fff; border-radius: 12px; padding: 36px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
     .event-image { width: 100%; height: 340px; object-fit: cover; border-radius: 12px; margin-bottom: 24px; }
     .event-title { font-size: 2em; color: #002976; margin-bottom: 12px; }
@@ -94,7 +113,15 @@
       <span>${data.eventLocation || "Unknown location"}</span>
     `;
 
-    if (data.eventBannerURL) bannerEl.src = data.eventBannerURL;
+    // Load event banner from Firebase
+    if (data.banner) {
+      bannerEl.src = data.banner;
+      bannerEl.alt = `${data.eventName} Banner`;
+    } else {
+      // Fallback to placeholder if no banner is set
+      bannerEl.src = "https://via.placeholder.com/900x340";
+      bannerEl.alt = "Event Banner";
+    }
 
     // 🚫 Hide organizer-only buttons if not owner
     if (!user || user.uid !== data.createdBy) {

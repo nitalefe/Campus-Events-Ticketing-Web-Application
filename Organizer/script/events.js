@@ -42,10 +42,16 @@ async function loadEventForEdit() {
     // Fill in fields
     document.getElementById("eventName").value = data.eventName || "";
     document.getElementById("eventDescription").value = data.eventDescription || "";
+    document.getElementById("eventBanner").value = data.banner || "";
     document.getElementById("eventLocation").value = data.eventLocation || "";
     document.getElementById("eventCategory").value = data.eventCategory || "";
     document.getElementById("capacity").value = data.capacity || "";
     document.getElementById("ticketPrice").value = data.ticketPrice || "";
+    
+    // Trigger banner preview if banner exists
+    if (data.banner && typeof previewBanner === 'function') {
+      previewBanner();
+    }
 
     // Extract date + time
     const dt = data.eventDateTime?.toDate?.();
@@ -68,6 +74,7 @@ formEl?.addEventListener("submit", async (e) => {
   const f = e.target;
   const eventName = f.eventName.value.trim();
   const eventDescription = f.eventDescription.value.trim();
+  const eventBanner = f.eventBanner.value; // Banner image path
   const eventDate = f.eventDate.value;
   const eventTime = f.eventTime.value;
   const eventLocation = f.eventLocation.value.trim();
@@ -89,6 +96,7 @@ formEl?.addEventListener("submit", async (e) => {
       await updateDoc(docRef, {
         eventName,
         eventDescription,
+        banner: eventBanner,
         eventDateTime: Timestamp.fromDate(eventDateObj),
         eventLocation,
         eventCategory,
@@ -104,6 +112,7 @@ formEl?.addEventListener("submit", async (e) => {
       const docRef = await addDoc(collection(db, "events"), {
         eventName,
         eventDescription,
+        banner: eventBanner,
         eventDateTime: Timestamp.fromDate(eventDateObj),
         eventLocation,
         eventCategory,
