@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>My Events</title>
-  <link rel="icon" type="image/png" href="evently_logo_DT.png">
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -285,7 +285,7 @@
 <body>
   <!-- Toolbar -->
   <div class="toolbar">
-    <img src="evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='organizer-dashboard.html'">
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='organizer-dashboard.html'">
     <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
     <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
     <div class="toolbar-spacer"></div>
@@ -300,7 +300,7 @@
     <div class="header-section">
       <h1 class="page-title">My Events</h1>
       <p class="page-subtitle">Manage and monitor your created events</p>
-      <button class="analytics-btn" onclick="location.href='../EventAnalytics/EventDashboard.html'">
+      <button class="analytics-btn" onclick="location.href='../Shared_Pages/EventDashboard.html'">
         📊 View Event Analytics Dashboard
       </button>
     </div>
@@ -326,12 +326,12 @@
   </div>
 
   <!-- Firebase Scripts -->
-  <script type="module" src="../Shared/firebase-config.js"></script>
-  <script type="module" src="../Registration/scripts/auth.js"></script>
+  <script type="module" src="../../Shared/firebase-config.js"></script>
+  <script type="module" src="../../js/auth.js"></script>
 
   <!-- My Events Script -->
   <script type="module">
-    import { auth, db } from "../Shared/firebase-config.js";
+    import { auth, db } from "../../Shared/firebase-config.js";
     import { collection, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 

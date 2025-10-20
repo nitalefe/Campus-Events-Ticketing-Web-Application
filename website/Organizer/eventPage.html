@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Event Details</title>
-  <link rel="icon" type="image/png" href="../evently_logo_DT.png">
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -48,7 +48,7 @@
 <body>
 
   <div class="toolbar">
-<img src="../evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='organizer-dashboard.html'">
+<img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='organizer-dashboard.html'">
 
     <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
     <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create Event</button>
@@ -63,16 +63,16 @@
   Edit Event
 </button>
     <button class="buy-ticket-btn" onclick="location.href='scanTicket.html'">Scan Ticket</button>
-    <button class="buy-ticket-btn" onclick="location.href='../EventAnalytics/script/EventDashboard.html'">View Analytics</button>
+    <button class="buy-ticket-btn" onclick="location.href='../Shared_Pages/EventDashboard.html'">View Analytics</button>
   </div>
 
   <!-- Firebase + Auth -->
-  <script type="module" src="../Shared/firebase-config.js"></script>
-  <script type="module" src="../Registration/scripts/auth.js"></script>
+  <script type="module" src="../../Shared/firebase-config.js"></script>
+  <script type="module" src="../../js/auth.js"></script>
 
   <!-- Load Event Details -->
   <script type="module">
-  import { auth, db } from "../Shared/firebase-config.js";
+  import { auth, db } from "../../Shared/firebase-config.js";
   import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
   import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 

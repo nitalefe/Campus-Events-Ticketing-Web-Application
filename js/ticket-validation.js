@@ -1,5 +1,5 @@
 // Import Firebase setup (same as your project)
-import { db } from "../../Shared/firebase-config.js";
+import { db } from "../Shared/firebase-config.js";
 import {
   doc,
   getDoc,

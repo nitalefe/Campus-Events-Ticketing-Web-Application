@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Create Event</title>
-  <link rel="icon" type="image/png" href="../evently_logo_DT.png">
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
   <style>
@@ -146,12 +146,12 @@
 <body>
   <!-- Toolbar -->
   <div class="toolbar">
-<img src="../evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='organizer-dashboard.html'">
+<img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='organizer-dashboard.html'">
 
     <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
-    <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
+    <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button> <!-- Isnt it this page ? -->
     <div class="toolbar-spacer"></div>
-    <button class="toolbar-btn" onclick="location.href='settings.html'">Settings</button>
+    <button class="toolbar-btn" onclick="location.href='settings.html'">Settings</button> <!-- im guessing this is a to do -->
     <div id="authBtnContainer">
       <button id="logout-btn" class="auth-btn">Log Out</button>
     </div>
@@ -170,16 +170,16 @@
       <label for="eventBanner">Event Banner</label>
       <select id="eventBanner" name="eventBanner" required onchange="previewBanner()">
         <option value="">Select Banner Image</option>
-        <option value="banners/event1.jpeg">Event Banner 1</option>
-        <option value="banners/event2.jpg">Event Banner 2</option>
-        <option value="banners/event 3.jpeg">Event Banner 3</option>
-        <option value="banners/event4.jpeg">Event Banner 4</option>
-        <option value="banners/event5.jpg">Event Banner 5</option>
-        <option value="banners/event6.jpg">Event Banner 6</option>
-        <option value="banners/event7.jpg">Event Banner 7</option>
-        <option value="banners/event8.jpg">Event Banner 8</option>
-        <option value="banners/event9.jpg">Event Banner 9</option>
-        <option value="banners/event10.jpg">Event Banner 10</option>
+        <option value="../../assets/images/event1.jpeg">Event Banner 1</option>
+        <option value="../../assets/images/event2.jpg">Event Banner 2</option>
+        <option value="../../assets/images/event3.jpeg">Event Banner 3</option>
+        <option value="../../assets/images/event4.jpeg">Event Banner 4</option>
+        <option value="../../assets/images/event5.jpg">Event Banner 5</option>
+        <option value="../../assets/images/event6.jpg">Event Banner 6</option>
+        <option value="../../assets/images/event7.jpg">Event Banner 7</option>
+        <option value="../../assets/images/event8.jpg">Event Banner 8</option>
+        <option value="../../assets/images/event9.jpg">Event Banner 9</option>
+        <option value="../../assets/images/event10.jpg">Event Banner 10</option>
       </select>
       <div id="bannerPreview" style="margin-top: 10px; text-align: center;">
         <img id="previewImage" src="" alt="Banner Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: none;">
@@ -260,8 +260,8 @@
   </script>
 
   <!-- Firebase Scripts -->
-  <script type="module" src="../Shared/firebase-config.js"></script>
-  <script type="module" src="../Registration/scripts/auth.js"></script>
-  <script type="module" src="script/events.js"></script>
+  <script type="module" src="../../Shared/firebase-config.js"></script>
+  <script type="module" src="../../js/auth.js"></script>
+  <script type="module" src="../../js/events.js"></script>
 </body>
 </html>
