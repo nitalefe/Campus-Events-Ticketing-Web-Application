@@ -1,4 +1,4 @@
-import { auth, db, /*app*/} from "../../Shared/firebase-config.js";
+import { auth, db, /*app*/} from "../Shared/firebase-config.js";
 // import {signInWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 import { setDoc, doc, getDoc, getDocs, collection, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 

@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Edit Event</title>
-  <link rel="icon" type="image/png" href="../evently_logo_DT.png">
+  <title>Create Event</title>
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
   <style>
@@ -22,18 +22,19 @@
       color: #fff;
       display: flex;
       align-items: center;
-      padding: 0 32px;
-      height: 72px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      padding: 0 2vw;
+      height: clamp(60px, 8vh, 72px);
+      box-sizing: border-box;
+      box-shadow: 0 0.3vh 1vh rgba(0,0,0,0.12);
       position: sticky;
       top: 0;
       z-index: 100;
     }
     .toolbar-logo {
-      height: 48px;
-      margin-right: 36px;
+      height: clamp(40px, 6vh, 48px);
+      margin-right: clamp(20px, 3vw, 36px);
       cursor: pointer;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.18));
+      filter: drop-shadow(0 0.2vh 0.3vh rgba(0,0,0,0.18));
       transition: transform 0.2s;
     }
     .toolbar-logo:hover {
@@ -43,16 +44,16 @@
       background: rgba(255,255,255,0.08);
       border: none;
       color: #fff;
-      font-size: 1.08em;
-      margin-right: 24px;
+      font-size: clamp(0.9rem, 2.5vw, 1.08rem);
+      margin-right: clamp(16px, 2.5vw, 24px);
       cursor: pointer;
-      padding: 10px 22px;
-      border-radius: 6px;
+      padding: clamp(8px, 1.5vh, 10px) clamp(16px, 3vw, 22px);
+      border-radius: 0.4vw;
       font-family: 'Montserrat', Arial, sans-serif;
       font-weight: 400;
       letter-spacing: 0.5px;
       transition: background 0.2s, box-shadow 0.2s;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      box-shadow: 0 0.2vh 0.6vh rgba(0,0,0,0.04);
       white-space: nowrap;
       display: flex;
       align-items: center;
@@ -61,57 +62,81 @@
     }
     .toolbar-btn:hover {
       background: #367bfc;
-      box-shadow: 0 4px 12px rgba(54,123,252,0.18);
+      box-shadow: 0 0.3vh 0.9vh rgba(54,123,252,0.18);
     }
     .toolbar-spacer { flex: 1; }
     .auth-btn {
       background: linear-gradient(90deg, #6fa3ef 60%, #367bfc 100%);
       color: #fff;
       border: none;
-      border-radius: 6px;
-      font-size: 1em;
+      border-radius: 0.4vw;
+      font-size: clamp(0.9rem, 2.2vw, 1rem);
       cursor: pointer;
-      padding: 10px 22px;
+      padding: clamp(8px, 1.5vh, 10px) clamp(16px, 3vw, 22px);
       font-weight: 600;
-      box-shadow: 0 2px 8px rgba(54,123,252,0.12);
+      box-shadow: 0 0.2vh 0.6vh rgba(54,123,252,0.12);
       transition: background 0.2s, box-shadow 0.2s;
     }
     .auth-btn:hover {
       background: linear-gradient(90deg, #a3c8f7 60%, #367bfc 100%);
-      box-shadow: 0 4px 12px rgba(54,123,252,0.22);
+      box-shadow: 0 0.3vh 0.9vh rgba(54,123,252,0.22);
     }
 
     /* Form Container */
     .container { 
-      max-width: 1000px; 
-      margin: 56px auto; 
+      max-width: 90vw; 
+      width: 100%;
+      margin: 4vh auto; 
       background: rgba(255,255,255,0.98);
-      padding: 40px 60px;
-      border-radius: 18px; 
-      box-shadow: 0 8px 32px rgba(54,123,252,0.10);
+      padding: 3vh 4vw;
+      border-radius: 1.2vw; 
+      box-shadow: 0 0.5vh 2vh rgba(54,123,252,0.10);
       color: #222;
+    }
+    
+    @media (min-width: 768px) {
+      .container {
+        max-width: 80vw;
+        padding: 3vh 5vw;
+      }
+    }
+    
+    @media (min-width: 1024px) {
+      .container {
+        max-width: 70vw;
+        padding: 4vh 6vw;
+      }
+    }
+    
+    @media (min-width: 1200px) {
+      .container {
+        max-width: 1000px;
+        padding: 40px 60px;
+        margin: 56px auto;
+        border-radius: 18px;
+      }
     }
     h2 { 
       text-align: center; 
       font-weight: 700; 
-      margin-bottom: 24px;
-      font-size: 2.2em;
+      margin-bottom: 2vh;
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
     }
     label { 
       display: block; 
-      margin-top: 18px; 
+      margin-top: 1.5vh; 
       color: #222;
-      font-size: 1.1em;
+      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
       font-weight: 500;
     }
     input, textarea, select { 
       width: 100%;
-      padding: 14px;
-      margin-top: 8px;
-      margin-bottom: 16px;
+      padding: clamp(10px, 2vh, 14px);
+      margin-top: 0.5vh;
+      margin-bottom: 1.5vh;
       border: 1px solid #dcdde1; 
-      border-radius: 6px; 
-      font-size: 1.1em;
+      border-radius: 0.4vw; 
+      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
       background: #f6f6f6;
       box-sizing: border-box;
     }
@@ -121,44 +146,92 @@
     }
     textarea { resize: vertical; }
     button[type="submit"] { 
-      margin-top: 28px;
+      margin-top: 3vh;
       width: 100%; 
-      padding: 16px; 
+      padding: clamp(12px, 2.5vh, 16px); 
       background: linear-gradient(90deg, #6fa3ef 60%, #367bfc 100%);
       color: #fff; 
       border: none; 
-      border-radius: 8px; 
-      font-size: 1.2em; 
+      border-radius: 0.6vw; 
+      font-size: clamp(1rem, 3vw, 1.2rem); 
       cursor: pointer;
       font-weight: 600;
-      box-shadow: 0 2px 8px rgba(54,123,252,0.12);
+      box-shadow: 0 0.2vh 0.6vh rgba(54,123,252,0.12);
       transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
     }
     button[type="submit"]:hover { 
       background: linear-gradient(90deg, #a3c8f7 60%, #367bfc 100%);
-      box-shadow: 0 4px 16px rgba(54,123,252,0.22);
+      box-shadow: 0 0.4vh 1.2vh rgba(54,123,252,0.22);
       transform: scale(1.03);
+    }
+    small { color:#888; }
+    
+    /* Mobile responsive adjustments */
+    @media (max-width: 768px) {
+      .toolbar {
+        padding: 0 1vw;
+        height: clamp(50px, 6vh, 60px);
+      }
+      
+      .toolbar-logo {
+        height: clamp(32px, 5vh, 40px);
+        margin-right: clamp(12px, 2vw, 20px);
+      }
+      
+      .toolbar-btn {
+        font-size: clamp(0.8rem, 2vw, 0.9rem);
+        padding: clamp(6px, 1vh, 8px) clamp(12px, 2.5vw, 16px);
+        margin-right: clamp(8px, 1.5vw, 16px);
+      }
+      
+      .auth-btn {
+        font-size: clamp(0.8rem, 2vw, 0.9rem);
+        padding: clamp(6px, 1vh, 8px) clamp(12px, 2.5vw, 16px);
+      }
+      
+      .container {
+        margin: 2vh auto;
+        padding: 2vh 3vw;
+        border-radius: 2vw;
+      }
+      
+      h2 {
+        font-size: clamp(1.2rem, 3.5vw, 1.8rem);
+        margin-bottom: 1.5vh;
+      }
+      
+      input, textarea, select {
+        padding: clamp(8px, 1.5vh, 12px);
+        font-size: clamp(0.8rem, 2.2vw, 1rem);
+        border-radius: 1vw;
+      }
+      
+      button[type="submit"] {
+        font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+        padding: clamp(10px, 2vh, 14px);
+        border-radius: 1.5vw;
+        margin-top: 2.5vh;
+      }
     }
   </style>
 </head>
 <body>
-
   <!-- Toolbar -->
   <div class="toolbar">
-  <img src="../evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='organizer-dashboard.html'">
+<img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='organizer-dashboard.html'">
 
     <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
-    <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
+    <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button> <!-- Isnt it this page ? -->
     <div class="toolbar-spacer"></div>
-    <button class="toolbar-btn" onclick="location.href='settings.html'">Settings</button>
+    <button class="toolbar-btn" onclick="location.href='settings.html'">Settings</button> <!-- im guessing this is a to do -->
     <div id="authBtnContainer">
       <button id="logout-btn" class="auth-btn">Log Out</button>
     </div>
   </div>
 
-  <!-- Edit Event Form -->
+  <!-- Event Creation Form -->
   <div class="container">
-    <h2>Edit Event</h2>
+    <h2>Create New Event</h2>
     <form id="eventForm">
       <label for="eventName">Event Name</label>
       <input type="text" id="eventName" name="eventName" required>
@@ -169,16 +242,16 @@
       <label for="eventBanner">Event Banner</label>
       <select id="eventBanner" name="eventBanner" required onchange="previewBanner()">
         <option value="">Select Banner Image</option>
-        <option value="banners/event1.jpeg">Event Banner 1</option>
-        <option value="banners/event2.jpg">Event Banner 2</option>
-        <option value="banners/event 3.jpeg">Event Banner 3</option>
-        <option value="banners/event4.jpeg">Event Banner 4</option>
-        <option value="banners/event5.jpg">Event Banner 5</option>
-        <option value="banners/event6.jpg">Event Banner 6</option>
-        <option value="banners/event7.jpg">Event Banner 7</option>
-        <option value="banners/event8.jpg">Event Banner 8</option>
-        <option value="banners/event9.jpg">Event Banner 9</option>
-        <option value="banners/event10.jpg">Event Banner 10</option>
+        <option value="../../assets/images/event1.jpeg">Event Banner 1</option>
+        <option value="../../assets/images/event2.jpg">Event Banner 2</option>
+        <option value="../../assets/images/event3.jpeg">Event Banner 3</option>
+        <option value="../../assets/images/event4.jpeg">Event Banner 4</option>
+        <option value="../../assets/images/event5.jpg">Event Banner 5</option>
+        <option value="../../assets/images/event6.jpg">Event Banner 6</option>
+        <option value="../../assets/images/event7.jpg">Event Banner 7</option>
+        <option value="../../assets/images/event8.jpg">Event Banner 8</option>
+        <option value="../../assets/images/event9.jpg">Event Banner 9</option>
+        <option value="../../assets/images/event10.jpg">Event Banner 10</option>
       </select>
       <div id="bannerPreview" style="margin-top: 10px; text-align: center;">
         <img id="previewImage" src="" alt="Banner Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: none;">
@@ -204,13 +277,24 @@
         <option value="Other">Other</option>
       </select>
 
+      <label for="openTo">Open to <small>(optional, select multiple)</small></label>
+      <select id="openTo" name="openTo" multiple size="6">
+        <option value="Concordia">Concordia University</option>
+        <option value="McGill">McGill University</option>
+        <option value="UdeM">Université de Montréal</option>
+        <option value="Polytechnique">Polytechnique Montréal</option>
+        <option value="HEC">HEC Montréal</option>
+        <option value="UQAM">UQAM</option>
+      </select>
+      <small>Hold Ctrl (Windows) or Command (Mac) to select multiple universities.</small>
+
       <label for="capacity">Number of Tickets</label>
       <input type="number" id="capacity" name="capacity" min="1" required>
 
       <label for="ticketPrice">Ticket Price ($)</label>
       <input type="number" id="ticketPrice" name="ticketPrice" min="0" step="0.01" required>
 
-      <button type="submit">Save Changes</button>
+      <button type="submit">Create Event</button>
     </form>
   </div>
 
@@ -247,11 +331,9 @@
     }
   </script>
 
-  <!-- Firebase + Auth -->
-  <script type="module" src="../Shared/firebase-config.js"></script>
-  <script type="module" src="../Registration/scripts/auth.js"></script>
-
-  <!-- Combined Events Script -->
-  <script type="module" src="script/events.js"></script>
+  <!-- Firebase Scripts -->
+  <script type="module" src="../../Shared/firebase-config.js"></script>
+  <script type="module" src="../../js/auth.js"></script>
+  <script type="module" src="../../js/events.js"></script>
 </body>
 </html>

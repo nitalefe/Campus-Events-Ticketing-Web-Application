@@ -1,4 +1,4 @@
-import { auth, db } from "../../Shared/firebase-config.js";
+import { auth, db } from "../Shared/firebase-config.js";
 
 import { 
   createUserWithEmailAndPassword, 
@@ -98,7 +98,7 @@ if (signinForm) {
 
           // Redirect by role
           if (userData.role === "organizer") {
-            window.location.href = "../../Organizer/organizer-dashboard.html";
+            window.location.href = "../../website/Organizer/organizer-dashboard.html";
           } else if (userData.role === "student") {
             window.location.href = "website.html";
           } else {
@@ -187,7 +187,7 @@ onAuthStateChanged(auth, async (user) => {
     if (userDoc.exists()) {
       const role = userDoc.data().role;
       if (role === "organizer") {
-        window.location.href = "../../Organizer/organizer-dashboard.html";
+        window.location.href = "../../website/Organizer/organizer-dashboard.html";
       } else {
         window.location.href = "website.html";
       }
