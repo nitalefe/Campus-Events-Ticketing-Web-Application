@@ -237,6 +237,21 @@
             h2 { font-size: 1.4em; }
             th, td { font-size: 0.95em; }
         }
+        /* Clean page overrides (do not modify toolbar styles) */
+        .page-hero { display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:12px 0; margin-bottom:18px; }
+        .page-hero .lead { color:#334E6A; margin-top:6px; font-size:0.95rem; }
+        .hero-actions { display:flex; gap:8px; }
+        .btn { padding:8px 12px; border-radius:8px; border:none; background:#2563eb; color:#fff; cursor:pointer; font-weight:600; }
+        .btn.outline { background:transparent; color:#2563eb; border:1px solid #dbeafe; }
+        .card { background:#fff; padding:14px; border-radius:10px; box-shadow:0 6px 18px rgba(15,23,42,0.04); }
+        .content-grid { display:grid; grid-template-columns: 1fr 420px; gap:20px; align-items:start; }
+        @media (max-width:980px) { .content-grid { grid-template-columns: 1fr; } .page-hero{flex-direction:column; align-items:flex-start;} }
+        /* Table badges & compact rows */
+        .badge { display:inline-block; padding:4px 8px; border-radius:999px; font-size:0.85rem; font-weight:600; }
+        .badge.scanned { background:#ecfdf5; color:#047857; border:1px solid #bbf7d0; }
+        .badge.not-scanned { background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; }
+        .attendee-search { width:100%; padding:8px 10px; margin-bottom:10px; border:1px solid #e6eef8; border-radius:8px; }
+        @media (max-width:600px){ th,td{padding:10px 8px;} .content-grid{grid-template-columns:1fr;} }
     </style>
 </head>
 <body>
@@ -244,65 +259,189 @@
         <div class="toolbar-left">
             <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='organizer-dashboard.html'">
 
-            <button class="toolbar-btn home-btn" onclick="location.href='../../home.html'">Home</button> <!-- Home button where ? -->
-            <button class="toolbar-btn create-event-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
+            <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
+            <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
         </div>
         <div class="toolbar-spacer"></div>
         <div class="toolbar-right">
-            <!-- Dynamic toolbar-right buttons inserted here -->
+            <button class="toolbar-btn" onclick="location.href='settings.html'">Settings</button>
+            <button id="logout-btn" class="auth-btn">Log Out</button>
         </div>
     </div>
     <div class="container">
-        <h2>Event Attendees</h2>
-        <form id="attendeeForm">
-            <h3>Add Attendee</h3>
-            <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
-            <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
-            <input type="email" id="email" name="email" placeholder="Email" required>
-            <input type="text" id="eventID" name="eventID" placeholder="Event ID" required>
-            <div class="checkbox-group">
-                <input type="checkbox" id="isScanned" name="isScanned">
-                <label for="isScanned">Scan Status</label>
+        <div class="page-hero">
+            <div>
+                <h2>Event Attendees</h2>
+                <div class="lead">Manage attendees for your events. Add manually or load from the database.</div>
             </div>
-            <button type="submit">Add Attendee</button>
-        </form>
-        <h3>Attendee List</h3>
-        <button id="loadAttendeesBtn" type="button">Load Attendees</button>
-        <table id="attendeeTable">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Email</th>
-                    <th>Scan Status</th>
-                    <th>Registered At</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-        <button id="exportCsvBtn" type="button">Export to CSV</button>
-    </div>
-    <script type="module">
-        // Dynamic right toolbar buttons
-        const toolbarRight = document.querySelector('.toolbar-right');
-    const settingsBtn = document.createElement('button');
-    settingsBtn.textContent = "Settings";
-    settingsBtn.className = "toolbar-btn";
-    settingsBtn.onclick = () => location.href = "../../settings.html";
-    toolbarRight.appendChild(settingsBtn);
+            <div class="hero-actions">
+                <button class="btn" id="loadAttendeesBtn">Load Attendees</button>
+                <button class="btn outline" id="exportCsvBtn">Export CSV</button>
+            </div>
+        </div>
 
-        const isSignedIn = !!localStorage.getItem("userRole");
-        if (isSignedIn) {
-            const logoutBtn = document.createElement('button');
-            logoutBtn.textContent = "Log Out";
-            logoutBtn.className = "toolbar-btn";
-            logoutBtn.onclick = () => {
-                localStorage.removeItem("userRole");
-                location.reload();
-            };
-                toolbarRight.appendChild(logoutBtn);
-        }
+        <div class="content-grid">
+            <div>
+                <div class="card">
+                    <form id="attendeeForm">
+                        <h3>Add Attendee</h3>
+                        <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
+                        <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
+                        <input type="email" id="email" name="email" placeholder="Email" required>
+                        <input type="text" id="eventID" name="eventID" placeholder="Event ID" required>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="isScanned" name="isScanned">
+                            <label for="isScanned">Scan Status</label>
+                        </div>
+                        <button type="submit">Add Attendee</button>
+                    </form>
+                </div>
+
+                <h3>Attendee List</h3>
+                <div class="card">
+                    <input id="attendeeSearch" class="attendee-search" placeholder="Search by name or email…" />
+                    <table id="attendeeTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Email</th>
+                                <th>Scan Status</th>
+                                <th>Registered At</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <aside class="card" id="statsPanel">
+                <h3>Event Stats</h3>
+                <p style="margin-bottom:12px; color:#475569;">Live attendee statistics for this event.</p>
+                <div style="margin-top:12px; display:flex; flex-direction:column; gap:10px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="color:#334E6A; font-weight:700;">Total attendees</div>
+                        <div id="statTotal">—</div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="color:#334E6A; font-weight:700;">Scanned</div>
+                        <div id="statScanned">—</div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="color:#334E6A; font-weight:700;">Not scanned</div>
+                        <div id="statNotScanned">—</div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="color:#334E6A; font-weight:700;">Scanned %</div>
+                        <div id="statPercent">—</div>
+                    </div>
+                    <div style="border-top:1px dashed #e6eef8; padding-top:8px; font-size:0.92rem; color:#6b7280;">
+                        <div style="font-weight:600; margin-bottom:6px;">Last updated</div>
+                        <div id="statUpdated">—</div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+    <script>
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) logoutBtn.addEventListener('click', () => { localStorage.removeItem('userRole'); location.reload(); });
+    </script>
+    <script>
+        // Table formatting & search helper
+        (function(){
+            const tbody = document.querySelector('#attendeeTable tbody');
+            const searchInput = document.getElementById('attendeeSearch');
+
+            function formatDateStr(raw){
+                if(!raw) return '';
+                const d = new Date(raw);
+                if (isNaN(d)) return raw;
+                return d.toLocaleString(undefined, { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+            }
+
+            function formatRow(row){
+                const cells = row.cells;
+                if(!cells || cells.length < 6) return;
+                // Combine first+last into first name cell, hide last name cell visually
+                const first = cells[1].textContent.trim();
+                const last = cells[2].textContent.trim();
+                cells[1].textContent = first + (last? (' ' + last) : '');
+                cells[2].style.display = 'none';
+
+                // Email small
+                cells[3].style.fontSize = '0.95rem';
+                cells[3].style.color = '#0f1724';
+
+                // Scan status -> badge
+                const statusText = cells[4].textContent.trim().toLowerCase();
+                const span = document.createElement('span');
+                span.className = 'badge ' + (statusText.includes('true') || statusText.includes('yes') || statusText.includes('scanned') ? 'scanned' : 'not-scanned');
+                span.textContent = cells[4].textContent.trim();
+                cells[4].textContent = '';
+                cells[4].appendChild(span);
+
+                // Format date
+                cells[5].textContent = formatDateStr(cells[5].textContent.trim());
+            }
+
+            // Observe tbody for new rows and update stats
+            function updateStats(){
+                const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
+                const visibleRows = rows.filter(r => r.style.display !== 'none');
+                const total = visibleRows.length;
+                let scanned = 0;
+                visibleRows.forEach(r=>{
+                    const statusCell = r.cells[4];
+                    if(!statusCell) return;
+                    const txt = statusCell.textContent.trim().toLowerCase();
+                    if(txt.includes('true') || txt.includes('yes') || txt.includes('scanned')) scanned++;
+                });
+                const notScanned = Math.max(0, total - scanned);
+                const pct = total === 0 ? 0 : Math.round((scanned/total)*100);
+                const now = new Date().toLocaleString();
+                const elTotal = document.getElementById('statTotal');
+                const elScanned = document.getElementById('statScanned');
+                const elNot = document.getElementById('statNotScanned');
+                const elPct = document.getElementById('statPercent');
+                const elUpdated = document.getElementById('statUpdated');
+                if(elTotal) elTotal.textContent = total;
+                if(elScanned) elScanned.textContent = scanned;
+                if(elNot) elNot.textContent = notScanned;
+                if(elPct) elPct.textContent = pct + '%';
+                if(elUpdated) elUpdated.textContent = now;
+            }
+
+            const mo = new MutationObserver((mutations)=>{
+                let changed = false;
+                mutations.forEach(m=>{
+                    m.addedNodes.forEach(node=>{ if(node.nodeName === 'TR'){ formatRow(node); changed = true; } });
+                });
+                if(changed) updateStats();
+            });
+            if(tbody) mo.observe(tbody, { childList:true, subtree:false });
+
+            // Format any existing rows now
+            document.addEventListener('DOMContentLoaded', ()=>{
+                const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
+                rows.forEach(r=>formatRow(r));
+            });
+
+            // Search/filter
+            function filterRows(q){
+                const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
+                const term = (q||'').toLowerCase();
+                rows.forEach(r=>{
+                    const text = r.textContent.toLowerCase();
+                    r.style.display = text.includes(term) ? '' : 'none';
+                });
+                updateStats();
+            }
+            if(searchInput){
+                searchInput.addEventListener('input', (e)=> filterRows(e.target.value));
+            }
+        })();
     </script>
     <script type="module" src="../../js/attendeeList.js"></script>
 </body>
