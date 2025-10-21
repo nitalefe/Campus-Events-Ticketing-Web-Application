@@ -6,11 +6,6 @@ import { /*getAuth, */onAuthStateChanged } from "https://www.gstatic.com/firebas
 import { auth, db, app } from "../../Shared/firebase-config.js";
 // import 'dotenv/config.js';
 
-// Initialize Firebase
-// const app = initializeApp(firebaseConfig);
-// const db = getFirestore(app);
-// const auth = getAuth();
-
 let currentUserRole = "organizer";
 // let currentUserRole = null;
 let testEventID = "6w3Q4k4LRLazZzJnHjil";

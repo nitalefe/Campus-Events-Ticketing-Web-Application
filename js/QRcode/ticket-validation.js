@@ -1,5 +1,10 @@
+//same thing here were not using this file but keeping it here for reference in case we need to come back to it for
+
+
+// --- Ticket Validation Module ---
+
 // Import Firebase setup (same as your project)
-import { db } from "../Shared/firebase-config.js";
+import { db } from "../../Shared/firebase-config.js";
 import {
   doc,
   getDoc,

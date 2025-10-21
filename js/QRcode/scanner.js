@@ -1,3 +1,7 @@
+//dont think were using this file but keeping it here for reference in case we need to come back to it for
+
+// scaning and ticket validation logic
+
 // --- Decrypt exactly as your teammate described: minus the increment ---
 export function decryptString(encryptedText, increment = 7) {
   let result = "";

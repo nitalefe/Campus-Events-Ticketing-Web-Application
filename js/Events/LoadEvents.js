@@ -1,3 +1,6 @@
+//load events from firestore and display them in their respective sections
+
+
 import { auth, db } from "../../Shared/firebase-config.js";
 import { collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
