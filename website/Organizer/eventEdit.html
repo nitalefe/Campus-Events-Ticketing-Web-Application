@@ -140,10 +140,10 @@
 
     /* Preview specifics */
     .preview-banner { overflow: hidden; border-radius: clamp(6px, 1vw, 10px); }
-    .preview-content { text-align: left; padding-top: clamp(10px, 2vh, 12px); }
-    .preview-content #previewTitle { font-size: clamp(1rem, 2.6vw, 1.2rem); margin: 0 0 clamp(6px, 1vh, 10px); color: #002976; font-weight: 700; }
-    .preview-meta { color: #367bfc; font-size: clamp(0.85rem, 2.1vw, 0.95rem); margin-bottom: clamp(8px, 1.5vh, 12px); }
-    .preview-desc { color: #444; font-size: clamp(0.9rem, 2vw, 1rem); margin-bottom: clamp(10px, 1.8vh, 14px); }
+  .preview-content { text-align: left; padding-top: clamp(10px, 2vh, 12px); /* allow long words to wrap inside the preview */ overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; hyphens: auto; }
+  .preview-content #previewTitle { font-size: clamp(1rem, 2.6vw, 1.2rem); margin: 0 0 clamp(6px, 1vh, 10px); color: #002976; font-weight: 700; white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
+  .preview-meta { color: #367bfc; font-size: clamp(0.85rem, 2.1vw, 0.95rem); margin-bottom: clamp(8px, 1.5vh, 12px); white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
+  .preview-desc { color: #444; font-size: clamp(0.9rem, 2vw, 1rem); margin-bottom: clamp(10px, 1.8vh, 14px); white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
     .preview-actions { display:flex; gap:8px; }
 
     .field-group { margin-bottom: clamp(8px, 2vh, 14px); }
