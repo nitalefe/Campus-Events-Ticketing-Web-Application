@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Event Ticket Claim</title>
+  <style>
+    :root{--bg:#f6f7fb;--card:#fff;--accent:#3b82f6;--success:#16a34a;--danger:#dc2626;--muted:#6b7280}
+    body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--bg); margin:0; padding:48px; color:#0f172a}
+    .container{max-width:720px;margin:0 auto}
+    .card{background:var(--card);border-radius:12px;padding:24px;box-shadow:0 6px 18px rgba(15,23,42,0.08)}
+    h1{margin:0 0 8px;font-size:20px}
+    p.lead{margin:0 0 20px;color:var(--muted)}
+
+    .availability{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+    .dot{width:12px;height:12px;border-radius:50%}
+    .state-available{background:#10b981}
+    .state-low{background:#f59e0b}
+    .state-sold{background:#ef4444}
+
+    .qty-row{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+    .qty-controls{display:flex;align-items:center;border-radius:8px;overflow:hidden;border:1px solid #e6e9ef}
+    .qty-controls button{background:transparent;border:0;padding:10px 12px;font-size:16px;cursor:pointer}
+    .qty-controls input{width:64px;text-align:center;border:0;padding:10px 8px;font-size:16px}
+
+    .meta{font-size:14px;color:var(--muted);margin-bottom:18px}
+    button.confirm{background:var(--accent);color:white;border:0;padding:10px 14px;border-radius:8px;font-weight:600;cursor:pointer}
+    button.confirm[disabled]{opacity:0.5;cursor:not-allowed}
+
+    .info-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .pill{padding:6px 10px;border-radius:999px;background:#f1f5f9;color:#0f172a;font-weight:600}
+
+    /* toasts */
+    .toast-wrap{position:fixed;right:20px;top:20px;z-index:9999;display:flex;flex-direction:column;gap:10px}
+    .toast{min-width:260px;padding:12px 14px;border-radius:10px;color:white;box-shadow:0 6px 18px rgba(2,6,23,0.12);display:flex;gap:10px;align-items:center}
+    .toast.success{background:var(--success)}
+    .toast.error{background:var(--danger)}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+    footer{margin-top:18px;color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card" id="ticket-card">
+      <h1 id="event-title">Campus Jazz Night</h1>
+      <p class="lead" id="event-sub">An evening of live student bands. Free entry — claim your seat.</p>
+
+      <div class="availability" aria-live="polite">
+        <div id="state-dot" class="dot state-available" aria-hidden="true"></div>
+        <div>
+          <div id="state-text" style="font-weight:700">Available</div>
+          <div id="remaining-text" class="meta">0 tickets remaining</div>
+        </div>
+      </div>
+
+      <div class="meta">Per-student limit: <strong id="per-user-limit">2</strong></div>
+
+      <div class="qty-row">
+        <label for="qty" class="sr-only">Quantity</label>
+        <div class="qty-controls" role="group" aria-label="Ticket quantity selector">
+          <button id="decrease" aria-label="Decrease quantity">−</button>
+          <input id="qty" type="number" min="1" value="1" aria-live="polite" aria-atomic="true" />
+          <button id="increase" aria-label="Increase quantity">+</button>
+        </div>
+
+        <div class="info-row" style="margin-left:auto">
+          <div class="pill" id="total-available-pill">0 available</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:center">
+        <button id="confirm" class="confirm">Confirm reservation</button>
+        <div id="spinner" aria-hidden="true" style="display:none">⏳</div>
+      </div>
+
+      <footer>
+        <div id="note">This flow is for free claims only. Payment is not required.</div>
+      </footer>
+    </div>
+  </div>
+
+  <div class="toast-wrap" id="toast-wrap" aria-live="polite" aria-atomic="false"></div>
+  <script type="module" src="../../js/claimEvent.js"></script>
+</body>
+</html>
