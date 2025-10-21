@@ -303,7 +303,7 @@
     <div class="header-section">
       <h1 class="page-title">My Events</h1>
       <p class="page-subtitle">Manage and monitor your created events</p>
-      <button class="analytics-btn" onclick="location.href='../Shared_Pages/EventDashboard.html'">
+      <button class="analytics-btn">
         📊 View Event Analytics Dashboard
       </button>
     </div>
@@ -434,6 +434,11 @@
     // Auth state listener
     onAuthStateChanged(auth, (user) => {
       loadMyEvents(user);
+      const analyticsBtn = document.querySelector('.analytics-btn');
+  if (analyticsBtn && user) {
+    analyticsBtn.onclick = () => {
+      location.href = `EventDashboard.html?uid=${user.uid}`;
+    };}
     });
   </script>
 </body>

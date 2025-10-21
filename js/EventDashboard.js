@@ -10,13 +10,14 @@ import {
   orderBy,
   doc,
   getDoc,
+  where,
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 import { auth, db } from "../Shared/firebase-config.js";
 
 const params = new URLSearchParams(window.location.search);
-const eventId = params.get("id"); // ✅ Single event mode if exists
-let windowTitle = document.getElementById("pageTitle");
+const eventId = params.get("id"); // ✅ Single-event mode if ?id=
+const windowTitle = document.getElementById("pageTitle");
 
 // ------------------------------
 // Utility: Format Date
@@ -33,64 +34,64 @@ function formatDate(date) {
 }
 
 // ------------------------------
-// Display events
+// Display events (multi or single)
 // ------------------------------
 function displayEvents(events) {
+  console.log("[displayEvents] Received events:", events);
+
   const eventsList = document.getElementById("eventsList");
   eventsList.innerHTML = "";
 
-  if (events.length === 0) {
-    eventsList.innerHTML = '<div class="status info">No events found.</div>';
+  if (!events || events.length === 0) {
+    eventsList.innerHTML = `
+      <div class="status info">
+        No events found.<br>
+        <a href="../Organizer/eventCreation.html" style="color:#367bfc;font-weight:600;text-decoration:none;">
+          Create your first event →
+        </a>
+      </div>`;
     return;
   }
 
+  // Render each event as an analytics card
   events.forEach((event) => {
+    const capacity = event.capacity || 0;
+    const sold = event.ticketsSold || 0;
+    const available = Math.max(0, capacity - sold);
+    const fillRate = capacity > 0 ? ((sold / capacity) * 100).toFixed(1) : 0;
+
     const div = document.createElement("div");
     div.className = "event-item";
+    div.style.marginBottom = "1.5rem";
+
     div.innerHTML = `
-      <h4>${event.eventName || "Unnamed Event"}</h4>
+      <h4 style="color:#002976;">${event.eventName || "Unnamed Event"}</h4>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
         <div>
-          <p><strong>Category:</strong> ${event.eventCategory || "No category"}</p>
+          <p><strong>Category:</strong> ${event.eventCategory || "N/A"}</p>
           <p><strong>Hosted By:</strong> ${event.school || "No school specified"}</p>
           <p><strong>Date:</strong> ${formatDate(event.eventDateTime)}</p>
         </div>
         <div>
-          <p><strong>Location:</strong> ${event.eventLocation || "No location"}</p>
+          <p><strong>Location:</strong> ${event.eventLocation || "N/A"}</p>
           <p><strong>Organizer:</strong> ${event.createdBy || "Unknown"}</p>
           <p><strong>Price:</strong> $${(event.ticketPrice || 0).toFixed(2)}</p>
         </div>
       </div>
       <div class="event-stats">
-        <div class="stat-box">
-          <div class="stat-value">${event.capacity || 0}</div>
-          <div class="stat-label">Total Capacity</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-value">${event.ticketsSold || 0}</div>
-          <div class="stat-label">Tickets Sold</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-value">${Math.max(
-            0,
-            (event.capacity || 0) - (event.ticketsSold || 0)
-          )}</div>
-          <div class="stat-label">Available</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-value">${(
-            ((event.ticketsSold || 0) / (event.capacity || 1)) *
-            100
-          ).toFixed(1)}%</div>
-          <div class="stat-label">Fill Rate</div>
-        </div>
-      </div>`;
+        <div class="stat-box"><div class="stat-value">${capacity}</div><div class="stat-label">Total Capacity</div></div>
+        <div class="stat-box"><div class="stat-value">${sold}</div><div class="stat-label">Tickets Sold</div></div>
+        <div class="stat-box"><div class="stat-value">${available}</div><div class="stat-label">Available</div></div>
+        <div class="stat-box"><div class="stat-value">${fillRate}%</div><div class="stat-label">Fill Rate</div></div>
+      </div>
+    `;
+
     eventsList.appendChild(div);
   });
 }
 
 // ------------------------------
-// Apply filters / Load events
+// Load analytics (single or all)
 // ------------------------------
 async function applyFilters(user) {
   const status = document.getElementById("eventsStatus");
@@ -113,30 +114,56 @@ async function applyFilters(user) {
 
       const data = snap.data();
 
-      // 🔒 Only show if this user created the event
+      // 🔒 Only allow the event’s creator to view analytics
       if (!user || data.createdBy !== user.uid) {
-        status.textContent = "Access denied: You can only view your own event analytics.";
+        status.textContent =
+          "Access denied: You can only view analytics for your own event.";
         status.className = "status error";
         return;
       }
 
       windowTitle.textContent = `Analytics: ${data.eventName}`;
-      events = [{ id: eventId, ...data, eventDateTime: data.eventDateTime?.toDate() }];
+      events = [
+        {
+          id: eventId,
+          ...data,
+          eventDateTime: data.eventDateTime?.toDate(),
+        },
+      ];
+window.currentFilteredEvents = events;
       status.textContent = `Showing analytics for "${data.eventName}"`;
-    } else {
-      // 🌍 DASHBOARD MODE (all events)
-      const q = query(collection(db, "events"), orderBy("eventDateTime", "desc"));
-      const snapshot = await getDocs(q);
-      events = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        eventDateTime: doc.data().eventDateTime?.toDate(),
-      }));
-      status.textContent = `Found ${events.length} total events`;
+      status.className = "status success";
+      displayEvents(events);
+      return;
     }
 
+    // 🌍 MULTI-EVENT ANALYTICS MODE (all events by this organizer)
+    const uidParam = params.get("uid") || user.uid;
+
+    const q = query(
+      collection(db, "events"),
+      where("createdBy", "==", uidParam),
+      orderBy("eventDateTime", "desc")
+    );
+    const snapshot = await getDocs(q);
+
+    events = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+      eventDateTime: doc.data().eventDateTime?.toDate(),
+    }));
+
+    if (events.length === 0) {
+      status.textContent = "No events found for your account.";
+      status.className = "status info";
+    } else {
+      status.textContent = `Showing analytics for ${events.length} of your events`;
+      status.className = "status success";
+    }
+
+    // Store globally for export & render
+    window.currentFilteredEvents = events;
     displayEvents(events);
-    status.className = "status success";
   } catch (error) {
     console.error("Error loading analytics:", error);
     status.textContent = "Error: " + error.message;
@@ -149,8 +176,9 @@ async function applyFilters(user) {
 // ------------------------------
 function exportToCSV() {
   const events = window.currentFilteredEvents || [];
+  const status = document.getElementById("eventsStatus");
+
   if (events.length === 0) {
-    const status = document.getElementById("eventsStatus");
     status.textContent = "No data to export";
     status.className = "status error";
     return;
@@ -168,6 +196,7 @@ function exportToCSV() {
   ];
 
   let csv = fields.join(",") + "\n";
+
   events.forEach((event) => {
     const row = fields.map((field) => {
       let value = event[field];
@@ -186,11 +215,13 @@ function exportToCSV() {
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
-  link.download = `event_analytics_${new Date().toISOString().split("T")[0]}.csv`;
+  link.download = `event_analytics_${new Date()
+    .toISOString()
+    .split("T")[0]}.csv`;
   link.click();
 
-  document.getElementById("eventsStatus").textContent = "CSV file exported successfully";
-  document.getElementById("eventsStatus").className = "status success";
+  status.textContent = "CSV file exported successfully";
+  status.className = "status success";
 }
 
 // ------------------------------
@@ -203,6 +234,7 @@ onAuthStateChanged(auth, (user) => {
     return;
   }
   applyFilters(user);
+  
 });
 
 // Expose for HTML buttons

@@ -200,8 +200,8 @@
     } else {
       // ✅ Organizer can edit, scan, view analytics
       editBtn.onclick = () => location.href = `eventEdit.html?id=${eventId}`;
-      scanBtn.onclick = () => location.href = `../QRCode/qrScanner.html?id=${eventId}`;
-      analyticsBtn.onclick = () => location.href = `../EventAnalytics/EventDashboard.html?id=${eventId}`;
+      scanBtn.onclick = () => location.href = `qrScanner.html?id=${eventId}`;
+      analyticsBtn.onclick = () => location.href = `EventDashboard.html?id=${eventId}`;
     }
   }
 
