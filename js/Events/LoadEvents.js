@@ -27,7 +27,8 @@ function createEventCard(eventData, eventId) {
     <div class="event-location">${eventData.eventLocation}</div>
   `;
   card.addEventListener("click", () => {
-    window.location.href = `eventPage.html?id=${eventId}`;
+    const target = document.body?.dataset?.eventPage || 'eventPage.html';
+    window.location.href = `${target}?id=${eventId}`;
   });
   return card;
 }

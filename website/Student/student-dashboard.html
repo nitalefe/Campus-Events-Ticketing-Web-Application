@@ -8,14 +8,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../shared/dashboard.css">
 </head>
-<body>
+<body data-event-page="eventPageStu.html">
 
   <!-- Toolbar (reuse shared styles) -->
   <div class="toolbar">
     <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='../Student/student-dashboard.html'">
 
     <button class="toolbar-btn" onclick="location.href='../Student/student-dashboard.html'">Home</button>
-    <button class="toolbar-btn" onclick="location.href='../other/qrGenerator.html'">My Tickets</button>
+    <button class="toolbar-btn" onclick="location.href='../Student/myTickets.html'">My Tickets</button>
     <div class="toolbar-spacer"></div>
     <!--to be added with 4th feature-->
     <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
@@ -120,7 +120,8 @@
         clone.style.display = 'block';
         const id = clone.getAttribute('data-event-id') || card.getAttribute('data-event-id');
         if(id){
-          clone.addEventListener('click', () => { window.location.href = `eventPage.html?id=${id}`; });
+          const target = document.body?.dataset?.eventPage || 'eventPageStu.html';
+          clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; });
           clone.style.cursor = 'pointer';
         }
         sr.appendChild(clone);
