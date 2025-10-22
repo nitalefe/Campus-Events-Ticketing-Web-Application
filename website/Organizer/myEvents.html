@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Events</title>
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #367bfc 0%, #002976 100%);
+      font-family: 'Montserrat', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      width: 100%;
+      background: rgba(0,51,102,0.95);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 2vw;
+      height: clamp(60px, 8vh, 72px);
+      box-sizing: border-box;
+      box-shadow: 0 0.3vh 1vh rgba(0,0,0,0.12);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .toolbar-logo {
+      height: clamp(40px, 6vh, 48px);
+      margin-right: clamp(20px, 3vw, 36px);
+      cursor: pointer;
+      filter: drop-shadow(0 0.2vh 0.3vh rgba(0,0,0,0.18));
+      transition: transform 0.2s;
+    }
+    .toolbar-logo:hover {
+      transform: scale(1.08) rotate(-2deg);
+    }
+    .toolbar-btn {
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: #fff;
+      font-size: clamp(0.9rem, 2.5vw, 1.08rem);
+      margin-right: clamp(16px, 2.5vw, 24px);
+      cursor: pointer;
+      padding: clamp(8px, 1.5vh, 10px) clamp(16px, 3vw, 22px);
+      border-radius: 0.4vw;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+      transition: background 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0.2vh 0.6vh rgba(0,0,0,0.04);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .toolbar-btn:hover {
+      background: #367bfc;
+      box-shadow: 0 0.3vh 0.9vh rgba(54,123,252,0.18);
+    }
+    .toolbar-spacer { flex: 1; }
+    .auth-btn {
+      background: linear-gradient(90deg, #6fa3ef 60%, #367bfc 100%);
+      color: #fff;
+      border: none;
+      border-radius: 0.4vw;
+      font-size: clamp(0.9rem, 2.2vw, 1rem);
+      cursor: pointer;
+      padding: clamp(8px, 1.5vh, 10px) clamp(16px, 3vw, 22px);
+      font-weight: 600;
+      box-shadow: 0 0.2vh 0.6vh rgba(54,123,252,0.12);
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .auth-btn:hover {
+      background: linear-gradient(90deg, #a3c8f7 60%, #367bfc 100%);
+      box-shadow: 0 0.3vh 0.9vh rgba(54,123,252,0.22);
+    }
+
+    /* Main Content */
+    .container {
+      max-width: clamp(320px, 90vw, 1200px);
+      margin: clamp(30px, 6vh, 40px) auto;
+      background: rgba(255,255,255,0.98);
+      padding: clamp(24px, 5vh, 40px) clamp(20px, 4vw, 36px) clamp(20px, 4vh, 32px) clamp(20px, 4vw, 36px);
+      border-radius: clamp(12px, 2vw, 22px);
+      box-shadow: 0 clamp(4px, 1vh, 8px) clamp(16px, 4vw, 32px) rgba(54,123,252,0.10), 0 clamp(1px, 0.2vh, 2px) clamp(4px, 1vw, 8px) rgba(0,0,0,0.08);
+      color: #222;
+      position: relative;
+      animation: fadeIn 0.8s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* Header Section */
+    .header-section {
+      text-align: center;
+      margin-bottom: clamp(20px, 4vh, 32px);
+      padding-bottom: clamp(16px, 3vh, 24px);
+      border-bottom: clamp(1px, 0.2vw, 2px) solid rgba(54,123,252,0.1);
+    }
+    .page-title {
+      font-size: clamp(1.6rem, 5vw, 2.2rem);
+      font-weight: 700;
+      color: #002976;
+      margin-bottom: clamp(8px, 1.5vh, 12px);
+      letter-spacing: clamp(0.5px, 0.1vw, 1px);
+    }
+    .page-subtitle {
+      font-size: clamp(1rem, 2.5vw, 1.1rem);
+      color: #367bfc;
+      margin-bottom: clamp(16px, 3vh, 24px);
+    }
+
+    /* Analytics Button */
+    .analytics-btn {
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      color: #fff;
+      border: none;
+      border-radius: clamp(8px, 1.5vw, 12px);
+      padding: clamp(10px, 2vh, 14px) clamp(20px, 4vw, 28px);
+      font-size: clamp(1rem, 2.5vw, 1.1rem);
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Montserrat', Arial, sans-serif;
+      box-shadow: 0 clamp(3px, 1vh, 6px) clamp(12px, 3vw, 20px) rgba(16,185,129,0.3);
+      transition: all 0.3s ease;
+      margin-bottom: clamp(6px, 1vh, 8px);
+    }
+    .analytics-btn:hover {
+      background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
+      transform: translateY(clamp(-1px, -0.2vh, -2px));
+      box-shadow: 0 clamp(4px, 1.2vh, 8px) clamp(15px, 4vw, 25px) rgba(16,185,129,0.4);
+    }
+
+    /* Events Grid */
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(clamp(280px, 30vw, 350px), 1fr));
+      gap: clamp(16px, 3vw, 24px);
+      margin-top: clamp(20px, 4vh, 32px);
+    }
+
+    /* Event Card */
+    .event-card {
+      background: #fff;
+      border-radius: clamp(12px, 2vw, 16px);
+      overflow: hidden;
+      box-shadow: 0 clamp(2px, 0.5vh, 4px) clamp(8px, 2vw, 16px) rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 1px solid rgba(54,123,252,0.1);
+    }
+    .event-card:hover {
+      transform: translateY(clamp(-2px, -0.5vh, -4px));
+      box-shadow: 0 clamp(4px, 1vh, 8px) clamp(16px, 4vw, 32px) rgba(54,123,252,0.15);
+    }
+
+    .event-banner {
+      width: 100%;
+      height: clamp(150px, 25vh, 200px);
+      object-fit: cover;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    }
+
+    .event-content {
+      padding: clamp(16px, 3vw, 20px);
+    }
+
+    .event-title {
+      font-size: clamp(1.1rem, 3vw, 1.3rem);
+      font-weight: 600;
+      color: #002976;
+      margin-bottom: clamp(6px, 1vh, 8px);
+      line-height: 1.3;
+    }
+
+    .event-date {
+      color: #367bfc;
+      font-size: clamp(0.85rem, 2.2vw, 0.95rem);
+      font-weight: 500;
+      margin-bottom: clamp(4px, 0.8vh, 6px);
+    }
+
+    .event-location {
+      color: #666;
+      font-size: clamp(0.8rem, 2vw, 0.9rem);
+      margin-bottom: clamp(8px, 1.5vh, 12px);
+      display: flex;
+      align-items: center;
+    }
+
+    .event-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-top: clamp(12px, 2vh, 16px);
+      padding-top: clamp(12px, 2vh, 16px);
+      border-top: 1px solid rgba(54,123,252,0.1);
+    }
+
+    .stat-item {
+      text-align: center;
+      flex: 1;
+    }
+
+    .stat-value {
+      font-size: clamp(1rem, 2.5vw, 1.1rem);
+      font-weight: 600;
+      color: #367bfc;
+    }
+
+    .stat-label {
+      font-size: clamp(0.7rem, 1.8vw, 0.8rem);
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: clamp(0.3px, 0.1vw, 0.5px);
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: clamp(40px, 8vh, 60px) clamp(16px, 3vw, 20px);
+      color: #666;
+    }
+
+    .empty-state h3 {
+      font-size: clamp(1.2rem, 3vw, 1.4rem);
+      color: #367bfc;
+      margin-bottom: clamp(8px, 1.5vh, 12px);
+    }
+
+    .empty-state p {
+      font-size: clamp(0.9rem, 2.2vw, 1rem);
+      margin-bottom: clamp(16px, 3vh, 24px);
+    }
+
+    .create-event-btn {
+      background: linear-gradient(135deg, #367bfc 0%, #002976 100%);
+      color: #fff;
+      border: none;
+      border-radius: clamp(8px, 1.5vw, 12px);
+      padding: clamp(10px, 2vh, 12px) clamp(20px, 4vw, 24px);
+      font-size: clamp(0.9rem, 2.2vw, 1rem);
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Montserrat', Arial, sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    .create-event-btn:hover {
+      transform: translateY(clamp(-1px, -0.2vh, -2px));
+      box-shadow: 0 clamp(3px, 1vh, 6px) clamp(12px, 3vw, 20px) rgba(54,123,252,0.3);
+    }
+
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: clamp(30px, 6vh, 40px);
+      color: #367bfc;
+      font-size: clamp(1rem, 2.5vw, 1.1rem);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(clamp(-8px, -2vh, -16px)); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .container {
+        margin: clamp(20px, 4vh, 30px) clamp(16px, 3vw, 20px);
+        padding: clamp(20px, 4vh, 24px) clamp(16px, 3vw, 20px);
+      }
+      .events-grid {
+        grid-template-columns: 1fr;
+        gap: clamp(12px, 2vh, 16px);
+      }
+      .page-title {
+        font-size: clamp(1.4rem, 4vw, 1.8rem);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='organizer-dashboard.html'">
+    <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
+    <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
+    <div class="toolbar-spacer"></div>
+    <button class="toolbar-btn" onclick="location.href='settings.html'">Settings</button>
+    <div id="authBtnContainer">
+      <button id="logout-btn" class="auth-btn">Log Out</button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <div class="header-section">
+      <h1 class="page-title">My Events</h1>
+      <p class="page-subtitle">Manage and monitor your created events</p>
+      <button class="analytics-btn">
+        📊 View Event Analytics Dashboard
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading" class="loading">
+      Loading your events...
+    </div>
+
+    <!-- Events Grid -->
+    <div id="eventsGrid" class="events-grid" style="display: none;">
+      <!-- Events will be loaded here dynamically -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="empty-state" style="display: none;">
+      <h3>No Events Created Yet</h3>
+      <p>You haven't created any events yet. Start by creating your first event!</p>
+      <button class="create-event-btn" onclick="location.href='eventCreation.html'">
+        Create Your First Event
+      </button>
+    </div>
+  </div>
+
+  <!-- Firebase Scripts -->
+  <script type="module" src="../../Shared/firebase-config.js"></script>
+<<<<<<< HEAD
+  <script type="module" src="../../js/Registration/auth.js"></script>
+=======
+  <script type="module" src="../../js/auth.js"></script>
+>>>>>>> Organizer
+
+  <!-- My Events Script -->
+  <script type="module">
+    import { auth, db } from "../../Shared/firebase-config.js";
+    import { collection, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+    const loadingEl = document.getElementById('loading');
+    const eventsGridEl = document.getElementById('eventsGrid');
+    const emptyStateEl = document.getElementById('emptyState');
+
+    // Create event card
+    function createEventCard(eventData, eventId) {
+      const card = document.createElement('div');
+      card.className = 'event-card';
+      
+      const bannerSrc = eventData.banner || 'https://via.placeholder.com/350x200';
+      const eventDate = eventData.eventDateTime?.toDate?.() || new Date();
+      const ticketsSold = eventData.ticketsSold || 0;
+      const capacity = eventData.capacity || 0;
+      const soldPercentage = capacity > 0 ? Math.round((ticketsSold / capacity) * 100) : 0;
+
+      card.innerHTML = `
+        <img src="${bannerSrc}" alt="Event Banner" class="event-banner" onerror="this.src='https://via.placeholder.com/350x200'">
+        <div class="event-content">
+          <div class="event-title">${eventData.eventName || 'Untitled Event'}</div>
+          <div class="event-date">${eventDate.toDateString()} at ${eventDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+          <div class="event-location">📍 ${eventData.eventLocation || 'Location TBD'}</div>
+          <div class="event-stats">
+            <div class="stat-item">
+              <div class="stat-value">${ticketsSold}</div>
+              <div class="stat-label">Sold</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">${capacity}</div>
+              <div class="stat-label">Capacity</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">${soldPercentage}%</div>
+              <div class="stat-label">Filled</div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      card.addEventListener('click', () => {
+        window.location.href = `eventPage.html?id=${eventId}`;
+      });
+
+      return card;
+    }
+
+    // Load organizer's events
+    async function loadMyEvents(user) {
+      if (!user) {
+        loadingEl.style.display = 'none';
+        emptyStateEl.style.display = 'block';
+        return;
+      }
+
+      try {
+        const eventsRef = collection(db, 'events');
+        const q = query(
+          eventsRef, 
+          where('createdBy', '==', user.uid),
+          orderBy('eventDateTime', 'desc')
+        );
+        const snapshot = await getDocs(q);
+
+        loadingEl.style.display = 'none';
+
+        if (snapshot.empty) {
+          emptyStateEl.style.display = 'block';
+          return;
+        }
+
+        eventsGridEl.style.display = 'grid';
+        eventsGridEl.innerHTML = '';
+
+        snapshot.forEach((doc) => {
+          const eventData = doc.data();
+          const eventCard = createEventCard(eventData, doc.id);
+          eventsGridEl.appendChild(eventCard);
+        });
+
+      } catch (error) {
+        console.error('Error loading events:', error);
+        loadingEl.innerHTML = 'Error loading events. Please try again.';
+        loadingEl.style.color = '#e74c3c';
+      }
+    }
+
+    // Logout function
+    window.logout = () => {
+      auth.signOut().then(() => {
+        localStorage.removeItem('userRole');
+        window.location.href = '../Registration/SignIn.html';
+      });
+    };
+
+    // Auth state listener
+    onAuthStateChanged(auth, (user) => {
+      loadMyEvents(user);
+      const analyticsBtn = document.querySelector('.analytics-btn');
+  if (analyticsBtn && user) {
+    analyticsBtn.onclick = () => {
+      location.href = `EventDashboard.html?uid=${user.uid}`;
+    };}
+    });
+  </script>
+</body>
+</html>
