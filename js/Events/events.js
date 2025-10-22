@@ -3,6 +3,7 @@
 // Handles both event creation and editing
 // ------------------------------
 
+
 import { auth, db } from "../../Shared/firebase-config.js";
 import {
   collection,
@@ -54,6 +55,11 @@ async function loadEventForEdit() {
     if (dt) {
       document.getElementById("eventDate").value = dt.toISOString().split("T")[0];
       document.getElementById("eventTime").value = dt.toTimeString().slice(0, 5);
+    }
+
+    // ✅ FIX: Delay preview update until DOM is ready
+    if (typeof updatePreview === "function") {
+      setTimeout(updatePreview, 50);
     }
 
     console.log("[eventD] ✅ Event data loaded for editing");
@@ -160,3 +166,4 @@ document.getElementById("addUniversity")?.addEventListener("click", () => {
 if (eventId) loadEventForEdit();
 
 console.log("[eventD] ✅ Script ready");
+

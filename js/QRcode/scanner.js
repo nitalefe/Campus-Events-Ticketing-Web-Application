@@ -1,3 +1,5 @@
+//dont think were using this file but keeping it here for reference in case we need to come back to it for
+
 // scanner.js
 import { validateTicket } from "./ticket-validation.js";
 
