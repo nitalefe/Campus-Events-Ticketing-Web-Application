@@ -1,4 +1,4 @@
-//load events from firestore and display them in their respective sections
+//load events on organizer-dashboard from firestore and display them in their respective sections
 
 
 import { auth, db } from "../../Shared/firebase-config.js";

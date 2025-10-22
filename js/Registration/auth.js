@@ -100,7 +100,7 @@ if (signinForm) {
           if (userData.role === "organizer") {
             window.location.href = "../../website/Organizer/organizer-dashboard.html";
           } else if (userData.role === "student") {
-            window.location.href = "website.html";
+            window.location.href = "../../website/Organizer/organizer-dashboard.html";;
           } else {
             window.location.href = "website.html"; // fallback
           }
@@ -169,7 +169,7 @@ onAuthStateChanged(auth, async (user) => {
     if (
       currentPage === "student-dashboard.html" || 
       currentPage === "organizer-dashboard.html" || 
-      currentPage === "website.html"
+      currentPage === "../../website/Organizer/organizer-dashboard.html"
     ) {
       window.location.href = "../Registration/SignIn.html";
     }
@@ -189,7 +189,7 @@ onAuthStateChanged(auth, async (user) => {
       if (role === "organizer") {
         window.location.href = "../../website/Organizer/organizer-dashboard.html";
       } else {
-        window.location.href = "website.html";
+        window.location.href = "../../website/Organizer/organizer-dashboard.html";;
       }
     }
   }
