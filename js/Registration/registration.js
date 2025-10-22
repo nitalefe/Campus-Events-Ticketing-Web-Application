@@ -1,3 +1,4 @@
+// helper function to toggle visibility and required attributes of fields based on role selection
 function toggleFields() {
     const role = document.getElementById('role')?.value;
     const schoolGroup = document.getElementById('school-group');
