@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -219,6 +220,10 @@
       transition: background 0.2s, box-shadow 0.2s;
     }
   </style>
+  
+
+
+
   <!-- Camera scanner library -->
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 </head>
@@ -240,8 +245,6 @@
     <div class="scanner-section">
       <h3>Camera Scanner</h3>
       <div class="control-group">
-        <label for="increment">Encryption increment:</label>
-        <input id="increment" type="number" value="7" min="1" max="64" />
         <label for="cameraSel">Camera:</label>
         <select id="cameraSel"></select>
         <button id="startBtn">Start Scanner</button>
@@ -262,14 +265,17 @@
   </div>
 
   <script type="module">
-    // -------- Decrypt & parse (matches your team’s format) ----------
-    function decryptString(encryptedText, increment = 7) {
+    // ---- Fixed encryption increment (UI removed) ----
+    const FIXED_INCREMENT = 7;
+
+    function decryptString(encryptedText, increment = FIXED_INCREMENT) {
       let out = "";
       for (let i = 0; i < encryptedText.length; i++) {
         out += String.fromCharCode(encryptedText.charCodeAt(i) - increment);
       }
       return out;
     }
+
     function parseEventAndAttendee(decryptedText) {
       const parts = (decryptedText || "").split("/");
       if (parts.length !== 2 || !parts[0] || !parts[1]) {
@@ -278,7 +284,7 @@
       return { ok:true, eventId: parts[0], attendeeId: parts[1] };
     }
 
-    // -------- Mock validator (so you can test NOW) ----------
+    // -------- Mock validator (replace with Firestore later) ----------
     const MOCK = { "myEvent123": new Set(["alice001","bob002","carol003"]) };
     const USED_KEY = "ticket_used_set_v1";
     const loadUsed = () => new Set(JSON.parse(localStorage.getItem(USED_KEY) || "[]"));
@@ -302,28 +308,25 @@
     const cameraSel = document.getElementById("cameraSel");
     const startBtn = document.getElementById("startBtn");
     const stopBtn  = document.getElementById("stopBtn");
-    const incInput = document.getElementById("increment");
-    const readerId = "reader";
-    const scanner  = new Html5Qrcode(readerId);
+    const scanner  = new Html5Qrcode("reader");
 
     // Populate cameras
     Html5Qrcode.getCameras().then(devices => {
       cameraSel.innerHTML = "";
-      devices.forEach(d => {
+      devices.forEach((d, idx) => {
         const opt = document.createElement("option");
-        opt.value = d.id; opt.textContent = d.label || `Camera ${cameraSel.length+1}`;
+        opt.value = d.id; opt.textContent = d.label || `Camera ${idx+1}`;
         cameraSel.appendChild(opt);
       });
       if (devices.length === 0) setStatus("No cameras found.", false);
     }).catch(() => setStatus("Could not list cameras. Check permissions.", false));
 
     async function onDecoded(encryptedText) {
-      const inc = Number(incInput.value || 7);
-      const decrypted = decryptString(encryptedText, inc);
+      const decrypted = decryptString(encryptedText, FIXED_INCREMENT);
       const parsed = parseEventAndAttendee(decrypted);
       if (!parsed.ok) return setStatus(parsed.message, false);
 
-      const result = await validateMock(parsed.eventId, parsed.attendeeId); // swap later for Firestore
+      const result = await validateMock(parsed.eventId, parsed.attendeeId); // swap for Firestore
       setStatus(result.message, result.ok);
     }
 
@@ -333,7 +336,7 @@
           cameraSel.value || { facingMode: "environment" },
           { fps: 10, qrbox: { width: 260, height: 260 } },
           onDecoded,
-          () => {} // ignore stream decode errors
+          () => {}
         );
         setStatus("Camera started. Aim at QR code…");
       } catch (e) {
@@ -349,9 +352,8 @@
 
     // Manual simulate
     document.getElementById("simulateBtn").addEventListener("click", async () => {
-      const inc = Number(incInput.value || 7);
       const encryptedText = (document.getElementById("manualEncrypted").value || "").trim();
-      const decrypted = decryptString(encryptedText, inc);
+      const decrypted = decryptString(encryptedText, FIXED_INCREMENT);
       const parsed = parseEventAndAttendee(decrypted);
       const out = document.getElementById("manualStatus");
       if (!parsed.ok) { out.textContent = parsed.message; out.className = "status err"; return; }
@@ -361,3 +363,5 @@
   </script>
 </body>
 </html>
+
+
