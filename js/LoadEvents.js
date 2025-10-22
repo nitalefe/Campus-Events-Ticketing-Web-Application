@@ -1,4 +1,4 @@
-import { auth, db } from "../../Shared/firebase-config.js";
+import { auth, db } from "../Shared/firebase-config.js";
 import { collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
@@ -12,11 +12,28 @@ function createEventCard(eventData, eventId) {
   const card = document.createElement("div");
   card.className = "event-card";
   
-  // Use the banner from Firebase or fallback to placeholder
-  const bannerSrc = eventData.banner || "https://via.placeholder.com/260x140";
+  // Default SVG placeholder
+  const defaultPlaceholder = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='140'%3E%3Crect fill='%23367bfc' width='260' height='140'/%3E%3Ctext fill='%23ffffff' font-family='Arial' font-size='18' x='50%25' y='50%25' text-anchor='middle' dy='.3em'%3EEvent Image%3C/text%3E%3C/svg%3E";
+  
+  // Use banner if provided, otherwise use placeholder
+  // Accept full URLs (http/https), data URIs, or relative paths that look valid
+  let bannerSrc = defaultPlaceholder;
+  if (eventData.banner) {
+    const banner = eventData.banner.trim();
+    // Accept if it starts with http/https/data OR if it doesn't have spaces/special chars that indicate an invalid path
+    if (banner.startsWith('http://') || 
+        banner.startsWith('https://') || 
+        banner.startsWith('data:') ||
+        banner.startsWith('/') ||
+        banner.startsWith('./') ||
+        banner.startsWith('../') ||
+        (!banner.includes(' ') && banner.includes('.'))) {
+      bannerSrc = banner;
+    }
+  }
   
   card.innerHTML = `
-    <img src="${bannerSrc}" class="event-banner" alt="Event Banner" onerror="this.src='https://via.placeholder.com/260x140'">
+    <img src="${bannerSrc}" class="event-banner" alt="Event Banner" onerror="this.onerror=null; this.src='${defaultPlaceholder}'">
     <div class="event-title">${eventData.eventName}</div>
     <div class="event-date">${eventData.eventDateTime?.toDate().toDateString()}</div>
     <div class="event-location">${eventData.eventLocation}</div>

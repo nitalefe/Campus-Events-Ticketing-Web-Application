@@ -3,7 +3,7 @@
 // Handles both event creation and editing
 // ------------------------------
 
-import { auth, db } from "../../Shared/firebase-config.js";
+import { auth, db } from "../Shared/firebase-config.js";
 import {
   collection,
   addDoc,
