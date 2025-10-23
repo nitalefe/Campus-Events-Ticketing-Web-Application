@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Organizer Approval — Admin</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --blue-1:#367bfc;
+      --blue-2:#002976;
+      --blue-3:#6fa3ef;
+      --card-bg: rgba(255,255,255,0.98);
+      --muted:#6b7280;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Montserrat', Arial, sans-serif;
+      background: linear-gradient(135deg, var(--blue-1) 0%, var(--blue-2) 100%);
+      color: #111;
+    }
+
+    /* Toolbar (match proportions and hover behavior from AttendeeList) */
+    .toolbar {
+      width: 100%;
+      background: rgba(0,51,102,0.95);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 2.5vw;
+      height: clamp(60px, 8vh, 72px);
+      box-sizing: border-box;
+      box-shadow: 0 0.3vh 1vh rgba(0,0,0,0.12);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .toolbar-left { display:flex; align-items:center; gap: clamp(8px,2vw,20px); }
+    .toolbar-logo {
+      height: clamp(40px,6vh,48px);
+      margin-right: clamp(12px,2.5vw,24px);
+      cursor: pointer;
+      filter: drop-shadow(0 0.2vh 0.3vh rgba(0,0,0,0.18));
+      transition: transform 0.2s;
+    }
+    .toolbar-logo:hover { transform: scale(1.08) rotate(-2deg); }
+
+    .toolbar-btn {
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: #fff;
+      font-size: clamp(0.95rem, 1.9vw, 1.05rem);
+      margin-right: clamp(8px,1.6vw,16px);
+      cursor: pointer;
+      padding: clamp(8px,1.2vh,10px) clamp(14px,2.8vw,22px);
+      border-radius: 0.4vw;
+      font-weight: 500;
+      letter-spacing: 0.4px;
+      transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.12s ease;
+      box-shadow: 0 0.2vh 0.6vh rgba(0,0,0,0.04);
+      white-space:nowrap;
+    }
+    /* proportions: small home, medium requests */
+    .toolbar-btn.home-btn { padding-left:10px; padding-right:10px; min-width:48px; }
+    .toolbar-btn.requests-btn { min-width:170px; padding:8px 18px; }
+
+    .toolbar-btn:hover {
+      background: var(--blue-1);
+      box-shadow: 0 0.8vh 1.4vh rgba(54,123,252,0.18);
+      transform: translateY(-2px);
+    }
+
+    .toolbar-spacer { flex: 1; }
+
+    .auth-btn {
+      background: linear-gradient(90deg, var(--blue-3) 60%, var(--blue-1) 100%);
+      color: #fff;
+      border: none;
+      border-radius: 0.4vw;
+      font-size: clamp(0.9rem, 2.2vw, 1rem);
+      cursor: pointer;
+      padding: clamp(8px,1.2vh,10px) clamp(14px,2.8vw,22px);
+      font-weight: 600;
+      box-shadow: 0 0.2vh 0.6vh rgba(54,123,252,0.12);
+      transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.12s ease;
+    }
+    .auth-btn:hover {
+      background: linear-gradient(90deg, #a3c8f7 60%, var(--blue-1) 100%);
+      box-shadow: 0 0.9vh 1.8vh rgba(54,123,252,0.22);
+      transform: translateY(-2px);
+    }
+
+    /* Page container: fill available height so desktop doesn't feel empty */
+    .page-wrap { min-height: calc(100vh - clamp(60px,8vh,72px)); display:flex; align-items:flex-start; justify-content:center; padding: clamp(18px,3vh,28px); box-sizing:border-box; }
+    .container { width:100%; max-width:1100px; }
+    .card {
+      background: var(--card-bg);
+      border-radius: clamp(10px,1.5vw,18px);
+      padding: clamp(18px,3.5vh,28px);
+      box-shadow: 0 clamp(6px,1.2vh,16px) clamp(24px,4vw,40px) rgba(54,123,252,0.08);
+      border:1px solid rgba(0,0,0,0.04);
+      min-height: calc(60vh);
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    h1{ margin:0; color:var(--blue-2); font-size:clamp(1.2rem,2.8vw,1.6rem); font-weight:700 }
+    .controls { display:flex; gap:8px; align-items:center }
+    input[type="search"]{ flex:1; padding:10px 12px; border-radius:8px; border:1px solid #e6e9ef; font-size:1rem }
+
+    .btn { padding:.6rem .9rem; border-radius:8px; border:0; cursor:pointer; font-weight:600 }
+    .btn-primary{ background: linear-gradient(90deg, var(--blue-3) 60%, var(--blue-1) 100%); color:#fff }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow:0 10px 28px rgba(54,123,252,0.14); }
+
+    /* table area fills remaining card height with AttendeeList-like row hover visuals */
+    .table-wrap { overflow:hidden; display:flex; flex-direction:column; border-radius:8px; border:1px solid rgba(0,0,0,0.03) }
+    table { width:100%; border-collapse:collapse; table-layout:fixed; min-width:600px; background: linear-gradient(180deg,#fff,#f7fbff); border-radius:8px; overflow:hidden; }
+    thead th{ text-align:left; padding:12px 14px; background: linear-gradient(135deg, var(--blue-1) 0%, var(--blue-3) 100%); color:#ffffff; font-weight:700; }
+    tbody{ display:block; height:100%; overflow:auto; max-height: calc(60vh - 140px); }
+    tbody tr{ display:table; width:100%; table-layout:fixed; transition: transform .12s ease, box-shadow .12s ease; }
+    td{ padding:12px 14px; border-bottom:1px solid rgba(0,0,0,0.04); vertical-align:middle; color:#222 }
+    .small{ font-size:12px; color:var(--muted) }
+    .badge{ padding:6px 8px; border-radius:999px; font-size:12px }
+    .badge.approved{ background:#e6f8ed; color:#0a7a3a }
+    .badge.pending{ background:#fff7e6; color:#8a5b00 }
+
+    tbody tr:hover td {
+      background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(54,123,252,0.10);
+    }
+
+    .row-actions{ display:flex; gap:8px; align-items:center }
+    .action-approve{ background:#2f8f4a; color:#fff; border-radius:6px; padding:.45rem .6rem; border:0; transition: transform .12s, box-shadow .12s; }
+    .action-approve:hover{ transform: translateY(-2px); box-shadow: 0 8px 20px rgba(47,143,74,0.15); }
+    .action-dis{ background:#e05353; color:#fff; border-radius:6px; padding:.45rem .6rem; border:0; transition: transform .12s, box-shadow .12s; }
+    .action-dis:hover{ transform: translateY(-2px); box-shadow: 0 8px 20px rgba(224,83,83,0.15); }
+
+    .empty{ padding:24px; text-align:center; color:var(--muted) }
+
+    /* responsive */
+    @media (max-width:900px){
+      .card{ padding:16px }
+      tbody tr{ display:table; width:100% }
+      table{ min-width:0 }
+      .toolbar-left{ gap:8px }
+      .toolbar-btn.requests-btn{ min-width:120px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <!-- logo top-left -->
+      <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='admin-dashboard.html'">
+      <button class="toolbar-btn home-btn" onclick="location.href='admin-dashboard.html'">Home</button>
+      <button class="toolbar-btn requests-btn" onclick="location.href='AdminApproval.html'">Organizer Requests</button>
+    </div>
+
+    <div class="toolbar-spacer"></div>
+
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="toolbar-btn" onclick="location.href='admin-settings.html'">Settings</button>
+      <button id="logout-btn" class="auth-btn">Log Out</button>
+    </div>
+  </div>
+
+  <div class="page-wrap">
+    <div class="container">
+      <div class="card" id="mainCard">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+          <div>
+            <h1>Organizer Accounts Approval</h1>
+            <div class="small">Review and manage organizer requests</div>
+          </div>
+          <div class="controls" style="width:45%;min-width:260px">
+            <input id="searchInput" type="search" placeholder="Search by name, email or uid" />
+            <button id="refreshBtn" class="btn btn-primary">Refresh</button>
+          </div>
+        </div>
+
+        <div class="table-wrap" style="flex:1; display:flex; flex-direction:column; gap:0; margin-top:8px;">
+          <table aria-label="organizer-requests">
+            <thead>
+              <tr>
+                <th style="width:30%">Organizer</th>
+                <th style="width:25%" class="small">Email / UID</th>
+                <th style="width:12%">Status</th>
+                <th style="width:18%" class="small">Requested At</th>
+                <th style="width:15%">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="organizersTbody">
+              <!-- injected -->
+            </tbody>
+          </table>
+
+          <div id="emptyState" class="empty" style="display:none">No organizer requests found.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js';
+    import {
+      getFirestore, collection, query, orderBy, getDocs, updateDoc, doc, serverTimestamp
+    } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js';
+    const auth = getAuth();
+    const db = getFirestore();
+
+    const tbody = document.getElementById('organizersTbody');
+    const searchInput = document.getElementById('searchInput');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const emptyState = document.getElementById('emptyState');
+
+    const ORG_COLLECTION = 'organizers';
+
+    function createRow(id, data){
+      const tr = document.createElement('tr');
+      const displayName = data.displayName || '(No name)';
+      const email = data.email || '';
+      const uid = data.uid || id;
+      const approved = !!data.approved;
+      const requestedAt = data.requestedAt ? new Date(data.requestedAt.seconds*1000).toLocaleString() : (data.createdAt ? new Date(data.createdAt.seconds*1000).toLocaleString() : '-');
+
+      tr.innerHTML = `
+        <td>
+          <div style="font-weight:600">${escapeHtml(displayName)}</div>
+          <div class="small">${escapeHtml(data.university || '')}</div>
+        </td>
+        <td class="small">${escapeHtml(email)}<br><span class="small">${escapeHtml(uid)}</span></td>
+        <td><span class="badge ${approved ? 'approved' : 'pending'}">${approved ? 'Approved' : 'Pending'}</span></td>
+        <td class="small">${escapeHtml(requestedAt)}</td>
+        <td>
+          <div class="row-actions">
+            <button class="action-approve" data-id="${id}" ${approved ? 'disabled' : ''}>Approve</button>
+            <button class="action-dis" data-id="${id}" ${approved ? '' : 'disabled'}>Disapprove</button>
+          </div>
+        </td>
+      `;
+      return tr;
+    }
+
+    function escapeHtml(s=''){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;'); }
+
+    async function fetchOrganizers(){
+      tbody.innerHTML = '';
+      emptyState.style.display='none';
+      try{
+        const q = query(collection(db, ORG_COLLECTION), orderBy('createdAt','desc'));
+        const snap = await getDocs(q);
+        const rows = [];
+        snap.forEach(s=> rows.push({ id: s.id, data: s.data() }));
+        if(!rows.length){ emptyState.style.display=''; return; }
+        for(const r of rows) tbody.appendChild(createRow(r.id, r.data));
+      }catch(err){
+        console.error('Failed to fetch organizers',err);
+        emptyState.textContent = 'Failed to load organizer requests. See console.';
+        emptyState.style.display = '';
+      }
+    }
+
+    async function setApproval(id, value){
+      try{
+        const adminUser = auth.currentUser;
+        if(!adminUser){ alert('You must be signed in as an admin.'); return; }
+        const docRef = doc(db, ORG_COLLECTION, id);
+        await updateDoc(docRef, { approved: value, approvedBy: adminUser.uid, approvedAt: serverTimestamp() });
+        const row = tbody.querySelector(`button[data-id="${id}"]`)?.closest('tr');
+        if(row){
+          const badge = row.querySelector('.badge');
+          if(badge){ badge.textContent = value ? 'Approved' : 'Pending'; badge.className = 'badge ' + (value ? 'approved' : 'pending'); }
+          const approveBtn = row.querySelector('button.action-approve');
+          const disBtn = row.querySelector('button.action-dis');
+          if(approveBtn) { if(value) approveBtn.setAttribute('disabled','true'); else approveBtn.removeAttribute('disabled'); }
+          if(disBtn) disBtn.disabled = !value;
+        }
+      }catch(err){
+        console.error('Failed to update approval',err);
+        alert('Failed to update approval. See console.');
+      }
+    }
+
+    tbody.addEventListener('click', (e)=>{
+      const a = e.target.closest('button.action-approve');
+      const d = e.target.closest('button.action-dis');
+      if(a){ const id = a.dataset.id; if(confirm('Approve this organizer account?')) setApproval(id, true); return; }
+      if(d){ const id = d.dataset.id; if(confirm('Disapprove this organizer account?')) setApproval(id, false); return; }
+    });
+
+    searchInput.addEventListener('input', ()=>{
+      const q = searchInput.value.trim().toLowerCase();
+      Array.from(tbody.querySelectorAll('tr')).forEach(tr=>{
+        const text = tr.textContent.toLowerCase();
+        tr.style.display = q ? (text.includes(q) ? '' : 'none') : '';
+      });
+    });
+
+    refreshBtn.addEventListener('click', fetchOrganizers);
+
+    document.getElementById('logout-btn').addEventListener('click', async ()=>{
+      try{ await signOut(auth); location.href = '/'; } catch(e){ console.error(e); alert('Logout failed'); }
+    });
+
+    fetchOrganizers();
+  </script>
+
+  <!-- Load local firebase init if you use it -->
+  <script type="module" src="../../Shared/firebase-config.js"></script>
+</body>
+</html>
