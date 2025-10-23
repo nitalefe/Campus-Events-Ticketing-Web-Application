@@ -3,7 +3,6 @@
 // Handles both event creation and editing
 // ------------------------------
 
-
 import { auth, db } from "../../Shared/firebase-config.js";
 import {
   collection,
@@ -166,4 +165,3 @@ document.getElementById("addUniversity")?.addEventListener("click", () => {
 if (eventId) loadEventForEdit();
 
 console.log("[eventD] ✅ Script ready");
-
