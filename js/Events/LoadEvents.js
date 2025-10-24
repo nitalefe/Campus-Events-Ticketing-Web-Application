@@ -14,10 +14,10 @@ const discoverSection = document.getElementById("discover-events");
 function createEventCard(eventData, eventId) {
   const card = document.createElement("div");
   card.className = "event-card";
-  
+
   // Use the banner from Firebase or fallback to placeholder
   const bannerSrc = eventData.banner || "https://via.placeholder.com/260x140";
-  
+
   card.innerHTML = `
     <img src="${bannerSrc}" class="event-banner" alt="Event Banner" onerror="this.src='https://via.placeholder.com/260x140'">
     <div class="event-title">${eventData.eventName}</div>
@@ -51,7 +51,7 @@ onAuthStateChanged(auth, async (user) => {
         upcomingSection?.appendChild(createEventCard(data, eventId));
 
       // New Events (within 7 days)
-      if (data.createdAt?.toDate() > new Date(Date.now() - 7*24*60*60*1000))
+      if (data.createdAt?.toDate() > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000))
         newSection?.appendChild(createEventCard(data, eventId));
 
       // Recommended (specific categories)

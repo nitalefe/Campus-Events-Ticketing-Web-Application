@@ -1,3 +1,5 @@
+//dont think were using this file but keeping it here for reference in case we need to come back to it for
+
 // scanner.js
 import { validateTicket } from "./ticket-validation.js";
 
@@ -96,7 +98,7 @@ startBtn.addEventListener("click", async () => {
       { deviceId: { exact: selectedId } },  // desktop-safe
       { fps: 10, qrbox: { width: 260, height: 260 } },
       onDecoded,
-      () => {} // ignore per-frame decode errors
+      () => { } // ignore per-frame decode errors
     );
 
     setStatus("Camera started. Aim at a QR code…");
