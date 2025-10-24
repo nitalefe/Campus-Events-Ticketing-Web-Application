@@ -7,6 +7,9 @@ import { auth, db, app } from "../../Shared/firebase-config.js";
 // const db = getFirestore(app);
 // const auth = getAuth();
 
+let DEBUG = true;
+// For testing purposes, please dont remove it this time
+
 let currentUserRole = "organizer";
 // let currentUserRole = null;
 // let testEventID = "6w3Q4k4LRLazZzJnHjil";
@@ -127,6 +130,7 @@ function exportToCsv(data, eventName) {
         { key: "lastName", label: "Last Name" },
         { key: "email", label: "Email" },
         { key: "isScanned", label: "Scan Status" },
+        { key: "isPaid", label: "Payment Status" },
     ];
 
     const headerRow = columns.map(col => col.label).join(",");
@@ -169,7 +173,8 @@ document.getElementById('attendeeForm').addEventListener('submit', async functio
         firstName: form.firstName.value,
         lastName: form.lastName.value,
         email: form.email.value,
-        isScanned: form.isScanned.checked ? "True" : "False"
+        isScanned: form.isScanned.checked ? "True" : "False",
+        isPaid: form.isPaid.checked ? "True" : "False"
     };
 
     // const form = e.target;
