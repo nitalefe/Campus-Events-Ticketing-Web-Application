@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Sign In</title>
@@ -11,7 +12,7 @@
         body {
             font-family: 'Montserrat', Arial, sans-serif;
             text-shadow: 1px 1px 2px #e0e6f6;
-            background-image: radial-gradient(circle farthest-corner at 10% 20%, rgba(54,123,252,1) 16.3%, rgba(0,41,118,1) 100.2%);
+            background-image: radial-gradient(circle farthest-corner at 10% 20%, rgba(54, 123, 252, 1) 16.3%, rgba(0, 41, 118, 1) 100.2%);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -19,28 +20,33 @@
             color: #222;
             margin: 0;
         }
+
         .signin-container {
             background: #f6f6f6;
             padding: 2rem 2.5rem;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             width: 350px;
             color: #222;
             font-family: 'Montserrat', Arial, sans-serif;
         }
+
         .signin-container h2 {
             text-align: center;
             margin-bottom: 1.5rem;
             color: #222;
         }
+
         .form-group {
             margin-bottom: 1rem;
         }
+
         .form-group label {
             display: block;
             margin-bottom: 0.3rem;
             color: #222;
         }
+
         .form-group input {
             width: 100%;
             padding: 0.5rem;
@@ -48,6 +54,7 @@
             border-radius: 4px;
             font-family: 'Montserrat', Arial, sans-serif;
         }
+
         .signin-btn {
             width: 100%;
             padding: 0.7rem;
@@ -59,24 +66,29 @@
             cursor: pointer;
             font-family: 'Montserrat', Arial, sans-serif;
         }
+
         .signin-btn:hover {
             background: #a3c8f7;
         }
+
         .signup-link {
             text-align: center;
             margin-top: 1rem;
             font-family: 'Montserrat', Arial, sans-serif;
             color: #222;
         }
+
         .signup-link a {
             color: #5d7bd0;
             text-decoration: none;
         }
+
         .signup-link a:hover {
             text-decoration: underline;
         }
     </style>
 </head>
+
 <body>
     <div style="position:fixed; bottom:16px; right:32px; z-index:100;">
         <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" style="width: 200px; height:auto;">
@@ -94,24 +106,17 @@
             </div>
             <button type="submit" class="signin-btn">Sign In</button>
             <div class="signup-link">
-  <a href="#" id="forgotPassword">Forgot Password?</a>
-</div>
+                <a href="#" id="forgotPassword">Forgot Password?</a>
+            </div>
         </form>
-            <div id="error-message" style="color:red; text-align:center; margin-top:10px;"></div>
+        <div id="error-message" style="color:red; text-align:center; margin-top:10px;"></div>
 
         <div class="signup-link">
             Don't have an account? <a href="SignUp.html">Sign Up</a>
         </div>
     </div>
-<<<<<<< HEAD
     <script type="module" src="../../js/Registration/auth.js"></script>
-
-    <script type="module" src="../../js/Registration/registration.js"></script>  
-=======
-    <script type="module" src="../../js/auth.js"></script>
-
-    <script type="module" src="../../js/registration.js"></script>  
->>>>>>> Organizer
-
+    <script type="module" src="../../js/Registration/registration.js"></script>
 </body>
+
 </html>

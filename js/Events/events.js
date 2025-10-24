@@ -56,6 +56,11 @@ async function loadEventForEdit() {
       document.getElementById("eventTime").value = dt.toTimeString().slice(0, 5);
     }
 
+    // ✅ FIX: Delay preview update until DOM is ready
+    if (typeof updatePreview === "function") {
+      setTimeout(updatePreview, 50);
+    }
+
     console.log("[eventD] ✅ Event data loaded for editing");
   } catch (err) {
     console.error("[eventD] Error loading event:", err);
