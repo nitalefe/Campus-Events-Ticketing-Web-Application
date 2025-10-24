@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Tickets</title>
+    <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Adopted from organizer/myEvents.html for visual parity */
+        body {
+            background: linear-gradient(135deg, #367bfc 0%, #002976 100%);
+            font-family: 'Montserrat', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            width: 100%;
+            background: rgba(0,51,102,0.95);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            padding: 0 2vw;
+            height: clamp(60px, 8vh, 72px);
+            box-sizing: border-box;
+            box-shadow: 0 0.3vh 1vh rgba(0,0,0,0.12);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .toolbar-logo {
+            height: clamp(40px, 6vh, 48px);
+            margin-right: clamp(20px, 3vw, 36px);
+            cursor: pointer;
+            filter: drop-shadow(0 0.2vh 0.3vh rgba(0,0,0,0.18));
+            transition: transform 0.2s;
+        }
+        .toolbar-btn {
+            background: rgba(255,255,255,0.08);
+            border: none;
+            color: #fff;
+            font-size: clamp(0.9rem, 2.5vw, 1.08rem);
+            margin-right: clamp(16px, 2.5vw, 24px);
+            cursor: pointer;
+            padding: clamp(8px, 1.5vh, 10px) clamp(16px, 3vw, 22px);
+            border-radius: 0.4vw;
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            transition: background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0.2vh 0.6vh rgba(0,0,0,0.04);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .toolbar-spacer { flex: 1; }
+        .auth-btn {
+            background: linear-gradient(90deg, #6fa3ef 60%, #367bfc 100%);
+            color: #fff;
+            border: none;
+            border-radius: 0.4vw;
+            font-size: clamp(0.9rem, 2.2vw, 1rem);
+            cursor: pointer;
+            padding: clamp(8px, 1.5vh, 10px) clamp(16px, 3vw, 22px);
+            font-weight: 600;
+            box-shadow: 0 0.2vh 0.6vh rgba(54,123,252,0.12);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: clamp(320px, 90vw, 1200px);
+            margin: clamp(30px, 6vh, 40px) auto;
+            background: rgba(255,255,255,0.98);
+            padding: clamp(24px, 5vh, 40px) clamp(20px, 4vw, 36px) clamp(20px, 4vh, 32px) clamp(20px, 4vw, 36px);
+            border-radius: clamp(12px, 2vw, 22px);
+            box-shadow: 0 clamp(4px, 1vh, 8px) clamp(16px, 4vw, 32px) rgba(54,123,252,0.10), 0 clamp(1px, 0.2vh, 2px) clamp(4px, 1vw, 8px) rgba(0,0,0,0.08);
+            color: #222;
+            position: relative;
+            animation: fadeIn 0.8s cubic-bezier(.4,0,.2,1);
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: clamp(20px, 4vh, 32px);
+            padding-bottom: clamp(16px, 3vh, 24px);
+            border-bottom: clamp(1px, 0.2vw, 2px) solid rgba(54,123,252,0.1);
+        }
+        .page-title { font-size: clamp(1.6rem, 5vw, 2.2rem); font-weight:700; color:#002976; margin-bottom:clamp(8px,1.5vh,12px); }
+        .page-subtitle { font-size: clamp(1rem,2.5vw,1.1rem); color:#367bfc; margin-bottom:clamp(16px,3vh,24px); }
+
+        .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(clamp(280px, 30vw, 350px), 1fr)); gap: clamp(16px, 3vw, 24px); margin-top: clamp(20px, 4vh, 32px); }
+
+        .card { background:#fff; border-radius: clamp(12px,2vw,16px); overflow:hidden; box-shadow:0 clamp(2px,0.5vh,4px) clamp(8px,2vw,16px) rgba(0,0,0,0.08); transition:all 0.3s ease; cursor:default; border:1px solid rgba(54,123,252,0.06); padding:14px; display:flex; gap:12px; align-items:flex-start }
+        .thumb { width:88px; height:88px; border-radius:8px; background:linear-gradient(135deg,#eef2ff,#fff); display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--primary,#367bfc); }
+        .meta { flex:1 }
+        .meta h3{ margin:0 0 6px; font-size:16px }
+        .meta p{ margin:0; color:#666; font-size:13px }
+        .row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px }
+        .chip{ background:#f3f4f6; padding:6px 8px; border-radius:8px; font-size:13px; color:#111; border:1px solid #eef2f7 }
+
+        @keyframes fadeIn { from{ opacity:0; transform: translateY(clamp(-8px,-2vh,-16px)); } to{ opacity:1; transform:none } }
+
+        @media (max-width:768px){ .container{ margin: clamp(20px,4vh,30px) clamp(16px,3vw,20px); padding: clamp(20px,4vh,24px) clamp(16px,3vw,20px); } .grid{ grid-template-columns:1fr; } }
+    </style>
+</head>
+<body>
+    <!-- Toolbar (copy student-dashboard wording/structure) -->
+    <div class="toolbar">
+        <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='student-dashboard.html'">
+
+        <button class="toolbar-btn" onclick="location.href='student-dashboard.html'">Home</button>
+        <button class="toolbar-btn" onclick="location.href='../other/qrGenerator.html'">My Tickets</button>
+        <div class="toolbar-spacer"></div>
+        <!--to be added with 4th feature-->
+        <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
+        <div id="authBtnContainer">
+            <button id="logout-btn" class="auth-btn">Log Out</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header-section">
+            <h1 class="page-title">My Tickets</h1>
+            <p class="page-subtitle">All your booked and saved tickets</p>
+        </div>
+
+        <div class="grid" aria-live="polite">
+            <div class="card">
+                <div class="thumb">J</div>
+                <div class="meta">
+                    <h3>Campus Jazz Night</h3>
+                    <p>Nov 5, 2025 · Main Hall</p>
+                    <div class="row">
+                        <div class="chip">Order: ORD-1001</div>
+                        <div class="chip">Seat: A12</div>
+                        <div class="chip">$12.50</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="thumb">C</div>
+                <div class="meta">
+                    <h3>Career Fair</h3>
+                    <p>Oct 1, 2025 · Gym</p>
+                    <div class="row">
+                        <div class="chip">Order: ORD-1002</div>
+                        <div class="chip">Seat: General</div>
+                        <div class="chip">Free</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="thumb">T</div>
+                <div class="meta">
+                    <h3>Tech Talk: AI Ethics</h3>
+                    <p>Aug 20, 2025 · Auditorium</p>
+                    <div class="row">
+                        <div class="chip">Order: ORD-0987</div>
+                        <div class="chip">Seat: B7</div>
+                        <div class="chip">$5.00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

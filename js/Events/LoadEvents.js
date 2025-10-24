@@ -14,6 +14,8 @@ const discoverSection = document.getElementById("discover-events");
 function createEventCard(eventData, eventId) {
   const card = document.createElement("div");
   card.className = "event-card";
+  // store event id for deduplication/search
+  card.setAttribute('data-event-id', eventId);
   
   // Use the banner from Firebase or fallback to placeholder
   const bannerSrc = eventData.banner || "https://via.placeholder.com/260x140";
@@ -25,7 +27,8 @@ function createEventCard(eventData, eventId) {
     <div class="event-location">${eventData.eventLocation}</div>
   `;
   card.addEventListener("click", () => {
-    window.location.href = `eventPage.html?id=${eventId}`;
+    const target = document.body?.dataset?.eventPage || 'eventPage.html';
+    window.location.href = `${target}?id=${eventId}`;
   });
   return card;
 }

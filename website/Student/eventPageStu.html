@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Event Page</title>
+	<link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+	<style>
+		/* Styling adapted from organizer eventPage for consistent look */
+		body { font-family: 'Montserrat', Arial, sans-serif; background: linear-gradient(135deg, #367bfc 0%, #002976 100%); margin: 0; padding: 0; }
+		.toolbar { width:100%; background: rgba(0,51,102,0.95); color:#fff; display:flex; align-items:center; padding:0 2vw; height:clamp(60px,8vh,72px); box-sizing:border-box; box-shadow:0 0.3vh 1vh rgba(0,0,0,0.12); position:sticky; top:0; z-index:100 }
+		.toolbar-logo{ height:clamp(40px,6vh,48px); margin-right:clamp(20px,3vw,36px); cursor:pointer; filter: drop-shadow(0 0.2vh 0.3vh rgba(0,0,0,0.18)); transition:transform .2s }
+		.toolbar-btn{ background: rgba(255,255,255,0.08); border:none; color:#fff; font-size:clamp(0.9rem,2.5vw,1.08rem); margin-right:clamp(16px,2.5vw,24px); cursor:pointer; padding:clamp(8px,1.5vh,10px) clamp(16px,3vw,22px); border-radius:0.4vw }
+		.toolbar-spacer{ flex:1 }
+		.auth-btn{ background: linear-gradient(90deg,#6fa3ef 60%,#367bfc 100%); color:#fff; border:none; border-radius:0.4vw; padding:clamp(8px,1.5vh,10px) clamp(16px,3vw,22px) }
+
+		.container{ max-width:900px; margin:48px auto; background:#fff; border-radius:12px; padding:36px; box-shadow:0 8px 24px rgba(0,0,0,0.1) }
+		.event-image{ width:100%; height:340px; object-fit:cover; border-radius:12px; margin-bottom:24px }
+		.event-title{ font-size:2em; color:#002976; margin-bottom:12px }
+		.event-date-location{ color:#367bfc; font-size:1.1em; margin-bottom:16px }
+		.event-description{ font-size:1.05em; color:#333; background: rgba(54,123,252,0.05); padding:16px; border-radius:8px }
+
+		.student-actions{ margin-top:20px; display:flex; gap:12px; flex-wrap:wrap }
+		.buy-ticket-btn{ background: linear-gradient(90deg,#10b981 60%,#059669 100%); color:#fff; border:none; border-radius:8px; padding:12px 20px; font-size:1rem; cursor:pointer }
+		.save-btn{ background: rgba(0,0,0,0.06); border:none; border-radius:8px; padding:12px 16px; cursor:pointer }
+
+		@media (max-width:768px){ .container{ margin:20px; padding:20px } .event-image{ height:200px } }
+	</style>
+</head>
+<body>
+
+	<!-- Toolbar (match myTickets.html exactly) -->
+	<div class="toolbar">
+		<img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='student-dashboard.html'">
+
+		<button class="toolbar-btn" onclick="location.href='student-dashboard.html'">Home</button>
+		<button class="toolbar-btn" onclick="location.href='../Student/myTickets.html'">My Tickets</button>
+		<div class="toolbar-spacer"></div>
+		<!--to be added with 4th feature-->
+		<button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
+		<div id="authBtnContainer">
+			<button id="logout-btn" class="auth-btn">Log Out</button>
+		</div>
+	</div>
+
+	<div class="container">
+		<img id="eventBanner" src="https://via.placeholder.com/900x340" class="event-image" alt="Event Banner">
+		<h1 class="event-title">Loading...</h1>
+		<div class="event-date-location"></div>
+		<div class="event-description">Loading event details...</div>
+
+		<div class="student-actions">
+			<button id="buyBtn" class="buy-ticket-btn">Buy Ticket</button>
+			<button id="saveBtn" class="save-btn">Save Event</button>
+			<button id="calendarBtn" class="save-btn">Add to Calendar</button>
+			<button id="contactBtn" class="save-btn">Contact Organizer</button>
+		</div>
+	</div>
+
+	<script type="module" src="../../Shared/firebase-config.js"></script>
+	<script type="module" src="../../js/Registration/auth.js"></script>
+
+
+</body>
+</html>
