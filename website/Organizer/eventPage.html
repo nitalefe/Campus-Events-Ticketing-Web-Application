@@ -134,7 +134,7 @@
 
     <button class="buy-ticket-btn" onclick="location.href='EventDashboard.html'">View Analytics</button>
     
-<button id="saveEventBtn" class="buy-ticket-btn">Save Event</button>
+
 
 
 
@@ -165,8 +165,6 @@
   const editBtn = document.querySelector('.buy-ticket-btn:nth-of-type(1)');
   const scanBtn = document.querySelector('.buy-ticket-btn:nth-of-type(2)');
   const analyticsBtn = document.querySelector('.buy-ticket-btn:nth-of-type(3)');
-   const saveBtn = document.getElementById("saveEventBtn");
-
 
   // ----------------------------
   // 3️⃣ Load event details
@@ -219,32 +217,6 @@
       analyticsBtn.onclick = () => location.href = `EventDashboard.html?id=${eventId}`;
     }
   }
-  // ----------------------------
-  // Save / Unsave Event (Students only)
-  // ----------------------------
-  async function toggleSaveEvent(user) {
-    const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
-
-    if (!userSnap.exists()) {
-      await setDoc(userRef, { savedEvents: [] });
-    }
-
-    const data = userSnap.data() || {};
-    const saved = data.savedEvents || [];
-
-    if (saved.includes(eventId)) {
-      await updateDoc(userRef, { savedEvents: arrayRemove(eventId) });
-      saveBtn.textContent = "Save Event";
-      saveBtn.style.background = "linear-gradient(90deg, #0078d4 60%, #367bfc 100%)";
-      alert("Event removed from your saved list.");
-    } else {
-      await updateDoc(userRef, { savedEvents: arrayUnion(eventId) });
-      saveBtn.textContent = "Unsave Event";
-      saveBtn.style.background = "linear-gradient(90deg, #e74c3c 60%, #c0392b 100%)"; // 🔴 red
-      alert("Event saved successfully!");
-    }
-  }
 
 
   // ----------------------------
@@ -253,38 +225,6 @@
   onAuthStateChanged(auth, async (user) => {
     console.log("[eventPage] Auth user:", user?.uid || "No user");
     await loadEventDetails(user);
-
-    if (!saveBtn) return;
-    saveBtn.style.display = "none";
-
-    if (user) {
-      // Fetch role
-      const userRef = doc(db, "users", user.uid);
-      const userSnap = await getDoc(userRef);
-      const userData = userSnap.data();
-      const role = userData?.role || "student";
-
-      // 🚫 Hide save button for organizers
-      if (role === "organizer") {
-        saveBtn.style.display = "none";
-        return;
-      }
-
-      // ✅ Show for students
-      saveBtn.style.display = "inline-block";
-
-      const saved = userData?.savedEvents || [];
-      if (saved.includes(eventId)) {
-        saveBtn.textContent = "Unsave Event";
-        saveBtn.style.background = "linear-gradient(90deg, #e74c3c 60%, #c0392b 100%)";
-      } else {
-        saveBtn.textContent = "Save Event";
-        saveBtn.style.background = "linear-gradient(90deg, #0078d4 60%, #367bfc 100%)";
-      }
-
-      // 👇 toggleSaveEvent now works
-      saveBtn.onclick = () => toggleSaveEvent(user);
-    }
   });
 </script>
 

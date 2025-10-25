@@ -1,66 +1,279 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>Event Page</title>
-	<link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
-	<style>
-		/* Styling adapted from organizer eventPage for consistent look */
-		body { font-family: 'Montserrat', Arial, sans-serif; background: linear-gradient(135deg, #367bfc 0%, #002976 100%); margin: 0; padding: 0; }
-		.toolbar { width:100%; background: rgba(0,51,102,0.95); color:#fff; display:flex; align-items:center; padding:0 2vw; height:clamp(60px,8vh,72px); box-sizing:border-box; box-shadow:0 0.3vh 1vh rgba(0,0,0,0.12); position:sticky; top:0; z-index:100 }
-		.toolbar-logo{ height:clamp(40px,6vh,48px); margin-right:clamp(20px,3vw,36px); cursor:pointer; filter: drop-shadow(0 0.2vh 0.3vh rgba(0,0,0,0.18)); transition:transform .2s }
-		.toolbar-btn{ background: rgba(255,255,255,0.08); border:none; color:#fff; font-size:clamp(0.9rem,2.5vw,1.08rem); margin-right:clamp(16px,2.5vw,24px); cursor:pointer; padding:clamp(8px,1.5vh,10px) clamp(16px,3vw,22px); border-radius:0.4vw }
-		.toolbar-spacer{ flex:1 }
-		.auth-btn{ background: linear-gradient(90deg,#6fa3ef 60%,#367bfc 100%); color:#fff; border:none; border-radius:0.4vw; padding:clamp(8px,1.5vh,10px) clamp(16px,3vw,22px) }
+  <meta charset="UTF-8">
+  <title>Event Page</title>
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Montserrat', Arial, sans-serif;
+      background: linear-gradient(135deg, #367bfc 0%, #002976 100%);
+      margin: 0;
+      padding: 0;
+    }
 
-		.container{ max-width:900px; margin:48px auto; background:#fff; border-radius:12px; padding:36px; box-shadow:0 8px 24px rgba(0,0,0,0.1) }
-		.event-image{ width:100%; height:340px; object-fit:cover; border-radius:12px; margin-bottom:24px }
-		.event-title{ font-size:2em; color:#002976; margin-bottom:12px }
-		.event-date-location{ color:#367bfc; font-size:1.1em; margin-bottom:16px }
-		.event-description{ font-size:1.05em; color:#333; background: rgba(54,123,252,0.05); padding:16px; border-radius:8px }
+    .toolbar {
+      width: 100%;
+      background: rgba(0,51,102,0.95);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 2vw;
+      height: clamp(60px,8vh,72px);
+      box-sizing: border-box;
+      box-shadow: 0 0.3vh 1vh rgba(0,0,0,0.12);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
 
-		.student-actions{ margin-top:20px; display:flex; gap:12px; flex-wrap:wrap }
-		.buy-ticket-btn{ background: linear-gradient(90deg,#10b981 60%,#059669 100%); color:#fff; border:none; border-radius:8px; padding:12px 20px; font-size:1rem; cursor:pointer }
-		.save-btn{ background: rgba(0,0,0,0.06); border:none; border-radius:8px; padding:12px 16px; cursor:pointer }
+    .toolbar-logo {
+      height: clamp(40px,6vh,48px);
+      margin-right: clamp(20px,3vw,36px);
+      cursor: pointer;
+    }
 
-		@media (max-width:768px){ .container{ margin:20px; padding:20px } .event-image{ height:200px } }
-	</style>
+    .toolbar-btn {
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: #fff;
+      font-size: clamp(0.9rem,2.5vw,1.08rem);
+      margin-right: clamp(16px,2.5vw,24px);
+      cursor: pointer;
+      padding: clamp(8px,1.5vh,10px) clamp(16px,3vw,22px);
+      border-radius: 0.4vw;
+    }
+
+    .toolbar-spacer { flex: 1; }
+
+    .auth-btn {
+      background: linear-gradient(90deg,#6fa3ef 60%,#367bfc 100%);
+      color: #fff;
+      border: none;
+      border-radius: 0.4vw;
+      padding: clamp(8px,1.5vh,10px) clamp(16px,3vw,22px);
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 48px auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 36px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+
+    .event-image {
+      width: 100%;
+      height: 340px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+
+    .event-title { font-size: 2em; color: #002976; margin-bottom: 12px; }
+    .event-date-location { color: #367bfc; font-size: 1.1em; margin-bottom: 16px; }
+    .event-description {
+      font-size: 1.05em;
+      color: #333;
+      background: rgba(54,123,252,0.05);
+      padding: 16px;
+      border-radius: 8px;
+    }
+
+    .student-actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .buy-ticket-btn {
+      background: linear-gradient(90deg,#10b981 60%,#059669 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .save-btn {
+      background: rgba(0,0,0,0.06);
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .save-btn.saved {
+      background: #367bfc;
+      color: #fff;
+    }
+
+    @media (max-width:768px){
+      .container { margin: 20px; padding: 20px; }
+      .event-image { height: 200px; }
+    }
+  </style>
 </head>
 <body>
 
-	<!-- Toolbar (match myTickets.html exactly) -->
-	<div class="toolbar">
-		<img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='student-dashboard.html'">
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='student-dashboard.html'">
+    <button class="toolbar-btn" onclick="location.href='student-dashboard.html'">Home</button>
+    <button class="toolbar-btn" onclick="location.href='../Student/myTickets.html'">My Tickets</button>
+    <div class="toolbar-spacer"></div>
+    <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
+    <div id="authBtnContainer">
+      <button id="logout-btn" class="auth-btn">Log Out</button>
+    </div>
+  </div>
 
-		<button class="toolbar-btn" onclick="location.href='student-dashboard.html'">Home</button>
-		<button class="toolbar-btn" onclick="location.href='../Student/myTickets.html'">My Tickets</button>
-		<div class="toolbar-spacer"></div>
-		<!--to be added with 4th feature-->
-		<button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
-		<div id="authBtnContainer">
-			<button id="logout-btn" class="auth-btn">Log Out</button>
-		</div>
-	</div>
+  <div class="container">
+    <img id="eventBanner" src="https://via.placeholder.com/900x340" class="event-image" alt="Event Banner">
+    <h1 class="event-title">Loading...</h1>
+    <div class="event-date-location"></div>
+    <div class="event-description">Loading event details...</div>
 
-	<div class="container">
-		<img id="eventBanner" src="https://via.placeholder.com/900x340" class="event-image" alt="Event Banner">
-		<h1 class="event-title">Loading...</h1>
-		<div class="event-date-location"></div>
-		<div class="event-description">Loading event details...</div>
+    <div class="student-actions">
+      <button id="buyBtn" class="buy-ticket-btn">Buy Ticket</button>
+      <button id="saveBtn" class="save-btn">Save Event</button>
+      <button id="calendarBtn" class="save-btn">Add to Calendar</button>
+      <button id="contactBtn" class="save-btn">Contact Organizer</button>
+    </div>
+  </div>
 
-		<div class="student-actions">
-			<button id="buyBtn" class="buy-ticket-btn">Buy Ticket</button>
-			<button id="saveBtn" class="save-btn">Save Event</button>
-			<button id="calendarBtn" class="save-btn">Add to Calendar</button>
-			<button id="contactBtn" class="save-btn">Contact Organizer</button>
-		</div>
-	</div>
+  <!-- Firebase scripts -->
+  <script type="module">
+  import { auth, db } from "../../Shared/firebase-config.js";
+import { doc, getDoc, updateDoc, setDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
-	<script type="module" src="../../Shared/firebase-config.js"></script>
-	<script type="module" src="../../js/Registration/auth.js"></script>
+const params = new URLSearchParams(window.location.search);
+const eventId = params.get("id");
 
+const titleEl = document.querySelector(".event-title");
+const descEl = document.querySelector(".event-description");
+const dateLocEl = document.querySelector(".event-date-location");
+const bannerEl = document.getElementById("eventBanner");
+const saveBtn = document.getElementById("saveBtn");
+
+// --------------------------------------------------
+// 1️⃣ Load event details
+// --------------------------------------------------
+async function loadEventDetails(user) {
+  if (!eventId) {
+    titleEl.textContent = "Event not found.";
+    return;
+  }
+
+  const docRef = doc(db, "events", eventId);
+  const snap = await getDoc(docRef);
+
+  if (!snap.exists()) {
+    titleEl.textContent = "Event not found.";
+    descEl.textContent = "";
+    return;
+  }
+
+  const data = snap.data();
+  titleEl.textContent = data.eventName || "Untitled Event";
+  descEl.innerHTML = data.eventDescription || "No description available.";
+
+  const dateObj = data.eventDateTime?.toDate?.();
+  const dateStr = dateObj ? dateObj.toDateString() : "Unknown date";
+  dateLocEl.innerHTML = `
+    <span>${dateStr}</span><br>
+    <span>${data.eventLocation || "Unknown location"}</span>
+  `;
+
+  // Load event banner
+  if (data.banner) {
+    bannerEl.src = data.banner;
+    bannerEl.alt = `${data.eventName} Banner`;
+  } else {
+    bannerEl.src = "https://via.placeholder.com/900x340";
+    bannerEl.alt = "Event Banner";
+  }
+}
+
+  // ----------------------------
+  // Save / Unsave Event (Students only)
+  // ----------------------------
+  async function toggleSaveEvent(user) {
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      await setDoc(userRef, { savedEvents: [] });
+    }
+
+    const data = userSnap.data() || {};
+    const saved = data.savedEvents || [];
+
+    if (saved.includes(eventId)) {
+      await updateDoc(userRef, { savedEvents: arrayRemove(eventId) });
+      saveBtn.textContent = "Save Event";
+      saveBtn.style.background = "linear-gradient(90deg, #0078d4 60%, #367bfc 100%)";
+      alert("Event removed from your saved list.");
+    } else {
+      await updateDoc(userRef, { savedEvents: arrayUnion(eventId) });
+      saveBtn.textContent = "Unsave Event";
+      saveBtn.style.background = "linear-gradient(90deg, #e74c3c 60%, #c0392b 100%)"; // 🔴 red
+      alert("Event saved successfully!");
+    }
+  }
+
+
+  // ----------------------------
+  // 🔹 Auth State Listener
+  // ----------------------------
+  onAuthStateChanged(auth, async (user) => {
+    console.log("[eventPage] Auth user:", user?.uid || "No user");
+    await loadEventDetails(user);
+
+    if (!saveBtn) return;
+    saveBtn.style.display = "none";
+
+    if (user) {
+      // Fetch role
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+      const userData = userSnap.data();
+      const role = userData?.role || "student";
+
+      // 🚫 Hide save button for organizers
+      if (role === "organizer") {
+        saveBtn.style.display = "none";
+        return;
+      }
+
+      // ✅ Show for students
+      saveBtn.style.display = "inline-block";
+
+      const saved = userData?.savedEvents || [];
+      if (saved.includes(eventId)) {
+        saveBtn.textContent = "Unsave Event";
+        saveBtn.style.background = "linear-gradient(90deg, #e74c3c 60%, #c0392b 100%)";
+		saveBtn.style.color = "#fff"; // ✅ make "Save Event" text white
+      } else {
+        saveBtn.textContent = "Save Event";
+        saveBtn.style.background = "linear-gradient(90deg, #0078d4 60%, #367bfc 100%)";
+		saveBtn.style.color = "#fff"; // ✅ make "Save Event" text white
+      }
+
+      // 👇 toggleSaveEvent now works
+      saveBtn.onclick = () => toggleSaveEvent(user);
+    }
+  });
+
+
+  </script>
 
 </body>
 </html>
