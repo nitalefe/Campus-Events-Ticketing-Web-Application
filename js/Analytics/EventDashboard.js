@@ -130,7 +130,11 @@ async function applyFilters(user) {
           eventDateTime: data.eventDateTime?.toDate(),
         },
       ];
+<<<<<<< HEAD
 window.currentFilteredEvents = events;
+=======
+      window.currentFilteredEvents = events;
+>>>>>>> main
       status.textContent = `Showing analytics for "${data.eventName}"`;
       status.className = "status success";
       displayEvents(events);
@@ -234,7 +238,11 @@ onAuthStateChanged(auth, (user) => {
     return;
   }
   applyFilters(user);
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> main
 });
 
 // Expose for HTML buttons
@@ -242,4 +250,8 @@ window.displayEvents = displayEvents;
 window.applyFilters = applyFilters;
 window.exportToCSV = exportToCSV;
 
+<<<<<<< HEAD
 console.log("[EventDashboard] ✅ Ready");
+=======
+console.log("[EventDashboard] ✅ Ready");
+>>>>>>> main
