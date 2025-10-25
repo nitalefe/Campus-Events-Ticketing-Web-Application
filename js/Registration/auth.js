@@ -1,14 +1,8 @@
 import { auth, db } from "../../Shared/firebase-config.js";
 
-<<<<<<< HEAD
-import { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-=======
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
->>>>>>> main
   signOut,
   sendEmailVerification,
   sendPasswordResetEmail,
@@ -26,11 +20,7 @@ if (signupForm) {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirm-password').value;
-<<<<<<< HEAD
     const role = document.getElementById('role').value; 
-=======
-    const role = document.getElementById('role').value;
->>>>>>> main
 
     const signupError = document.getElementById('signup-error');
     signupError.textContent = "";
@@ -87,11 +77,7 @@ if (signinForm) {
 
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
-<<<<<<< HEAD
     const errorMsg = document.getElementById('error-message'); 
-=======
-    const errorMsg = document.getElementById('error-message');
->>>>>>> main
     errorMsg.textContent = "";
 
     signInWithEmailAndPassword(auth, email, password)
@@ -114,11 +100,7 @@ if (signinForm) {
           if (userData.role === "organizer") {
             window.location.href = "../../website/Organizer/organizer-dashboard.html";
           } else if (userData.role === "student") {
-<<<<<<< HEAD
             window.location.href = "../../website/Student/student-dashboard.html";;
-=======
-            window.location.href = "website.html";
->>>>>>> main
           } else {
             window.location.href = "website.html"; // fallback
           }
@@ -185,15 +167,9 @@ onAuthStateChanged(auth, async (user) => {
   // 🚫 If user not logged in → redirect away from protected pages
   if (!user) {
     if (
-<<<<<<< HEAD
       currentPage === "../../website/Student/student-dashboard.html" || 
       currentPage === "organizer-dashboard.html" || 
       currentPage === "../../website/Organizer/organizer-dashboard.html"
-=======
-      currentPage === "student-dashboard.html" ||
-      currentPage === "organizer-dashboard.html" ||
-      currentPage === "website.html"
->>>>>>> main
     ) {
       window.location.href = "../Registration/SignIn.html";
     }
@@ -203,15 +179,9 @@ onAuthStateChanged(auth, async (user) => {
   // ✅ If logged in and on SignIn/SignUp → redirect to dashboard
   if (currentPage === "SignIn.html" || currentPage === "SignUp.html") {
     if (!user.emailVerified) {
-<<<<<<< HEAD
     console.log("User is signed in but not verified — staying on SignUp/SignIn page.");
     return; // stop here — do NOT redirect
   }
-=======
-      console.log("User is signed in but not verified — staying on SignUp/SignIn page.");
-      return; // stop here — do NOT redirect
-    }
->>>>>>> main
 
     const userDoc = await getDoc(doc(db, "users", user.uid));
     if (userDoc.exists()) {
@@ -219,11 +189,7 @@ onAuthStateChanged(auth, async (user) => {
       if (role === "organizer") {
         window.location.href = "../../website/Organizer/organizer-dashboard.html";
       } else {
-<<<<<<< HEAD
         window.location.href = "../../website/Student/student-dashboard.html";
-=======
-        window.location.href = "website.html";
->>>>>>> main
       }
     }
   }
