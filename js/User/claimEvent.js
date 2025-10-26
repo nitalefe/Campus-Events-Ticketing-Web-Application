@@ -11,7 +11,7 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { auth, db } from "../Shared/firebase-config.js";
+import { auth, db } from "../../Shared/firebase-config.js";
 
 // Get event ID from URL parameters
 // const eventID = "khBBjlAZtTMYtrqOtZ8J"; // Test event ID
@@ -245,7 +245,7 @@ document.getElementById("confirm").addEventListener("click", async (e) => {
     }
 
     if (checkIfUserIsAttending(eventID, currentUserData.uid)) {
-    // if (await checkIfUserIsAttending(eventID, currentUserData.uid)) {
+      // if (await checkIfUserIsAttending(eventID, currentUserData.uid)) {
       throw new Error("You have already claimed a ticket for this event.");
     }
 
@@ -282,7 +282,7 @@ async function checkIfUserIsAttending(eventID, userID) {
     console.error("Missing eventID or userID when checking attendee");
     return false;
   }
-  
+
   try {
     const attendeesRef = collection(db, "events", eventID, "attendees");
 

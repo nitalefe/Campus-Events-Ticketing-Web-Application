@@ -1,25 +1,13 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Event QR</title>
-  <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; padding: 24px; background: #fafafa; color: #111; }
-    .wrap { max-width: 720px; margin: 0 auto; }
-    h1 { font-size: 1.25rem; margin: 0 0 16px; }
-    .panel { background: #fff; border: 1px solid #e6e6e6; border-radius: 12px; padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
-    form { display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: end; margin-bottom: 16px; }
-    label { display: block; font-size: .85rem; color: #555; margin-bottom: 6px; }
-    input[type="text"] { width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 8px; font-size: 0.95rem; }
-    .row { display: flex; align-items: center; gap: 10px; }
-    button { padding: 10px 14px; border: 0; border-radius: 10px; background: #111; color: #fff; cursor: pointer; font-weight: 600; }
-    button:disabled { opacity: .6; cursor: not-allowed; }
-    #status { font-size: .9rem; color: #666; margin-bottom: 10px; min-height: 1.2em; }
-    #qrcode { display: grid; place-items: center; width: 320px; height: 320px; background: #fff; border-radius: 12px; border: 1px dashed #ddd; margin: 0 auto; }
-    .hint { font-size: .85rem; color: #777; text-align: center; margin-top: 8px; }
-  </style>
+  <link rel="stylesheet" href="../../css/User/qrGenerator.css" />
 </head>
+
 <body>
   <div class="wrap">
     <h1>Event QR Code</h1>
@@ -49,10 +37,12 @@
   </div>
 
   <!-- qrcode.js must load BEFORE the module that calls new QRCode(...) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" crossorigin="anonymous"
+    referrerpolicy="no-referrer"></script>
 
   <!-- Your generator module in /Script -->
-  <script type="module" src="../../js/generator.js"></script>
+
+  <script type="module" src="../../js/QRcode/generator.js"></script>
 
   <script>
     const $ = (id) => document.getElementById(id);
@@ -112,4 +102,5 @@
     });
   </script>
 </body>
+
 </html>

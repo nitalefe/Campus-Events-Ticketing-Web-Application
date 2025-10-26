@@ -1,0 +1,412 @@
+/* Shared dashboard styles (compact subset) */
+:root {
+	--primary: #367bfc;
+	--nav-bg: rgba(0, 51, 102, 0.95);
+	--card-bg: #eaeaea;
+	--muted: #6b7280;
+}
+
+/* Base */
+html,
+body {
+	height: 100%;
+}
+
+body {
+	font-family: 'Montserrat', Arial, sans-serif;
+	background: linear-gradient(135deg, #367bfc 0%, #002976 100%);
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	color: #222;
+	/* larger base text for readability */
+	font-size: clamp(16px, 1.6vw, 18px);
+	line-height: 1.45;
+}
+
+/* Toolbar */
+.toolbar {
+	width: 100%;
+	background: rgba(0, 51, 102, 0.95);
+	color: #fff;
+	display: flex;
+	align-items: center;
+	padding: 0 clamp(16px, 3vw, 32px);
+	height: clamp(60px, 8vh, 72px);
+	box-sizing: border-box;
+	box-shadow: 0 0.3vh 1vh rgba(0, 0, 0, 0.12);
+	position: sticky;
+	top: 0;
+	z-index: 100;
+}
+
+.toolbar-logo {
+	height: clamp(40px, 6vh, 48px);
+	margin-right: clamp(20px, 3vw, 36px);
+	filter: drop-shadow(0 0.2vh 0.3vh rgba(0, 0, 0, 0.18));
+	transition: transform 0.2s;
+	cursor: pointer;
+}
+
+.toolbar-logo:hover {
+	transform: scale(1.08) rotate(-2deg);
+}
+
+.toolbar-btn {
+	background: rgba(255, 255, 255, 0.08);
+	border: none;
+	color: #fff;
+	font-size: clamp(0.9rem, 2.5vw, 1.08rem);
+	margin-right: clamp(16px, 2.5vw, 24px);
+	cursor: pointer;
+	padding: clamp(8px, 1.5vh, 10px) clamp(16px, 3vw, 22px);
+	border-radius: 0.4vw;
+	font-family: 'Montserrat', Arial, sans-serif;
+	font-weight: 400;
+	letter-spacing: 0.5px;
+	transition: background 0.2s, box-shadow 0.2s;
+	box-shadow: 0 0.2vh 0.6vh rgba(0, 0, 0, 0.04);
+	white-space: nowrap;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}
+
+.toolbar-btn:hover {
+	background: #367bfc;
+	box-shadow: 0 0.3vh 0.9vh rgba(54, 123, 252, 0.18);
+}
+
+.toolbar-spacer {
+	flex: 1;
+}
+
+.auth-btn {
+	background: linear-gradient(90deg, #6fa3ef 60%, #367bfc 100%);
+	color: #fff;
+	border: none;
+	border-radius: 0.4vw;
+	font-size: clamp(0.9rem, 2.2vw, 1rem);
+	cursor: pointer;
+	padding: clamp(8px, 1.5vh, 10px) clamp(16px, 3vw, 22px);
+	margin-right: 0;
+	font-weight: 600;
+	box-shadow: 0 0.2vh 0.6vh rgba(54, 123, 252, 0.12);
+	transition: background 0.2s, box-shadow 0.2s;
+}
+
+.auth-btn:hover {
+	background: linear-gradient(90deg, #a3c8f7 60%, #367bfc 100%);
+	box-shadow: 0 0.3vh 0.9vh rgba(54, 123, 252, 0.22);
+}
+
+/* Header / Hero */
+header {
+	padding: clamp(28px, 6vh, 48px) 20px;
+	text-align: center;
+	color: #fff
+}
+
+header h1 {
+	font-size: clamp(1.4rem, 5vw, 2.2rem);
+	margin: 0 0 8px
+}
+
+header p {
+	margin: 0;
+	color: rgba(255, 255, 255, 0.92)
+}
+
+/* Main layout */
+.main-content {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.section-bar {
+	font-weight: 700;
+	color: var(--primary);
+	background: #e8eeff;
+	padding: 10px 16px;
+	border-radius: 6px
+}
+
+.events-container {
+	width: 100%;
+	/* use container width, avoid forcing viewport width which can cause overflow */
+	box-sizing: border-box;
+	margin: 0 auto;
+	padding: clamp(16px, 4vw, 36px);
+	/* increased inner padding */
+	background: #fff;
+	border-radius: 0;
+	/* let it blend edge-to-edge */
+	box-shadow: 0 8px 20px rgba(13, 71, 161, 0.04);
+	overflow: hidden;
+	/* prevent child horizontal scroll from escaping to page */
+}
+
+/* Optional vertical scroll mode for containers */
+.events-container.vertical-scroll {
+	max-height: clamp(48vh, 60vh, 72vh);
+	overflow-y: auto;
+	padding-right: calc(clamp(16px, 4vw, 36px) + 8px);
+	/* room for scrollbar */
+}
+
+.events-container.vertical-scroll .events {
+	flex-direction: column;
+	flex-wrap: nowrap;
+	overflow-x: visible;
+	gap: 16px;
+	padding: 8px 0;
+}
+
+.events-container.vertical-scroll .events::-webkit-scrollbar {
+	width: 8px
+}
+
+.events-container.vertical-scroll .events::-webkit-scrollbar-thumb {
+	background: rgba(0, 0, 0, 0.08);
+	border-radius: 6px
+}
+
+/* Events grid - horizontal scroll instead of wrapping */
+.events {
+	display: flex;
+	flex-wrap: nowrap;
+	/* don't wrap, allow horizontal scroll */
+	gap: 14px;
+	align-items: flex-start;
+	overflow-x: auto;
+	/* horizontal scroll within the row */
+	-webkit-overflow-scrolling: touch;
+	padding: 6px 4px;
+	/* small inner padding for scroll area */
+	scroll-snap-type: x proximity;
+	/* smoother snap behavior */
+	width: auto;
+	/* let the container control visible width; scrolling stays inside */
+}
+
+/* Scroll control buttons (chevrons) */
+.events-container {
+	position: relative
+}
+
+.scroll-btn {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	border: none;
+	background: rgba(0, 0, 0, 0.55);
+	color: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	z-index: 40;
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+	opacity: 0.9;
+}
+
+.scroll-btn.left {
+	left: 12px
+}
+
+.scroll-btn.right {
+	right: 12px
+}
+
+.scroll-btn.hidden {
+	opacity: 0;
+	pointer-events: none
+}
+
+.scroll-btn:focus {
+	outline: 2px solid rgba(255, 255, 255, 0.12)
+}
+
+/* small chevron icon */
+.scroll-btn svg {
+	width: 18px;
+	height: 18px
+}
+
+.events::-webkit-scrollbar {
+	height: 10px
+}
+
+.events::-webkit-scrollbar-track {
+	background: transparent
+}
+
+.events::-webkit-scrollbar-thumb {
+	background: rgba(0, 0, 0, 0.14);
+	border-radius: 8px
+}
+
+.event-card {
+	background: var(--card-bg);
+	padding: clamp(14px, 2.5vw, 20px);
+	border-radius: 10px;
+	cursor: pointer;
+	flex: 0 0 auto;
+	/* do not shrink/grow */
+	width: clamp(240px, 28vw, 320px);
+	min-width: 220px;
+	display: flex;
+	flex-direction: column;
+	scroll-snap-align: start;
+	/* snap each card into view when scrolling */
+}
+
+.event-card .event-banner {
+	width: 100%;
+	height: clamp(140px, 20vh, 200px);
+	object-fit: cover;
+	border-radius: 8px;
+	margin-bottom: 12px
+}
+
+.event-title {
+	font-size: clamp(1.05rem, 2.4vw, 1.4rem);
+	margin: 0 0 8px;
+	color: #233241
+}
+
+.event-date,
+.event-location {
+	font-size: clamp(0.95rem, 2vw, 1.05rem);
+	color: var(--muted);
+	margin: 0 0 8px
+}
+
+.event-desc {
+	font-size: clamp(0.95rem, 2vw, 1rem);
+	color: #444;
+	line-height: 1.45;
+	overflow-wrap: break-word
+}
+
+/* Search */
+.search-bar {
+	display: flex;
+	justify-content: center;
+	padding: 18px 0
+}
+
+.search-input {
+	width: min(560px, 80%);
+	padding: 12px;
+	border: 1px solid #ccc;
+	border-right: none;
+	border-radius: 10px 0 0 10px;
+	font-size: 1rem
+}
+
+.search-btn {
+	background: #007acc;
+	color: #fff;
+	border: 1px solid #007acc;
+	border-radius: 0 10px 10px 0;
+	padding: 12px 18px;
+	font-size: 1rem
+}
+
+/* Small screens */
+@media (max-width:900px) {
+	.events {
+		justify-content: flex-start
+	}
+
+	/* slightly larger cards on medium screens are fine; horizontal scroll keeps layout stable */
+	.event-card {
+		width: clamp(260px, 40vw, 360px)
+	}
+}
+
+@media (max-width:600px) {
+	.toolbar {
+		padding: 0 12px
+	}
+
+	.toolbar-btn {
+		display: none
+	}
+
+	.toolbar-spacer {
+		flex: 0
+	}
+
+	.event-card {
+		width: clamp(220px, 62vw, 320px);
+		min-width: 200px
+	}
+
+	.search-input {
+		width: 70%
+	}
+}
+
+/* Accessibility focus states */
+.event-card:focus-within,
+.event-card:focus {
+	outline: 2px solid rgba(54, 123, 252, 0.2);
+	box-shadow: 0 2px 8px rgba(54, 123, 252, 0.06)
+}
+
+/* Organizer-specific hero/header styles moved from inline CSS */
+.organizer-page header {
+	background: url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=400&q=80') center/cover no-repeat;
+	background-color: rgba(54, 123, 252, 0.05);
+	background-blend-mode: overlay;
+	color: #fff;
+	padding: clamp(40px, 8vh, 60px) clamp(16px, 4vw, 20px);
+	text-align: center;
+	position: relative;
+	box-shadow:
+		0 0.5vh 2vh rgba(0, 0, 0, 0.15),
+		0 0 clamp(20px, 4vw, 40px) rgba(54, 123, 252, 0.4),
+		0 0 clamp(40px, 8vw, 80px) rgba(54, 123, 252, 0.2),
+		0 0 clamp(60px, 12vw, 120px) rgba(54, 123, 252, 0.1);
+	margin-bottom: clamp(16px, 3vh, 20px);
+}
+
+.organizer-page header::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: linear-gradient(135deg, rgba(54, 123, 252, 0.4) 0%, rgba(0, 41, 118, 0.6) 100%);
+	pointer-events: none;
+}
+
+.organizer-page header h1 {
+	color: #ffffff;
+	font-size: clamp(1.8rem, 6vw, 2.5rem);
+	font-weight: 700;
+	margin: 0 0 clamp(12px, 2vh, 15px) 0;
+	text-shadow: 0 0.2vh 0.4vh rgba(0, 0, 0, 0.3);
+	letter-spacing: clamp(0.5px, 0.1vw, 1px);
+	position: relative;
+	z-index: 10;
+}
+
+.organizer-page header p {
+	font-size: clamp(1rem, 3vw, 1.2rem);
+	margin: 0;
+	opacity: 0.9;
+	font-weight: 400;
+	position: relative;
+	z-index: 10;
+	text-shadow: 0 0.1vh 0.2vh rgba(0, 0, 0, 0.2);
+}

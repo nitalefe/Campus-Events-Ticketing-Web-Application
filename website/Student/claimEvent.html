@@ -1,17 +1,20 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Event Ticket Claim - Evently</title>
   <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../css/claimEvent.css">
+  <link rel="stylesheet" href="../../css/User/claimEvent.css">
 </head>
+
 <body>
   <!-- Toolbar -->
   <div class="toolbar">
-    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='../Organizer/organizer-dashboard.html'">
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+      onclick="location.href='../Organizer/organizer-dashboard.html'">
 
     <button class="toolbar-btn" onclick="location.href='../Organizer/organizer-dashboard.html'">Home</button>
     <button class="toolbar-btn" onclick="location.href='../Organizer/eventCreation.html'">Create New Event</button>
@@ -22,100 +25,104 @@
   </div>
 
   <div class="page-wrapper">
-  <div class="page-container">
-    <!-- LEFT PANEL - Event Details -->
-    <div class="event-panel">
-      <div class="org-badge">
-        <div class="org-logo"></div>
-        <span id="org-name">Concordia University Events</span>
-      </div>
-      
-      <img id="event-banner" class="event-banner" src="" alt="Event banner" style="display:none" />
-      
-      <h1 class="event-title" id="event-title">Fein concert</h1>
-      
-      <div class="tickets-left" id="tickets-left-badge">
-        <span id="tickets-left-text">7 tickets left</span>
-      </div>
-      
-      <div class="event-details">
-        <div class="detail-item">
-          <div class="detail-icon">📅</div>
-          <div class="detail-content">
-            <div class="detail-label"></div>
-            <div class="detail-value" id="event-date">Nov 8 at 8:00 a.m.<br>to Nov 9 at 8:00 p.m. EST</div>
+    <div class="page-container">
+      <!-- LEFT PANEL - Event Details -->
+      <div class="event-panel">
+        <div class="org-badge">
+          <div class="org-logo"></div>
+          <span id="org-name">Concordia University Events</span>
+        </div>
+
+        <img id="event-banner" class="event-banner" src="" alt="Event banner" style="display:none" />
+
+        <h1 class="event-title" id="event-title">Fein concert</h1>
+
+        <div class="tickets-left" id="tickets-left-badge">
+          <span id="tickets-left-text">7 tickets left</span>
+        </div>
+
+        <div class="event-details">
+          <div class="detail-item">
+            <div class="detail-icon">📅</div>
+            <div class="detail-content">
+              <div class="detail-label"></div>
+              <div class="detail-value" id="event-date">Nov 8 at 8:00 a.m.<br>to Nov 9 at 8:00 p.m. EST</div>
+            </div>
+          </div>
+
+          <div class="detail-item">
+            <div class="detail-icon">📍</div>
+            <div class="detail-content">
+              <div class="detail-label"></div>
+              <div class="detail-value" id="event-location">Montreal<br>QC H3G 1M8, Canada</div>
+            </div>
           </div>
         </div>
-        
-        <div class="detail-item">
-          <div class="detail-icon">📍</div>
-          <div class="detail-content">
-            <div class="detail-label"></div>
-            <div class="detail-value" id="event-location">Montreal<br>QC H3G 1M8, Canada</div>
-          </div>
-        </div>
-      </div>
-      
-      <p class="event-description" id="event-description">
-        SOME DESCRIPTION HELLO DECIRIONT I WANT DEDSICCPRIOTN FEING ONCER TEJ 
-      </p>
-      
-      <!-- <button class="more-details-btn">More details ↓</button> -->
-    </div>
-    
-    <!-- RIGHT PANEL - Ticket Selection -->
-    <div class="ticket-panel">
-      <div class="ticket-section">
-        <h2 class="section-title" id="admission-title">General Admission</h2>
-        
-        <div class="ticket-type" id="ticket-card">
-          <div class="ticket-header">
-            <div class="ticket-name">Free</div>
-            <div class="ticket-price" id="ticket-price">Free</div>
-          </div>
-          
-          <div class="ticket-info" id="ticket-info">
-            <span id="remaining-text">7 left!</span>
-          </div>
-          
-          <p style="font-size:13px;color:rgb(0, 0, 0);margin-bottom:12px" id="ticket-details">
-            This will include: thingy fein
-          </p>
-          
-          <button id="add-ticket" class="add-btn">Select</button>
-        </div>
+
+        <p class="event-description" id="event-description">
+          SOME DESCRIPTION HELLO DECIRIONT I WANT DEDSICCPRIOTN FEING ONCER TEJ
+        </p>
+
+        <!-- <button class="more-details-btn">More details ↓</button> -->
       </div>
 
-      <!-- Payment section (shown only if event requires payment) -->
-      <div class="payment-section" id="payment-section" style="display:none;">
-        <h2 class="section-title">Payment details</h2>
-        <div class="cc-form">
-          <label>Cardholder Name
-            <input id="cc-name" class="cc-input" type="text" placeholder="Full name on card" autocomplete="cc-name">
-          </label>
-          <label>Card Number
-            <input id="cc-number" class="cc-input" type="text" inputmode="numeric" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number">
-          </label>
-          <div class="cc-row">
-            <label style="flex:1">Expiry (MM/YY)
-              <input id="cc-exp" class="cc-input" type="text" inputmode="numeric" placeholder="MM/YY" maxlength="5" autocomplete="cc-exp">
-            </label>
-            <label style="flex:1">CVC
-              <input id="cc-cvc" class="cc-input" type="text" inputmode="numeric" placeholder="123" maxlength="4" autocomplete="cc-csc">
-            </label>
+      <!-- RIGHT PANEL - Ticket Selection -->
+      <div class="ticket-panel">
+        <div class="ticket-section">
+          <h2 class="section-title" id="admission-title">General Admission</h2>
+
+          <div class="ticket-type" id="ticket-card">
+            <div class="ticket-header">
+              <div class="ticket-name">Free</div>
+              <div class="ticket-price" id="ticket-price">Free</div>
+            </div>
+
+            <div class="ticket-info" id="ticket-info">
+              <span id="remaining-text">7 left!</span>
+            </div>
+
+            <p style="font-size:13px;color:rgb(0, 0, 0);margin-bottom:12px" id="ticket-details">
+              This will include: thingy fein
+            </p>
+
+            <button id="add-ticket" class="add-btn">Select</button>
           </div>
-          <p class="cc-note">Payments are simulated in development and not processed.</p>
         </div>
+
+        <!-- Payment section (shown only if event requires payment) -->
+        <div class="payment-section" id="payment-section" style="display:none;">
+          <h2 class="section-title">Payment details</h2>
+          <div class="cc-form">
+            <label>Cardholder Name
+              <input id="cc-name" class="cc-input" type="text" placeholder="Full name on card" autocomplete="cc-name">
+            </label>
+            <label>Card Number
+              <input id="cc-number" class="cc-input" type="text" inputmode="numeric" placeholder="1234 5678 9012 3456"
+                maxlength="19" autocomplete="cc-number">
+            </label>
+            <div class="cc-row">
+              <label style="flex:1">Expiry (MM/YY)
+                <input id="cc-exp" class="cc-input" type="text" inputmode="numeric" placeholder="MM/YY" maxlength="5"
+                  autocomplete="cc-exp">
+              </label>
+              <label style="flex:1">CVC
+                <input id="cc-cvc" class="cc-input" type="text" inputmode="numeric" placeholder="123" maxlength="4"
+                  autocomplete="cc-csc">
+              </label>
+            </div>
+            <p class="cc-note">Payments are simulated in development and not processed.</p>
+          </div>
+        </div>
+
+        <button id="confirm" class="confirm-btn">Confirm reservation</button>
+        <div id="spinner" aria-hidden="true" style="display:none;text-align:center;margin-top:12px">⏳</div>
       </div>
-      
-      <button id="confirm" class="confirm-btn">Confirm reservation</button>
-      <div id="spinner" aria-hidden="true" style="display:none;text-align:center;margin-top:12px">⏳</div>
     </div>
-  </div>
   </div>
 
   <div class="toast-wrap" id="toast-wrap" aria-live="polite" aria-atomic="false"></div>
   <script type="module" src="../../js/claimEvent.js"></script>
   <script type="module" src="../../js/auth.js"></script>
 </body>
+
 </html>

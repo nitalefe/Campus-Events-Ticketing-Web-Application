@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Event Page</title>
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/User/eventPageStu.css">
+</head>
+
+<body>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+      onclick="location.href='student-dashboard.html'">
+    <button class="toolbar-btn" onclick="location.href='student-dashboard.html'">Home</button>
+    <button class="toolbar-btn" onclick="location.href='../Student/myTickets.html'">My Tickets</button>
+    <div class="toolbar-spacer"></div>
+    <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
+    <div id="authBtnContainer">
+      <button id="logout-btn" class="auth-btn">Log Out</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <img id="eventBanner" src="https://via.placeholder.com/900x340" class="event-image" alt="Event Banner">
+    <h1 class="event-title">Loading...</h1>
+    <div class="event-date-location"></div>
+    <div class="event-description">Loading event details...</div>
+
+    <div class="student-actions">
+      <button id="buyBtn" class="buy-ticket-btn">Buy Ticket</button>
+      <button id="saveBtn" class="save-btn">Save Event</button>
+      <button id="calendarBtn" class="save-btn">Add to Calendar</button>
+      <button id="contactBtn" class="save-btn">Contact Organizer</button>
+    </div>
+  </div>
+
+  <!-- Firebase scripts -->
+  <script type="module">
+    import { auth, db } from "../../Shared/firebase-config.js";
+    import { doc, getDoc, updateDoc, setDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+    const params = new URLSearchParams(window.location.search);
+    const eventId = params.get("id");
+
+    const titleEl = document.querySelector(".event-title");
+    const descEl = document.querySelector(".event-description");
+    const dateLocEl = document.querySelector(".event-date-location");
+    const bannerEl = document.getElementById("eventBanner");
+    const saveBtn = document.getElementById("saveBtn");
+
+    // --------------------------------------------------
+    // 1️⃣ Load event details
+    // --------------------------------------------------
+    async function loadEventDetails(user) {
+      if (!eventId) {
+        titleEl.textContent = "Event not found.";
+        return;
+      }
+
+      const docRef = doc(db, "events", eventId);
+      const snap = await getDoc(docRef);
+
+      if (!snap.exists()) {
+        titleEl.textContent = "Event not found.";
+        descEl.textContent = "";
+        return;
+      }
+
+      const data = snap.data();
+      titleEl.textContent = data.eventName || "Untitled Event";
+      descEl.innerHTML = data.eventDescription || "No description available.";
+
+      const dateObj = data.eventDateTime?.toDate?.();
+      const dateStr = dateObj ? dateObj.toDateString() : "Unknown date";
+      dateLocEl.innerHTML = `<span>${dateStr}</span><br><span>${data.eventLocation || "Unknown location"}</span>`;
+
+      // Load event banner
+      if (data.banner) {
+        bannerEl.src = data.banner;
+        bannerEl.alt = `${data.eventName} Banner`;
+      } else {
+        bannerEl.src = "https://via.placeholder.com/900x340";
+        bannerEl.alt = "Event Banner";
+      }
+    }
+
+    // ----------------------------
+    // Save / Unsave Event (Students only)
+    // ----------------------------
+    async function toggleSaveEvent(user) {
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (!userSnap.exists()) {
+        await setDoc(userRef, { savedEvents: [] });
+      }
+
+      const data = userSnap.data() || {};
+      const saved = data.savedEvents || [];
+
+      if (saved.includes(eventId)) {
+        await updateDoc(userRef, { savedEvents: arrayRemove(eventId) });
+        saveBtn.textContent = "Save Event";
+        saveBtn.style.background = "linear-gradient(90deg, #0078d4 60%, #367bfc 100%)";
+        alert("Event removed from your saved list.");
+      } else {
+        await updateDoc(userRef, { savedEvents: arrayUnion(eventId) });
+        saveBtn.textContent = "Unsave Event";
+        saveBtn.style.background = "linear-gradient(90deg, #e74c3c 60%, #c0392b 100%)"; // 🔴 red
+        alert("Event saved successfully!");
+      }
+    }
+
+
+    // ----------------------------
+    // 🔹 Auth State Listener
+    // ----------------------------
+    onAuthStateChanged(auth, async (user) => {
+      console.log("[eventPage] Auth user:", user?.uid || "No user");
+      await loadEventDetails(user);
+
+      if (!saveBtn) return;
+      saveBtn.style.display = "none";
+
+      if (user) {
+        // Fetch role
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+        const userData = userSnap.data();
+        const role = userData?.role || "student";
+
+        // 🚫 Hide save button for organizers
+        if (role === "organizer") {
+          saveBtn.style.display = "none";
+          return;
+        }
+
+        // ✅ Show for students
+        saveBtn.style.display = "inline-block";
+
+        const saved = userData?.savedEvents || [];
+        if (saved.includes(eventId)) {
+          saveBtn.textContent = "Unsave Event";
+          saveBtn.style.background = "linear-gradient(90deg, #e74c3c 60%, #c0392b 100%)";
+          saveBtn.style.color = "#fff"; // ✅ make "Save Event" text white
+        } else {
+          saveBtn.textContent = "Save Event";
+          saveBtn.style.background = "linear-gradient(90deg, #0078d4 60%, #367bfc 100%)";
+          saveBtn.style.color = "#fff"; // ✅ make "Save Event" text white
+        }
+
+        // 👇 toggleSaveEvent now works
+        saveBtn.onclick = () => toggleSaveEvent(user);
+      }
+    });
+  </script>
+</body>
+
+</html>

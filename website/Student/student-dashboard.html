@@ -5,32 +5,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
-  <title>Organizer Home Page</title>
+  <title>Student Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../css/Organizer/dashboard.css">
+  <link rel="stylesheet" href="../../shared/dashboard.css">
 </head>
 
-<body class="organizer-page">
+<body data-event-page="eventPageStu.html">
 
-  <!-- Toolbar -->
+  <!-- Toolbar (reuse shared styles) -->
   <div class="toolbar">
     <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
-      onclick="location.href='organizer-dashboard.html'">
+      onclick="location.href='../Student/student-dashboard.html'">
 
-    <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
-    <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
-    <button class="toolbar-btn" onclick="location.href='myEvents.html'">My Events</button>
+    <button class="toolbar-btn" onclick="location.href='../Student/student-dashboard.html'">Home</button>
+    <button class="toolbar-btn" onclick="location.href='../Student/myTickets.html'">My Tickets</button>
     <div class="toolbar-spacer"></div>
-    <button class="toolbar-btn" onclick="location.href='settings.html'">Settings</button>
-    <button class="toolbar-btn" onclick="location.href='profile.html'">Profile</button>
+    <!--to be added with 4th feature-->
+    <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
     <div id="authBtnContainer">
       <button id="logout-btn" class="auth-btn">Log Out</button>
     </div>
   </div>
 
   <header>
-    <h1>Organizer Home Page</h1>
-    <p>Welcome! Here are your upcoming events.</p>
+    <h1>Explore Events</h1>
+    <p>Discover events on campus and RSVP quickly.</p>
   </header>
 
   <!-- Search -->
@@ -44,46 +43,53 @@
   <!-- Dynamic event sections -->
   <div class="main-content">
     <div>
-      <div class="section-bar">Your Upcoming Events</div>
-      <div class="events-container">
-        <div class="events" id="upcoming-events"></div>
-      </div>
-    </div>
-    <div>
-      <div class="section-bar">New Events</div>
-      <div class="events-container">
-        <div class="events" id="new-events"></div>
-      </div>
-    </div>
-    <div>
-      <div class="section-bar">Recommended Events</div>
+      <!--Events for which tickets are already bought-->
+      <div class="section-bar">My Events</div>
       <div class="events-container">
         <div class="events" id="recommended-events"></div>
       </div>
     </div>
+
     <div>
-      <div class="section-bar">Discover Events</div>
+      <!--events saved by user-->
+      <div class="section-bar">Saved Events</div>
+      <div class="events-container">
+        <div class="events" id="saved-events"></div>
+      </div>
+    </div>
+
+    <div>
+      <!--upcoming events for the user's school'scampus-->
+      <div class="section-bar">Upcoming On Campus</div>
+      <div class="events-container">
+        <div class="events" id="upcoming-events"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-bar">Discover</div>
       <div class="events-container">
         <div class="events" id="discover-events"></div>
       </div>
     </div>
-  </div>
-
-  <div id="search-results-section" style="display:none">
-    <div class="section-bar">Search Results</div>
-    <div class="events-container">
-      <div class="events" id="search-results"></div>
+    <!-- Search logic: consolidated search results (hidden by default) -->
+    <div id="search-results-section" style="display:none">
+      <div class="section-bar">Search Results</div>
+      <div class="events-container">
+        <div class="events" id="search-results"></div>
+      </div>
     </div>
-  </div>
   </div>
 
   <script type="module">
     function clearSearchView() {
       document.getElementById('search-results-section').style.display = 'none';
       document.getElementById('clear-search').style.display = 'none';
+      // show original sections
       document.querySelectorAll('.main-content > div').forEach(section => {
         if (section.id !== 'search-results-section') section.style.display = '';
       });
+      // remove cloned cards
       const sr = document.getElementById('search-results'); while (sr && sr.firstChild) sr.removeChild(sr.firstChild);
     }
 
@@ -91,6 +97,7 @@
       const query = document.querySelector('.search-input').value.toLowerCase().trim();
       if (!query) { clearSearchView(); return; }
 
+      // collect matches from all event lists, deduplicating by data-event-id
       const matches = [];
       const seen = new Set();
       document.querySelectorAll('.events').forEach(list => {
@@ -105,17 +112,20 @@
         });
       });
 
+      // hide original sections
       document.querySelectorAll('.main-content > div').forEach(section => {
         if (section.id !== 'search-results-section') section.style.display = 'none';
       });
 
+      // populate search results container with clones
       const sr = document.getElementById('search-results'); while (sr && sr.firstChild) sr.removeChild(sr.firstChild);
       matches.forEach(card => {
         const clone = card.cloneNode(true);
         clone.style.display = 'block';
         const id = clone.getAttribute('data-event-id') || card.getAttribute('data-event-id');
         if (id) {
-          clone.addEventListener('click', () => { window.location.href = `eventPage.html?id=${id}`; });
+          const target = document.body?.dataset?.eventPage || 'eventPageStu.html';
+          clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; });
           clone.style.cursor = 'pointer';
         }
         sr.appendChild(clone);
@@ -128,9 +138,7 @@
     document.getElementById('clear-search').addEventListener('click', clearSearchView);
   </script>
 
-  <!-- Firebase + Auth + Events -->
   <script type="module" src="../../Shared/firebase-config.js"></script>
-
   <script type="module" src="../../js/Registration/auth.js"></script>
   <script type="module" src="../../js/Events/LoadEvents.js"></script>
   <script type="module" src="../../shared/scroll-controls.js"></script>

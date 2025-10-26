@@ -13,7 +13,7 @@ import {
   where,
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { auth, db } from "../Shared/firebase-config.js";
+import { auth, db } from "../../Shared/firebase-config.js";
 
 const params = new URLSearchParams(window.location.search);
 const eventId = params.get("id"); // ✅ Single-event mode if ?id=
@@ -130,7 +130,7 @@ async function applyFilters(user) {
           eventDateTime: data.eventDateTime?.toDate(),
         },
       ];
-window.currentFilteredEvents = events;
+      window.currentFilteredEvents = events;
       status.textContent = `Showing analytics for "${data.eventName}"`;
       status.className = "status success";
       displayEvents(events);
@@ -234,7 +234,7 @@ onAuthStateChanged(auth, (user) => {
     return;
   }
   applyFilters(user);
-  
+
 });
 
 // Expose for HTML buttons
