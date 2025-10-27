@@ -1,50 +1,39 @@
 //dont think were using this file but keeping it here for reference in case we need to come back to it for
 
 // scanner.js
-import { validateTicket } from "./ticket-validation.js";
+import { validateAndConsumeTicket } from "./ticket-validation.js";
 
-// UI refs
-const statusEl = document.getElementById("scanStatus");
-const manualStatusEl = document.getElementById("manualStatus");
+
+// ---- UI refs ----
+const statusEl  = document.getElementById("scanStatus");
 const cameraSel = document.getElementById("cameraSel");
-const startBtn = document.getElementById("startBtn");
-const stopBtn = document.getElementById("stopBtn");
-const simulateBtn = document.getElementById("simulateBtn");
-const manualEncrypted = document.getElementById("manualEncrypted");
+const startBtn  = document.getElementById("startBtn");
+const stopBtn   = document.getElementById("stopBtn");
 
-const setStatus = (msg, state = "") => {
+// style helper
+const setStatus = (msg, ok = null) => {
   statusEl.textContent = msg;
-  statusEl.className = "status" + (state ? ` ${state}` : "");
-};
-const setManualStatus = (msg, state = "") => {
-  manualStatusEl.textContent = msg;
-  manualStatusEl.className = "status" + (state ? ` ${state}` : "");
+  statusEl.className = "status" + (ok === null ? "" : ok ? " ok" : " err");
 };
 
 let scanner;
 let cameraList = [];
 let starting = false;
 
+// debounce same payload
+let lastPayload = "";
+let lastAt = 0;
+
+// ---- init ----
 (async function init() {
   try {
-    // Disable start until we have cameras
     startBtn.disabled = true;
-
-    // (Optional) Force permission prompt early; uncomment if needed.
-    // if (navigator.mediaDevices?.getUserMedia) {
-    //   try {
-    //     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    //     stream.getTracks().forEach(t => t.stop());
-    //   } catch (e) {
-    //     /* ignore; user may grant on start */
-    //   }
-    // }
 
     cameraList = await Html5Qrcode.getCameras();
     cameraSel.innerHTML = "";
 
     if (!cameraList || cameraList.length === 0) {
-      setStatus("No cameras found. Use HTTPS/localhost and check permissions.", "err");
+      setStatus("No cameras found. Use HTTPS/localhost and check permissions.", false);
       return;
     }
 
@@ -55,61 +44,75 @@ let starting = false;
       cameraSel.appendChild(opt);
     });
 
-    // Enable start now that we have devices
-    startBtn.disabled = false;
+    console.log("[CAM] cameras found:", cameraList);
 
-    // Prepare scanner element
     scanner = new Html5Qrcode("reader");
     setStatus("Ready to start scanning.");
+    startBtn.disabled = false;
   } catch (err) {
     console.error(err);
-    setStatus(`Could not list cameras: ${err?.message || err}`, "err");
+    setStatus(`Could not list cameras: ${err?.message || err}`, false);
   }
 })();
 
+// ---- decode handler ----
 async function onDecoded(encryptedText) {
+  console.log("[SCAN] raw payload:", encryptedText);
+
+  const now = Date.now();
+  if (encryptedText === lastPayload && now - lastAt < 2000) return;
+  lastPayload = encryptedText;
+  lastAt = now;
+
   try {
-    const result = await validateTicket(encryptedText);
-    setStatus(result.message, result.ok ? "ok" : "err");
+    const result = await validateAndConsumeTicket(encryptedText);
+    console.log("[SCAN] validation/consume result:", result);
+    setStatus(result.message, result.ok);
+
+    if (result.ok) {
+      try {
+        await scanner.pause(true);
+        setTimeout(() => scanner.resume(), 1200);
+      } catch (_) {}
+    }
   } catch (e) {
-    console.error(e);
-    setStatus(`Unexpected error validating ticket: ${e?.message || e}`, "err");
+    console.error("[SCAN] unexpected error:", e);
+    setStatus(`Unexpected error: ${e?.message || e}`, false);
   }
 }
 
+// ---- buttons ----
 startBtn.addEventListener("click", async () => {
   if (!scanner) {
-    setStatus("Scanner not ready yet.", "err");
+    setStatus("Scanner not ready yet.", false);
     return;
   }
   if (starting) return;
   starting = true;
 
   try {
-    // Use the selected deviceId or fall back to the first camera
     const selectedId = cameraSel.value || (cameraList[0] && cameraList[0].id);
     if (!selectedId) {
-      setStatus("No camera deviceId available.", "err");
+      setStatus("No camera deviceId available.", false);
       starting = false;
       return;
     }
 
     await scanner.start(
-      { deviceId: { exact: selectedId } },  // desktop-safe
+      { deviceId: { exact: selectedId } },
       { fps: 10, qrbox: { width: 260, height: 260 } },
       onDecoded,
       () => {} // ignore per-frame decode errors
     );
 
-    setStatus("Camera started. Aim at a QR code…");
+    setStatus("Camera started. Aim at a QR code…", null);
   } catch (e) {
     console.error(e);
-    // Show the real reason to the user
     const hint =
       location.protocol === "http:" && location.hostname !== "localhost"
         ? " (Tip: use https:// or http://localhost)"
         : "";
-    setStatus(`Failed to start camera: ${e?.message || e}${hint}`, "err");
+    setStatus(`Failed to start camera: ${e?.name || ""} ${e?.message || e}${hint}`, false);
   } finally {
     starting = false;
   }
@@ -119,24 +122,9 @@ stopBtn.addEventListener("click", async () => {
   try {
     if (scanner) {
       await scanner.stop();
-      setStatus("Camera stopped.");
+      setStatus("Camera stopped.", null);
     }
   } catch (e) {
     console.error(e);
-  }
-});
-
-simulateBtn.addEventListener("click", async () => {
-  const encrypted = (manualEncrypted.value || "").trim();
-  if (!encrypted) {
-    setManualStatus("Please paste encrypted QR text first.", "err");
-    return;
-  }
-  try {
-    const result = await validateTicket(encrypted);
-    setManualStatus(result.message, result.ok ? "ok" : "err");
-  } catch (e) {
-    console.error(e);
-    setManualStatus(`Unexpected error validating ticket: ${e?.message || e}`, "err");
   }
 });
