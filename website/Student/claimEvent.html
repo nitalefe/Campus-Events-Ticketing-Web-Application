@@ -14,14 +14,16 @@
   <!-- Toolbar -->
   <div class="toolbar">
     <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
-      onclick="location.href='../Organizer/organizer-dashboard.html'">
+      onclick="location.href='../Student/student-dashboard.html'">
 
-    <button class="toolbar-btn" onclick="location.href='../Organizer/organizer-dashboard.html'">Home</button>
-    <button class="toolbar-btn" onclick="location.href='../Organizer/eventCreation.html'">Create New Event</button>
-    <button class="toolbar-btn" onclick="location.href='../Organizer/myEvents.html'">My Events</button>
+    <button class="toolbar-btn" onclick="location.href='../Student/student-dashboard.html'">Home</button>
+    <button class="toolbar-btn" onclick="location.href='../Student/myTickets.html'">My Tickets</button>
     <div class="toolbar-spacer"></div>
-    <button class="toolbar-btn" onclick="location.href='../Organizer/settings.html'">Settings</button>
-    <button id="logout-btn" class="auth-btn">Log Out</button>
+    <!--to be added with 4th feature-->
+    <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
+    <div id="authBtnContainer">
+      <button id="logout-btn" class="auth-btn">Log Out</button>
+    </div>
   </div>
 
   <div class="page-wrapper">
@@ -121,8 +123,8 @@
   </div>
 
   <div class="toast-wrap" id="toast-wrap" aria-live="polite" aria-atomic="false"></div>
-  <script type="module" src="../../js/claimEvent.js"></script>
-  <script type="module" src="../../js/auth.js"></script>
+  <script type="module" src="../../js/User/claimEvent.js"></script>
+  <script type="module" src="../../js/Registration/auth.js"></script>
 </body>
 
 </html>

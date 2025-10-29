@@ -11,14 +11,15 @@
 </head>
 
 <body>
-
   <!-- Toolbar -->
   <div class="toolbar">
     <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
-      onclick="location.href='student-dashboard.html'">
-    <button class="toolbar-btn" onclick="location.href='student-dashboard.html'">Home</button>
+      onclick="location.href='../Student/student-dashboard.html'">
+
+    <button class="toolbar-btn" onclick="location.href='../Student/student-dashboard.html'">Home</button>
     <button class="toolbar-btn" onclick="location.href='../Student/myTickets.html'">My Tickets</button>
     <div class="toolbar-spacer"></div>
+    <!--to be added with 4th feature-->
     <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
     <div id="authBtnContainer">
       <button id="logout-btn" class="auth-btn">Log Out</button>
@@ -32,7 +33,11 @@
     <div class="event-description">Loading event details...</div>
 
     <div class="student-actions">
-      <button id="buyBtn" class="buy-ticket-btn">Buy Ticket</button>
+      <!-- <button id="buyBtn" class="buy-ticket-btn">Buy Ticket</button> -->
+      <button id="buyBtn" class="buy-ticket-btn"
+      onclick="location.href='claimEvent.html?id=' + new URLSearchParams(window.location.search).get('id')">
+      Buy Ticket
+    </button>
       <button id="saveBtn" class="save-btn">Save Event</button>
       <button id="calendarBtn" class="save-btn">Add to Calendar</button>
       <button id="contactBtn" class="save-btn">Contact Organizer</button>

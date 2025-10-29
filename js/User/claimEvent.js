@@ -206,13 +206,6 @@ document.addEventListener("DOMContentLoaded", () => {
 document.getElementById("confirm").addEventListener("click", async (e) => {
   e.preventDefault();
 
-  if (!DEBUG) {
-    if (!currentUser || !currentUserData || !eventData) {
-      showToast("Please sign in to claim tickets", "error");
-      return;
-    }
-  }
-
   const ticketCard = document.getElementById("ticket-card");
   if (!ticketCard.classList.contains("selected")) {
     showToast("Please select a ticket before confirming.", "error");
@@ -244,7 +237,7 @@ document.getElementById("confirm").addEventListener("click", async (e) => {
       await new Promise((res) => setTimeout(res, 600));
     }
 
-    if (checkIfUserIsAttending(eventID, currentUserData.uid)) {
+    if (await checkIfUserIsAttending(eventID, currentUser.uid)) {
       // if (await checkIfUserIsAttending(eventID, currentUserData.uid)) {
       throw new Error("You have already claimed a ticket for this event.");
     }
@@ -265,7 +258,7 @@ document.getElementById("confirm").addEventListener("click", async (e) => {
 
     // Redirect after success
     setTimeout(() => {
-      window.location.href = "../Organizer/organizer-dashboard.html";
+      window.location.href = "../../website/Student/student-dashboard.html";
     }, 2000);
 
   } catch (error) {
@@ -319,7 +312,7 @@ async function addAttendee(paid = true) {
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(2, 9);
   // const attendeeID = currentUser.uid;
-  const attendeeID = currentUserData.uid;
+  const attendeeID = currentUser.uid;
   // const attendeeID = `${currentUserData.uid}_${timestamp}_${random}`;
   // const attendeeID = `${currentUser.uid}_${timestamp}_${random}`;
 
