@@ -1,9 +1,26 @@
-import { auth, db, /*app*/} from "../Shared/firebase-config.js";
+import { auth, db, /*app*/} from "../../Shared/firebase-config.js";
 // import {signInWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 import { setDoc, doc, getDoc, getDocs, collection, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-var eventID = "6w3Q4k4LRLazZzJnHjil";
-var attendeeID = "ze-yu-huang-benoyo8489_reifide_com";
+const currentUser = auth.currentUser;
+const uid = currentUser.uid;
+const userDocRef = doc(db, "users", uid);
+const userSnap = await getDoc(userDocRef);
+
+/*const currentEvent = auth.currentEvent;
+const eid = currentEvent.uid;
+const eventDocRef = doc(db, "events", eid);
+const eventSnap = await getDoc(eventDocRef);*/
+const params = new URLSearchParams(window.location.search);
+const eid = params.get("id");
+
+var attendeeID = uid;
+var eventID = eid;
+
+//var eventID = "6w3Q4k4LRLazZzJnHjil"; --for testing
+//var attendeeID = "ze-yu-huang-benoyo8489_reifide_com";
+//var eventID = user.id;
+var attendeeID = "";
 eventID = eventID.slice(0,15);
 attendeeID = attendeeID.slice(0,15);
 
@@ -24,21 +41,20 @@ async function readEvent(eventID, attendeeID) { //I may be stupid but wouldnt we
   
 
   var qrText = eventID+'/'+attendeeID;
-  qrText = initializeQRCode(qrText, 7);
-  
+  qrText = encryption(qrText, 3);
+  qrText = initializeQRCode(qrText);
   return qrText;
 }
 
 //ok so easy way to bypass overflow is only read first 16 characters, could be changed later on
 function encryption(str, increment) {
   let result = '';
-
+  
   for (let i = 0; i < str.length; i++) {
     const charCode = str.charCodeAt(i);         // get ASCII code
     const newChar = String.fromCharCode(charCode + increment); // add increment
     result += newChar;
   }
-
   return result;
 }
 
@@ -68,10 +84,19 @@ function initializeQRCode(FIXED_DATA_STRING) {
     console.log(`QR Code displayed for: ${FIXED_DATA_STRING}`);
 }
 
+readEvent(eventID, attendeeID);
 // 3. Call the function to run when the script loads
-initializeQRCode(readEvent(eventID));
+/*window.setIdsAndRenderQR = async function (eventID, attendeeID, options = {}) {
+  const { encrypt } = options;
+  let qrText = await readEvent(eventID, attendeeID);
 
-window.setIdsAndRenderQR = async function (eventID, attendeeID, options = {}) {
+  if (encrypt) {
+    qrText = encryption(qrText, 7);
+  }
+
+  initializeQRCode(qrText);
+};*/
+/*window.setIdsAndRenderQR = async function (eventID, attendeeID, options = {}) {
   const { encrypt } = options;
   let qrText = `${eventID}/${attendeeID}`;
 
@@ -80,4 +105,4 @@ window.setIdsAndRenderQR = async function (eventID, attendeeID, options = {}) {
   }
 
   initializeQRCode(qrText);
-};
+};*/
