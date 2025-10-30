@@ -361,10 +361,13 @@ header p {
 	outline: 2px solid rgba(54, 123, 252, 0.2);
 	box-shadow: 0 2px 8px rgba(54, 123, 252, 0.06)
 }
-
-/* Organizer-specific hero/header styles moved from inline CSS */
-.organizer-page header {
-	background: url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=400&q=80') center/cover no-repeat;
+/* ==============================
+   Shared Header (Organizer + Student)
+   ============================== */
+.organizer-page header,
+.student-page header {
+	background: url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=400&q=80')
+		center/cover no-repeat;
 	background-color: rgba(54, 123, 252, 0.05);
 	background-blend-mode: overlay;
 	color: #fff;
@@ -379,18 +382,26 @@ header p {
 	margin-bottom: clamp(16px, 3vh, 20px);
 }
 
-.organizer-page header::before {
+/* Shared gradient overlay */
+.organizer-page header::before,
+.student-page header::before {
 	content: '';
 	position: absolute;
 	top: 0;
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background: linear-gradient(135deg, rgba(54, 123, 252, 0.4) 0%, rgba(0, 41, 118, 0.6) 100%);
+	background: linear-gradient(
+		135deg,
+		rgba(54, 123, 252, 0.4) 0%,
+		rgba(0, 41, 118, 0.6) 100%
+	);
 	pointer-events: none;
 }
 
-.organizer-page header h1 {
+/* Shared header text styling */
+.organizer-page header h1,
+.student-page header h1 {
 	color: #ffffff;
 	font-size: clamp(1.8rem, 6vw, 2.5rem);
 	font-weight: 700;
@@ -401,7 +412,8 @@ header p {
 	z-index: 10;
 }
 
-.organizer-page header p {
+.organizer-page header p,
+.student-page header p {
 	font-size: clamp(1rem, 3vw, 1.2rem);
 	margin: 0;
 	opacity: 0.9;
