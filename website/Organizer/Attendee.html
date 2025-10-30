@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Event Attendees</title>
@@ -7,257 +8,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Montserrat font from Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(135deg, #367bfc 0%, #002976 100%);
-            font-family: 'Montserrat', Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-        }
-        .toolbar {
-            width: 100%;
-            background: rgba(0,51,102,0.95);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            padding: 0 32px;
-            height: 72px;
-            box-sizing: border-box;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-        }
-        .toolbar-logo {
-            height: 48px;
-            margin-right: 36px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.18));
-            transition: transform 0.2s;
-        }
-        .toolbar-logo:hover {
-            transform: scale(1.08) rotate(-2deg);
-        }
-        .toolbar-btn {
-            background: rgba(255,255,255,0.08);
-            border: none;
-            color: #fff;
-            font-size: 1.08em;
-            margin-right: 24px;
-            cursor: pointer;
-            padding: 10px 22px;
-            border-radius: 6px;
-            font-family: 'Montserrat', Arial, sans-serif;
-            font-weight: 400;
-            letter-spacing: 0.5px;
-            transition: background 0.2s, box-shadow 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-        .toolbar-btn.home-btn {
-            padding: 10px 2px;
-            min-width: 30px;
-        }
-        .toolbar-btn.create-event-btn {
-            padding: 10px 36px;
-            min-width: 200px;
-        }
-        .toolbar-btn:hover {
-            background: #367bfc;
-            box-shadow: 0 4px 12px rgba(54,123,252,0.18);
-        }
-        .auth-btn {
-            background: linear-gradient(90deg, #6fa3ef 60%, #367bfc 100%);
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            font-size: 1em;
-            cursor: pointer;
-            font-family: 'Montserrat', Arial, sans-serif;
-            padding: 10px 22px;
-            margin-left: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            transition: background 0.2s, box-shadow 0.2s;
-        }
-        .toolbar-spacer { 
-            flex: 1; 
-        }
-        .toolbar-left {
-            display: flex;
-            align-items: center;
-        }
-        .toolbar-right {
-            display: flex;
-            align-items: center;
-        }
-        .toolbar-spacer {
-            flex: 1;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 120px auto 40px auto;
-            background: rgba(255,255,255,0.98);
-            padding: 40px 36px 32px 36px;
-            border-radius: 22px;
-            box-shadow: 0 8px 32px rgba(54,123,252,0.10), 0 2px 8px rgba(0,0,0,0.08);
-            color: #222;
-            font-family: 'Montserrat', Arial, sans-serif;
-            position: relative;
-            animation: fadeIn 0.8s cubic-bezier(.4,0,.2,1);
-        }
-        h2 {
-            text-align: center;
-            margin-bottom: 28px;
-            color: #222;
-            font-family: 'Montserrat', Arial, sans-serif;
-            font-size: 2.2em;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-shadow: 0 2px 8px rgba(54,123,252,0.08);
-        }
-        h3 {
-            margin-top: 32px;
-            margin-bottom: 18px;
-            color: #367bfc;
-            font-weight: 600;
-            font-size: 1.25em;
-            letter-spacing: 0.5px;
-        }
-        label {
-            display: block;
-            margin-top: 16px;
-            color: #222;
-            font-family: 'Montserrat', Arial, sans-serif;
-            font-weight: 500;
-        }
-        input[type="text"],
-        input[type="email"],
-        input[type="number"],
-        button,
-        select {
-            width: 100%;
-            padding: 13px;
-            margin-top: 7px;
-            margin-bottom: 14px;
-            border: 1.5px solid #dcdde1;
-            border-radius: 6px;
-            font-family: 'Montserrat', Arial, sans-serif;
-            font-size: 1.04em;
-            background: #f6f6f6;
-            box-sizing: border-box;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        input:focus, select:focus {
-            border-color: #6fa3ef;
-            outline: none;
-            box-shadow: 0 2px 8px rgba(54,123,252,0.10);
-        }
-        button[type="submit"], #loadAttendeesBtn, #exportCsvBtn {
-            background: linear-gradient(135deg, #6fa3ef 0%, #367bfc 50%, #4285f4 100%);
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.08em;
-            cursor: pointer;
-            font-family: 'Montserrat', Arial, sans-serif;
-            font-weight: 600;
-            box-shadow: 0 6px 20px rgba(54,123,252,0.3), 0 2px 8px rgba(0,0,0,0.1);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-bottom: 12px;
-            position: relative;
-            overflow: hidden;
-        }
-        button[type="submit"]:hover, #loadAttendeesBtn:hover, #exportCsvBtn:hover {
-            background: linear-gradient(135deg, #7bb3f0 0%, #4285f4 50%, #1976d2 100%);
-            box-shadow: 0 8px 25px rgba(54,123,252,0.4), 0 4px 12px rgba(0,0,0,0.15);
-            transform: translateY(-2px) scale(1.02);
-        }
-        button[type="submit"]:active, #loadAttendeesBtn:active, #exportCsvBtn:active {
-            transform: translateY(0) scale(0.98);
-            box-shadow: 0 4px 15px rgba(54,123,252,0.3);
-        }
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin: 4px 0;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 8px 32px rgba(54,123,252,0.15), 0 2px 8px rgba(0,0,0,0.1);
-            animation: fadeIn 0.6s ease-out;
-        }
-        th, td {
-            border: none;
-            padding: 16px 12px;
-            text-align: left;
-            font-size: 1em;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        th {
-            background: linear-gradient(135deg, #367bfc 0%, #6fa3ef 100%);
-            color: #ffffff;
-            font-weight: 700;
-            font-size: 1.1em;
-            text-align: center;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            letter-spacing: 0.5px;
-        }
-        tr:nth-child(even) td {
-            background: linear-gradient(135deg, #f8fbff 0%, #e8f4ff 100%);
-        }
-        tr:nth-child(odd) td {
-            background: linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%);
-        }
-        tbody tr:hover td {
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(54,123,252,0.15);
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-16px);}
-            to { opacity: 1; transform: translateY(0);}
-        }
-        @media (max-width: 800px) {
-            .container { max-width: 98vw; padding: 24px 4vw; }
-        }
-        @media (max-width: 600px) {
-            .container { padding: 12px 2vw; }
-            h2 { font-size: 1.4em; }
-            th, td { font-size: 0.95em; }
-        }
-        /* Clean page overrides (do not modify toolbar styles) */
-        .page-hero { display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:12px 0; margin-bottom:18px; }
-        .page-hero .lead { color:#334E6A; margin-top:6px; font-size:0.95rem; }
-        .hero-actions { display:flex; gap:8px; }
-        .btn { padding:8px 12px; border-radius:8px; border:none; background:#2563eb; color:#fff; cursor:pointer; font-weight:600; }
-        .btn.outline { background:transparent; color:#2563eb; border:1px solid #dbeafe; }
-        .card { background:#fff; padding:14px; border-radius:10px; box-shadow:0 6px 18px rgba(15,23,42,0.04); }
-        .content-grid { display:grid; grid-template-columns: 1fr 420px; gap:20px; align-items:start; }
-        @media (max-width:980px) { .content-grid { grid-template-columns: 1fr; } .page-hero{flex-direction:column; align-items:flex-start;} }
-        /* Table badges & compact rows */
-        .badge { display:inline-block; padding:4px 8px; border-radius:999px; font-size:0.85rem; font-weight:600; }
-        .badge.scanned { background:#ecfdf5; color:#047857; border:1px solid #bbf7d0; }
-        .badge.not-scanned { background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; }
-        .attendee-search { width:100%; padding:8px 10px; margin-bottom:10px; border:1px solid #e6eef8; border-radius:8px; }
-        @media (max-width:600px){ th,td{padding:10px 8px;} .content-grid{grid-template-columns:1fr;} }
-    </style>
+    <link rel="stylesheet" href="../../css/Organizer/Attendee.css">
 </head>
+
 <body>
     <div class="toolbar">
         <div class="toolbar-left">
-            <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='organizer-dashboard.html'">
+            <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+                onclick="location.href='organizer-dashboard.html'">
 
             <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
             <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
@@ -350,24 +108,24 @@
     </script>
     <script>
         // Table formatting & search helper
-        (function(){
+        (function () {
             const tbody = document.querySelector('#attendeeTable tbody');
             const searchInput = document.getElementById('attendeeSearch');
 
-            function formatDateStr(raw){
-                if(!raw) return '';
+            function formatDateStr(raw) {
+                if (!raw) return '';
                 const d = new Date(raw);
                 if (isNaN(d)) return raw;
-                return d.toLocaleString(undefined, { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+                return d.toLocaleString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
             }
 
-            function formatRow(row){
+            function formatRow(row) {
                 const cells = row.cells;
-                if(!cells || cells.length < 6) return;
+                if (!cells || cells.length < 6) return;
                 // Combine first+last into first name cell, hide last name cell visually
                 const first = cells[1].textContent.trim();
                 const last = cells[2].textContent.trim();
-                cells[1].textContent = first + (last? (' ' + last) : '');
+                cells[1].textContent = first + (last ? (' ' + last) : '');
                 cells[2].style.display = 'none';
 
                 // Email small
@@ -387,62 +145,63 @@
             }
 
             // Observe tbody for new rows and update stats
-            function updateStats(){
+            function updateStats() {
                 const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
                 const visibleRows = rows.filter(r => r.style.display !== 'none');
                 const total = visibleRows.length;
                 let scanned = 0;
-                visibleRows.forEach(r=>{
+                visibleRows.forEach(r => {
                     const statusCell = r.cells[4];
-                    if(!statusCell) return;
+                    if (!statusCell) return;
                     const txt = statusCell.textContent.trim().toLowerCase();
-                    if(txt.includes('true') || txt.includes('yes') || txt.includes('scanned')) scanned++;
+                    if (txt.includes('true') || txt.includes('yes') || txt.includes('scanned')) scanned++;
                 });
                 const notScanned = Math.max(0, total - scanned);
-                const pct = total === 0 ? 0 : Math.round((scanned/total)*100);
+                const pct = total === 0 ? 0 : Math.round((scanned / total) * 100);
                 const now = new Date().toLocaleString();
                 const elTotal = document.getElementById('statTotal');
                 const elScanned = document.getElementById('statScanned');
                 const elNot = document.getElementById('statNotScanned');
                 const elPct = document.getElementById('statPercent');
                 const elUpdated = document.getElementById('statUpdated');
-                if(elTotal) elTotal.textContent = total;
-                if(elScanned) elScanned.textContent = scanned;
-                if(elNot) elNot.textContent = notScanned;
-                if(elPct) elPct.textContent = pct + '%';
-                if(elUpdated) elUpdated.textContent = now;
+                if (elTotal) elTotal.textContent = total;
+                if (elScanned) elScanned.textContent = scanned;
+                if (elNot) elNot.textContent = notScanned;
+                if (elPct) elPct.textContent = pct + '%';
+                if (elUpdated) elUpdated.textContent = now;
             }
 
-            const mo = new MutationObserver((mutations)=>{
+            const mo = new MutationObserver((mutations) => {
                 let changed = false;
-                mutations.forEach(m=>{
-                    m.addedNodes.forEach(node=>{ if(node.nodeName === 'TR'){ formatRow(node); changed = true; } });
+                mutations.forEach(m => {
+                    m.addedNodes.forEach(node => { if (node.nodeName === 'TR') { formatRow(node); changed = true; } });
                 });
-                if(changed) updateStats();
+                if (changed) updateStats();
             });
-            if(tbody) mo.observe(tbody, { childList:true, subtree:false });
+            if (tbody) mo.observe(tbody, { childList: true, subtree: false });
 
             // Format any existing rows now
-            document.addEventListener('DOMContentLoaded', ()=>{
+            document.addEventListener('DOMContentLoaded', () => {
                 const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
-                rows.forEach(r=>formatRow(r));
+                rows.forEach(r => formatRow(r));
             });
 
             // Search/filter
-            function filterRows(q){
+            function filterRows(q) {
                 const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
-                const term = (q||'').toLowerCase();
-                rows.forEach(r=>{
+                const term = (q || '').toLowerCase();
+                rows.forEach(r => {
                     const text = r.textContent.toLowerCase();
                     r.style.display = text.includes(term) ? '' : 'none';
                 });
                 updateStats();
             }
-            if(searchInput){
-                searchInput.addEventListener('input', (e)=> filterRows(e.target.value));
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => filterRows(e.target.value));
             }
         })();
     </script>
-    <script type="module" src="../../js/attendeeList.js"></script>
+    <script type="module" src="../../js/Organizer/attendeeList.js"></script>
 </body>
+
 </html>

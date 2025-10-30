@@ -17,6 +17,7 @@ const newSection = document.getElementById("new-events");
 const recommendedSection = document.getElementById("recommended-events");
 const discoverSection = document.getElementById("discover-events");
 const savedSection = document.getElementById("saved-events"); // student only
+const myEventsSection = document.getElementById("myEventsSection"); // ✅ your updated ID
 
 // --------------------------------------------------
 // Helper: Create clickable event card
@@ -56,7 +57,6 @@ onAuthStateChanged(auth, async (user) => {
     const userSnap = await getDoc(userRef);
     const userData = userSnap.exists() ? userSnap.data() : {};
     const role = userData.role || "student";
-    const savedEvents = userData.savedEvents || [];
 
     // 🔹 Fetch all events
     const eventsRef = collection(db, "events");
@@ -78,10 +78,13 @@ onAuthStateChanged(auth, async (user) => {
           upcomingSection?.appendChild(createEventCard(data, eventId));
 
         // New (recently created)
-        if (data.createdAt?.toDate() > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000))
+        if (
+          data.createdAt?.toDate() >
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+        )
           newSection?.appendChild(createEventCard(data, eventId));
 
-        // Recommended or Discover sections can be reused if needed
+        // Recommended / Discover sections
         if (["Technology", "Education", "Business"].includes(data.eventCategory))
           recommendedSection?.appendChild(createEventCard(data, eventId));
 
@@ -92,29 +95,37 @@ onAuthStateChanged(auth, async (user) => {
       // Student Dashboard Logic
       // --------------------------------------------------
       if (role === "student") {
+        const claimedEvents = userData.claimedEvents || [];
+        const savedEvents = userData.savedEvents || [];
+
+        // 🟢 My Events (tickets the student claimed)
+        if (claimedEvents.includes(eventId)) {
+          myEventsSection?.appendChild(createEventCard(data, eventId));
+        }
+
         // Saved Events
-        if (savedEvents.includes(eventId))
+        if (savedEvents.includes(eventId)) {
           savedSection?.appendChild(createEventCard(data, eventId));
+        }
 
         // Upcoming On Campus
-        if (eventDate > now)
+        if (eventDate > now) {
           upcomingSection?.appendChild(createEventCard(data, eventId));
+        }
 
-        // Recommended
-        if (["Technology", "Education", "Business"].includes(data.eventCategory))
-          recommendedSection?.appendChild(createEventCard(data, eventId));
+        // Recommended (optional: based on category)
+        if (
+          ["Technology", "Education", "Business"].includes(data.eventCategory)
+        ) {
+          discoverSection?.appendChild(createEventCard(data, eventId));
+        }
 
         // Discover (everything else)
         discoverSection?.appendChild(createEventCard(data, eventId));
       }
-    });
+    }); // ✅ closes snapshot.forEach
 
-    // Optional: hide empty saved section for students
-    if (role === "student" && savedSection && savedSection.children.length === 0) {
-      const savedContainer = savedSection.closest(".events-container")?.previousElementSibling;
-      if (savedContainer) savedContainer.style.display = "none"; // hide section title too
-    }
   } catch (err) {
     console.error("[loadEvents] Error fetching events:", err);
   }
-});
+}); // ✅ closes onAuthStateChanged

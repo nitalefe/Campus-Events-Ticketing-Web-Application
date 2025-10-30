@@ -1,14 +1,13 @@
-// Import Firebase modules
-// import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { /*getFirestore, */collection, doc, addDoc, updateDoc, getDocs, setDoc, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-import { /*getAuth, */onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-// import { firebaseConfig } from './firebaseConfig.js';
+import { collection, doc, getDocs, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 import { auth, db, app } from "../../Shared/firebase-config.js";
-// import 'dotenv/config.js';
+
+let DEBUG = true;
+// For testing purposes, please dont remove it this time
 
 let currentUserRole = "organizer";
 // let currentUserRole = null;
-let testEventID = "6w3Q4k4LRLazZzJnHjil";
+// let testEventID = "6w3Q4k4LRLazZzJnHjil";
 
 console.log("Firebase app initialized", app);
 
@@ -126,6 +125,7 @@ function exportToCsv(data, eventName) {
         { key: "lastName", label: "Last Name" },
         { key: "email", label: "Email" },
         { key: "isScanned", label: "Scan Status" },
+        { key: "isPaid", label: "Payment Status" },
     ];
 
     const headerRow = columns.map(col => col.label).join(",");
@@ -168,7 +168,8 @@ document.getElementById('attendeeForm').addEventListener('submit', async functio
         firstName: form.firstName.value,
         lastName: form.lastName.value,
         email: form.email.value,
-        isScanned: form.isScanned.checked ? "True" : "False"
+        isScanned: form.isScanned.checked ? "True" : "False",
+        isPaid: form.isPaid.checked ? "True" : "False"
     };
 
     // const form = e.target;
