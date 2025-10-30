@@ -8,7 +8,8 @@ import {
   updateDoc,
   increment,
   collection,
-  serverTimestamp
+  serverTimestamp,
+  arrayUnion
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 import { auth, db } from "../../Shared/firebase-config.js";
@@ -252,6 +253,14 @@ document.getElementById("confirm").addEventListener("click", async (e) => {
       ticketsSold: increment(qty),
       // capacity: increment(-qty)
     });
+    try {
+    await updateDoc(doc(db, "users", currentUser.uid), {
+      claimedEvents: arrayUnion(eventID)
+    });
+    console.log(`Added ${eventID} to user's claimedEvents`);
+  } catch (err) {
+    console.error("Error updating claimedEvents:", err);
+  }
 
     // showToast(`Successfully claimed ${qty} ticket(s)!`, "success");
     showToast(`Successfully claimed ticket!`, "success");
