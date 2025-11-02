@@ -8,7 +8,7 @@ import {
   sendPasswordResetEmail,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 /* ---------------- SIGN UP ---------------- */
 const signupForm = document.getElementById('signupForm');
@@ -57,6 +57,24 @@ if (signupForm) {
           ...extraInfo
         });
 
+        // Create organizer approval request (only for organizer role)
+        if (role === "organizer") {
+          try {
+            await setDoc(doc(db, "organizers", user.uid), {
+              uid: user.uid,
+              displayName: fullname || "",
+              email: email || "",
+              university: extraInfo.organization || extraInfo.school || "",
+              approved: false,
+              status: "pending", // ADDED: canonical status so admin actions reflect immediately
+              createdAt: serverTimestamp()
+            });
+            console.log("Organizer request created for", user.uid);
+          } catch (e) {
+            console.error("Failed to create organizer request:", e);
+          }
+        }
+        
         // Send verification email
         await sendEmailVerification(user);
         alert("Check your email to verify your account before logging in.");
@@ -68,6 +86,7 @@ if (signupForm) {
       });
   });
 }
+
 
 /* ---------------- SIGN IN ---------------- */
 const signinForm = document.getElementById('signinForm');
@@ -86,6 +105,27 @@ if (signinForm) {
 
         if (!user.emailVerified) {
           errorMsg.textContent = "Please verify your email before signing in.";
+          await signOut(auth);
+          return;
+        }
+
+        // Check organizer approval status here BEFORE redirecting
+        try {
+          const orgRef = doc(db, "organizers", user.uid);
+          const orgSnap = await getDoc(orgRef);
+          if (orgSnap.exists()) {
+            const org = orgSnap.data();
+            const status = (org.status || (org.approved ? 'approved' : 'pending')).toLowerCase();
+            if (status !== 'approved') {
+              errorMsg.textContent = "Your organizer account is not approved yet. An administrator must approve your request before you can log in.";
+              await signOut(auth);
+              return;
+            }
+          }
+        } catch (e) {
+          // Show user-friendly error message
+          console.error('Failed to verify organizer approval status during sign-in', e);
+          errorMsg.textContent = "Could not verify organizer approval status. Try again later.";
           await signOut(auth);
           return;
         }
@@ -192,5 +232,28 @@ onAuthStateChanged(auth, async (user) => {
         window.location.href = "website.html";
       }
     }
+  }
+
+  // Check organizer approval status
+  try {
+    const orgRef = doc(db, 'organizers', user.uid);
+    const orgSnap = await getDoc(orgRef);
+    if (orgSnap.exists()) {
+      const org = orgSnap.data();
+      const status = (org.status || (org.approved ? 'approved' : 'pending')).toLowerCase();
+      if (status !== 'approved') {
+        // sign the user out and prevent navigation
+        await signOut(auth);
+        alert('Your organizer account is not approved yet. An administrator must approve your request before you can log in.');
+        return; // stop further sign-in navigation
+      }
+    }
+  } catch (e) {
+    console.error('Failed to check organizer approval status', e);
+    console.error('getDoc error code:', e?.code, 'message:', e?.message);
+    // block sign-in on error to be safe
+    await signOut(auth);
+    alert('Could not verify organizer approval status. Try again later.');
+    return;
   }
 });
