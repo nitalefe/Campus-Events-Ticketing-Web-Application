@@ -3,7 +3,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js';
 import {
   getFirestore, collection, query, orderBy, onSnapshot,
-  updateDoc, doc, serverTimestamp, getDocs, getDoc, setDoc, addDoc
+  updateDoc, doc, serverTimestamp, getDocs, getDoc, setDoc
 } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js';
 
 let auth = null;
@@ -44,8 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const logoutBtn = document.getElementById('logout-btn');
 
   const ORG_COLLECTION = 'organizers';
-  // Ensure we write to the collection your MailerSend extension is listening to:
-  const MAIL_COLLECTION = 'emails';
   if (!tbody) { err('organizersTbody element not found'); return; }
 
   function escapeHtml(s=''){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;'); }
@@ -183,7 +181,10 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch (e) { warn('Failed to read organizer doc', e); }
 
       const targetColl = value ? 'approvedOrganizer' : 'disapprovedOrganizer';
-      const logRef = doc(db, targetColl, id);
+      // Write moderation log under the organizer document as a subcollection
+      // Use a fixed doc id ('log') to upsert a single entry; change to an auto-id if you want history
+      const subcoll = value ? 'approved' : 'disapproved';
+      const logRef = doc(db, ORG_COLLECTION, id, subcoll, 'log');
       const payload = {
         uid: organizerData.uid || id,
         displayName: organizerData.displayName || organizerData.fullname || '',
@@ -199,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // write audit/log entry
       try {
         await setDoc(logRef, payload, { merge: true });
-        log('Wrote log to', targetColl, id);
+        log('Wrote log to', `organizers/${id}/${subcoll}/log`);
       } catch (e) {
         if (e?.code === 'permission-denied') {
           alert('Failed to write audit log: permission denied. Check Firestore rules.');
@@ -220,7 +221,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         log('Updated organizer doc with status', id);
       } catch (e) {
-        // surface permission issues but do not block because audit log is primary
         if (e?.code === 'permission-denied') {
           warn('Permission denied updating organizers/{id}. Audit log written but organizer doc not updated.', e);
           alert('Action recorded, but could not update organizer record due to rules. Check Firestore rules or admin privileges.');
@@ -247,38 +247,6 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
       } catch (e) { warn('Failed to update row UI after action', e); }
-
-      // Send notification email (stubbed, requires implementation)
-      try {
-        const toEmail = (organizerData.email || '').toString();
-        const displayName = organizerData.displayName || organizerData.fullname || '';
-        const signInUrl = window.location.origin + '/SignIn.html';
-
-        if (!toEmail) {
-          warn('Organizer has no email; skipping notification for', id);
-        } else {
-          await addDoc(collection(db, MAIL_COLLECTION), {
-            to: [toEmail],
-
-            // For MailerSend extension: put these at TOP LEVEL (not under `message`)
-            subject: "Your organizer account has been approved 🎉",
-            text: `Hi ${displayName || 'there'},\n\nYour organizer account has been approved. You can now access your organizer features.\n\n— Campus Tickets Team`,
-            html: `<p>Hi ${escapeHtml(displayName) || 'there'},</p>
-                   <p>Your organizer account has been <strong>approved</strong>. You can now access your organizer features.</p>
-                   <p>— Campus Tickets Team</p>`,
-
-            // Optional extras
-            headers: { "X-Mail-Source": `${ORG_COLLECTION}/${id}` },
-            metadata: { uid: id, action: value ? 'approved' : 'disapproved' },
-
-            createdAt: serverTimestamp()
-          });
-          log('Queued approval email for', toEmail);
-        }
-      } catch (e) {
-        err('Failed to queue notification email:', e);
-        // Do not fail the approval action if email queuing fails
-      }
 
     } catch(e){
       err('performApproval failed', e);
