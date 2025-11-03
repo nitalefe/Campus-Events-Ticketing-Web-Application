@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>My Tickets</title>
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/User/myTickets.css">
+</head>
+
+<body>
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+      onclick="location.href='student-dashboard.html'">
+
+    <button class="toolbar-btn" onclick="location.href='student-dashboard.html'">Home</button>
+    <button class="toolbar-btn" onclick="location.href='myTickets.html'">My Tickets</button>
+    <div class="toolbar-spacer"></div>
+    <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
+    <div id="authBtnContainer">
+      <button id="logout-btn" class="auth-btn">Log Out</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="header-section">
+      <h1 class="page-title">My Tickets</h1>
+      <p class="page-subtitle">All your booked and saved tickets</p>
+    </div>
+
+    <div id="ticketGrid" class="grid" aria-live="polite">
+      <p id="loadingText">Loading your tickets...</p>
+    </div>
+  </div>
+
+  <!-- Firebase + Auth -->
+  <script type="module" src="../../Shared/firebase-config.js"></script>
+  <script type="module" src="../../js/Registration/auth.js"></script>
+
+  <!-- 🟢 Load actual tickets -->
+  <script type="module">
+    import { auth, db } from "../../Shared/firebase-config.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const ticketGrid = document.getElementById("ticketGrid");
+    const loadingText = document.getElementById("loadingText");
+
+    // Helper to create ticket card
+    function createTicketCard(eventData, eventId) {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const firstLetter = (eventData.eventName || "?")[0].toUpperCase();
+      const eventDate = eventData.eventDateTime?.toDate?.() || new Date();
+      const dateStr = eventDate.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric"
+      });
+
+      const price = eventData.ticketPrice
+        ? `$${eventData.ticketPrice.toFixed(2)}`
+        : "Free";
+
+      card.innerHTML = `
+        <div class="thumb">${firstLetter}</div>
+        <div class="meta">
+          <h3>${eventData.eventName || "Untitled Event"}</h3>
+          <p>${dateStr} · ${eventData.eventLocation || "TBD"}</p>
+          <div class="row">
+            <div class="chip">Order: ${eventId.slice(0, 8).toUpperCase()}</div>
+            <div class="chip">Seat: General</div>
+            <div class="chip">${price}</div>
+          </div>
+        </div>
+      `;
+
+      // Clicking the card opens event page
+      card.addEventListener("click", () => {
+        window.location.href = `eventPageStu.html?id=${eventId}`;
+      });
+
+      return card;
+    }
+
+    // 🔹 Load user’s claimed tickets
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return;
+
+      try {
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (!userSnap.exists()) {
+          loadingText.textContent = "No tickets found.";
+          return;
+        }
+
+        const userData = userSnap.data();
+        const claimedEvents = userData.claimedEvents || [];
+
+        if (claimedEvents.length === 0) {
+          loadingText.textContent = "You haven't claimed any tickets yet.";
+          return;
+        }
+
+        ticketGrid.innerHTML = ""; // Clear loading text
+
+        for (const eventId of claimedEvents) {
+          const eventRef = doc(db, "events", eventId);
+          const eventSnap = await getDoc(eventRef);
+          if (eventSnap.exists()) {
+            const eventData = eventSnap.data();
+            ticketGrid.appendChild(createTicketCard(eventData, eventId));
+          }
+        }
+      } catch (err) {
+        console.error("Error loading tickets:", err);
+        loadingText.textContent = "Error loading tickets.";
+      }
+    });
+  </script>
+</body>
+
+</html>
