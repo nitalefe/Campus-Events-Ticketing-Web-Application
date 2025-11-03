@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+  <title>Student Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/Shared/dashboard.css">
+</head>
+
+<body class="student-page" data-event-page="eventPageStu.html">
+
+  <!-- Toolbar (reuse shared styles) -->
+  <div class="toolbar">
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+      onclick="location.href='../Student/student-dashboard.html'">
+
+    <button class="toolbar-btn" onclick="location.href='../Student/student-dashboard.html'">Home</button>
+    <button class="toolbar-btn" onclick="location.href='../Student/myTickets.html'">My Tickets</button>
+    <div class="toolbar-spacer"></div>
+    <!--to be added with 4th feature-->
+    <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
+    <div id="authBtnContainer">
+      <button id="logout-btn" class="auth-btn">Log Out</button>
+    </div>
+  </div>
+
+  <header>
+    <h1>Explore Events</h1>
+    <p>Discover events on campus and RSVP quickly.</p>
+  </header>
+
+  <!-- Search -->
+  <div class="search-bar">
+    <input type="text" class="search-input" placeholder="Search events...">
+    <button class="search-btn" onclick="handleSearch()">Search</button>
+    <button id="clear-search" class="search-btn" style="display:none;margin-left:8px"
+      onclick="clearSearchView()">Clear</button>
+  </div>
+
+  <!-- Dynamic event sections -->
+  <div class="main-content">
+    <div>
+      <!--Events for which tickets are already bought-->
+      <div class="section-bar">My Events</div>
+      <div class="events-container">
+        <div class="events" id="myEventsSection"></div>
+      </div>
+    </div>
+
+    <div>
+      <!--events saved by user-->
+      <div class="section-bar">Saved Events</div>
+      <div class="events-container">
+        <div class="events" id="saved-events"></div>
+      </div>
+    </div>
+
+    <div>
+      <!--upcoming events for the user's school'scampus-->
+      <div class="section-bar">Upcoming On Campus</div>
+      <div class="events-container">
+        <div class="events" id="upcoming-events"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-bar">Discover</div>
+      <div class="events-container">
+        <div class="events" id="discover-events"></div>
+      </div>
+    </div>
+    <!-- Search logic: consolidated search results (hidden by default) -->
+    <div id="search-results-section" style="display:none">
+      <div class="section-bar">Search Results</div>
+      <div class="events-container">
+        <div class="events" id="search-results"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    function clearSearchView() {
+      document.getElementById('search-results-section').style.display = 'none';
+      document.getElementById('clear-search').style.display = 'none';
+      // show original sections
+      document.querySelectorAll('.main-content > div').forEach(section => {
+        if (section.id !== 'search-results-section') section.style.display = '';
+      });
+      // remove cloned cards
+      const sr = document.getElementById('search-results'); while (sr && sr.firstChild) sr.removeChild(sr.firstChild);
+    }
+
+    window.handleSearch = function () {
+      const query = document.querySelector('.search-input').value.toLowerCase().trim();
+      if (!query) { clearSearchView(); return; }
+
+      // collect matches from all event lists, deduplicating by data-event-id
+      const matches = [];
+      const seen = new Set();
+      document.querySelectorAll('.events').forEach(list => {
+        list.querySelectorAll('.event-card').forEach(card => {
+          const id = card.getAttribute('data-event-id') || '';
+          if (seen.has(id)) return;
+          const title = (card.querySelector('.event-title') || { textContent: '' }).textContent.toLowerCase();
+          if (title.includes(query)) {
+            matches.push(card);
+            seen.add(id);
+          }
+        });
+      });
+
+      // hide original sections
+      document.querySelectorAll('.main-content > div').forEach(section => {
+        if (section.id !== 'search-results-section') section.style.display = 'none';
+      });
+
+      // populate search results container with clones
+      const sr = document.getElementById('search-results'); while (sr && sr.firstChild) sr.removeChild(sr.firstChild);
+      matches.forEach(card => {
+        const clone = card.cloneNode(true);
+        clone.style.display = 'block';
+        const id = clone.getAttribute('data-event-id') || card.getAttribute('data-event-id');
+        if (id) {
+          const target = document.body?.dataset?.eventPage || 'eventPageStu.html';
+          clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; });
+          clone.style.cursor = 'pointer';
+        }
+        sr.appendChild(clone);
+      });
+
+      document.getElementById('search-results-section').style.display = '';
+      document.getElementById('clear-search').style.display = '';
+    };
+
+    document.getElementById('clear-search').addEventListener('click', clearSearchView);
+  </script>
+
+  <script type="module" src="../../Shared/firebase-config.js"></script>
+  <script type="module" src="../../js/Registration/auth.js"></script>
+  <script type="module" src="../../js/Events/LoadEvents.js"></script>
+  <script type="module" src="../../shared/scroll-controls.js"></script>
+
+</body>
+
+</html>

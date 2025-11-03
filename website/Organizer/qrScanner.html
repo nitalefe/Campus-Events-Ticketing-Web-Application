@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>QR Ticket Scanner</title>
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/Organizer/qrScanner.css" />
+  <!-- Camera scanner library -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+</head>
+
+<body>
+  <div class="toolbar">
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+      onclick="location.href='organizer-dashboard.html'">
+
+    <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
+    <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
+    <div class="toolbar-spacer"></div>
+    <button class="toolbar-btn" onclick="location.href='settings.html'">Settings</button>
+    <div id="authBtnContainer"></div>
+  </div>
+
+  <div class="container">
+    <h1>QR Ticket Scanner</h1>
+    <p>Scan QR codes to validate event tickets and manage event entry</p>
+
+    <div class="scanner-section">
+      <h3>Camera Scanner</h3>
+      <div class="control-group">
+        <label for="cameraSel">Camera:</label>
+        <select id="cameraSel"></select>
+        <button id="startBtn">Start Scanner</button>
+        <button id="stopBtn">Stop Scanner</button>
+      </div>
+
+      <div id="reader"></div>
+      <div id="scanStatus" class="status"></div>
+    </div>
+
+    <div class="scanner-section">
+      <h3>Manual Entry</h3>
+      <p>Paste <strong>encrypted</strong> QR text to simulate a scan:</p>
+      <textarea id="manualEncrypted" rows="3" placeholder="Paste encrypted QR code text here..."></textarea>
+      <button id="simulateBtn">Simulate Scan</button>
+      <div id="manualStatus" class="status"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    // ---- Fixed encryption increment (UI removed) ----
+    const FIXED_INCREMENT = 7;
+
+    function decryptString(encryptedText, increment = FIXED_INCREMENT) {
+      let out = "";
+      for (let i = 0; i < encryptedText.length; i++) {
+        out += String.fromCharCode(encryptedText.charCodeAt(i) - increment);
+      }
+      return out;
+    }
+    function parseEventAndAttendee(decryptedText) {
+      const parts = (decryptedText || "").split("/");
+      if (parts.length !== 2 || !parts[0] || !parts[1]) {
+        return { ok: false, message: "Invalid QR format. Expected eventID/attendeeID." };
+      }
+      return { ok: true, eventId: parts[0], attendeeId: parts[1] };
+    }
+
+    // -------- Mock validator (replace with Firestore later) ----------
+    const MOCK = { "myEvent123": new Set(["alice001", "bob002", "carol003"]) };
+    const USED_KEY = "ticket_used_set_v1";
+    const loadUsed = () => new Set(JSON.parse(localStorage.getItem(USED_KEY) || "[]"));
+    const saveUsed = s => localStorage.setItem(USED_KEY, JSON.stringify([...s]));
+    async function validateMock(eventId, attendeeId) {
+      if (!MOCK[eventId]) return { ok: false, message: "❌ Event not found (mock)." };
+      if (!MOCK[eventId].has(attendeeId)) return { ok: false, message: "❌ Not registered (mock)." };
+      const used = loadUsed(), key = `${eventId}/${attendeeId}`;
+      if (used.has(key)) return { ok: false, message: "❌ Ticket already used (mock)." };
+      used.add(key); saveUsed(used);
+      return { ok: true, message: "✅ Ticket validated (mock). Entry granted." };
+    }
+
+    // -------- Camera setup & scanning ----------
+    const statusEl = document.getElementById("scanStatus");
+    const setStatus = (msg, ok = null) => {
+      statusEl.textContent = msg;
+      statusEl.className = "status" + (ok === null ? "" : ok ? " ok" : " err");
+    };
+
+    const cameraSel = document.getElementById("cameraSel");
+    const startBtn = document.getElementById("startBtn");
+    const stopBtn = document.getElementById("stopBtn");
+    const scanner = new Html5Qrcode("reader");
+
+    // Populate cameras
+    Html5Qrcode.getCameras().then(devices => {
+      cameraSel.innerHTML = "";
+      devices.forEach((d, idx) => {
+        const opt = document.createElement("option");
+        opt.value = d.id; opt.textContent = d.label || `Camera ${idx + 1}`;
+        cameraSel.appendChild(opt);
+      });
+      if (devices.length === 0) setStatus("No cameras found.", false);
+    }).catch(() => setStatus("Could not list cameras. Check permissions.", false));
+
+    async function onDecoded(encryptedText) {
+      const decrypted = decryptString(encryptedText, FIXED_INCREMENT);
+      const parsed = parseEventAndAttendee(decrypted);
+      if (!parsed.ok) return setStatus(parsed.message, false);
+
+      const result = await validateMock(parsed.eventId, parsed.attendeeId); // swap for Firestore
+      setStatus(result.message, result.ok);
+    }
+
+    startBtn.addEventListener("click", async () => {
+      try {
+        await scanner.start(
+          cameraSel.value || { facingMode: "environment" },
+          { fps: 10, qrbox: { width: 260, height: 260 } },
+          onDecoded,
+          () => { }
+        );
+        setStatus("Camera started. Aim at QR code…");
+      } catch (e) {
+        setStatus("Failed to start camera. Allow permission & use https/localhost.", false);
+        console.error(e);
+      }
+    });
+
+    stopBtn.addEventListener("click", async () => {
+      try { await scanner.stop(); setStatus("Camera stopped."); }
+      catch (e) { console.error(e); }
+    });
+
+    // Manual simulate
+    document.getElementById("simulateBtn").addEventListener("click", async () => {
+      const encryptedText = (document.getElementById("manualEncrypted").value || "").trim();
+      const decrypted = decryptString(encryptedText, FIXED_INCREMENT);
+      const parsed = parseEventAndAttendee(decrypted);
+      const out = document.getElementById("manualStatus");
+      if (!parsed.ok) { out.textContent = parsed.message; out.className = "status err"; return; }
+      const result = await validateMock(parsed.eventId, parsed.attendeeId);
+      out.textContent = result.message; out.className = "status " + (result.ok ? "ok" : "err");
+    });
+  </script>
+</body>
+
+</html>

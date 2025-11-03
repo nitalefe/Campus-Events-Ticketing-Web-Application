@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>My Events</title>
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/Organizer/myEvents.css">
+</head>
+
+<body>
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+      onclick="location.href='organizer-dashboard.html'">
+    <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
+    <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
+    <div class="toolbar-spacer"></div>
+    <button class="toolbar-btn" onclick="location.href='settings.html'">Settings</button>
+    <div id="authBtnContainer">
+      <button id="logout-btn" class="auth-btn">Log Out</button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <div class="header-section">
+      <h1 class="page-title">My Events</h1>
+      <p class="page-subtitle">Manage and monitor your created events</p>
+      <button class="analytics-btn">
+        📊 View Event Analytics Dashboard
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading" class="loading">
+      Loading your events...
+    </div>
+
+    <!-- Events Grid -->
+    <div id="eventsGrid" class="events-grid" style="display: none;">
+      <!-- Events will be loaded here dynamically -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="empty-state" style="display: none;">
+      <h3>No Events Created Yet</h3>
+      <p>You haven't created any events yet. Start by creating your first event!</p>
+      <button class="create-event-btn" onclick="location.href='eventCreation.html'">
+        Create Your First Event
+      </button>
+    </div>
+  </div>
+
+  <!-- Firebase Scripts -->
+  <script type="module" src="../../Shared/firebase-config.js"></script>
+  <script type="module" src="../../js/Registration/auth.js"></script>
+
+  <!-- My Events Script -->
+  <script type="module">
+    import { auth, db } from "../../Shared/firebase-config.js";
+    import { collection, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+    const loadingEl = document.getElementById('loading');
+    const eventsGridEl = document.getElementById('eventsGrid');
+    const emptyStateEl = document.getElementById('emptyState');
+
+    // Create event card
+    function createEventCard(eventData, eventId) {
+      const card = document.createElement('div');
+      card.className = 'event-card';
+
+      const bannerSrc = eventData.banner || 'https://via.placeholder.com/350x200';
+      const eventDate = eventData.eventDateTime?.toDate?.() || new Date();
+      const ticketsSold = eventData.ticketsSold || 0;
+      const capacity = eventData.capacity || 0;
+      const soldPercentage = capacity > 0 ? Math.round((ticketsSold / capacity) * 100) : 0;
+
+      card.innerHTML = `
+        <img src="${bannerSrc}" alt="Event Banner" class="event-banner" onerror="this.src='https://via.placeholder.com/350x200'">
+        <div class="event-content">
+          <div class="event-title">${eventData.eventName || 'Untitled Event'}</div>
+          <div class="event-date">${eventDate.toDateString()} at ${eventDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+          <div class="event-location">📍 ${eventData.eventLocation || 'Location TBD'}</div>
+          <div class="event-stats">
+            <div class="stat-item">
+              <div class="stat-value">${ticketsSold}</div>
+              <div class="stat-label">Sold</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">${capacity}</div>
+              <div class="stat-label">Capacity</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">${soldPercentage}%</div>
+              <div class="stat-label">Filled</div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      card.addEventListener('click', () => {
+        window.location.href = `eventPage.html?id=${eventId}`;
+      });
+
+      return card;
+    }
+
+    // Load organizer's events
+    async function loadMyEvents(user) {
+      if (!user) {
+        loadingEl.style.display = 'none';
+        emptyStateEl.style.display = 'block';
+        return;
+      }
+
+      try {
+        const eventsRef = collection(db, 'events');
+        const q = query(
+          eventsRef,
+          where('createdBy', '==', user.uid),
+          orderBy('eventDateTime', 'desc')
+        );
+        const snapshot = await getDocs(q);
+
+        loadingEl.style.display = 'none';
+
+        if (snapshot.empty) {
+          emptyStateEl.style.display = 'block';
+          return;
+        }
+
+        eventsGridEl.style.display = 'grid';
+        eventsGridEl.innerHTML = '';
+
+        snapshot.forEach((doc) => {
+          const eventData = doc.data();
+          const eventCard = createEventCard(eventData, doc.id);
+          eventsGridEl.appendChild(eventCard);
+        });
+
+      } catch (error) {
+        console.error('Error loading events:', error);
+        loadingEl.innerHTML = 'Error loading events. Please try again.';
+        loadingEl.style.color = '#e74c3c';
+      }
+    }
+
+    // Logout function
+    window.logout = () => {
+      auth.signOut().then(() => {
+        localStorage.removeItem('userRole');
+        window.location.href = '../Registration/SignIn.html';
+      });
+    };
+
+    // Auth state listener
+    onAuthStateChanged(auth, (user) => {
+      loadMyEvents(user);
+      const analyticsBtn = document.querySelector('.analytics-btn');
+      if (analyticsBtn && user) {
+        analyticsBtn.onclick = () => {
+          location.href = `EventDashboard.html?uid=${user.uid}`;
+        };
+      }
+    });
+  </script>
+</body>
+
+</html>

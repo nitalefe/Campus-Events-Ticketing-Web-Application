@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Event Analytics Dashboard</title>
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/Organizer/EventDashboard.css" />
+</head>
+
+<body>
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+      onclick="location.href='organizer-dashboard.html'">
+
+    <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
+    <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
+    <div class="toolbar-spacer"></div>
+    <button class="toolbar-btn" onclick="location.href='settings.html'">Settings</button>
+    <div id="authBtnContainer">
+      <button id="logout-btn" class="auth-btn">Log Out</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="hero">
+      <div>
+        <h1 id="pageTitle">Event Analytics Dashboard</h1>
+        <p>Analyze and track event performance across all universities</p>
+      </div>
+      <div class="hero-actions">
+        <button class="btn">Create Event</button>
+        <button class="btn secondary">View Reports</button>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h3>Filters</h3>
+      <div class="filter-grid">
+        <div class="filter-item">
+          <label for="eventFilter">Category</label>
+          <select id="eventFilter" onchange="applyFilters()">
+            <option value="all">All Categories</option>
+            <option value="Academic">Academic</option>
+            <option value="Music">Music</option>
+            <option value="Sports">Sports</option>
+            <option value="Technology">Technology</option>
+            <option value="Cultural">Cultural</option>
+            <option value="Social">Social</option>
+            <option value="Networking">Networking</option>
+            <option value="Career">Career</option>
+            <option value="Workshop">Workshop</option>
+          </select>
+        </div>
+
+        <div class="filter-item">
+          <label for="schoolFilter">Available to</label>
+          <select id="schoolFilter" onchange="applyFilters()">
+            <option value="all">All Universities</option>
+            <option value="concordia">Concordia University</option>
+            <option value="mcgill">McGill University</option>
+            <option value="udem">Université de Montréal</option>
+            <option value="polytechnique">Polytechnique Montréal</option>
+            <option value="hec">HEC Montréal</option>
+            <option value="uqam">UQAM</option>
+          </select>
+        </div>
+
+        <div class="filter-item">
+          <label for="dateFrom">From</label>
+          <input type="date" id="dateFrom" />
+        </div>
+
+        <div class="filter-item">
+          <label for="dateTo">To</label>
+          <input type="date" id="dateTo" />
+        </div>
+      </div>
+
+      <div id="eventsStatus" class="status info">Loading events...</div>
+    </div>
+
+    <div class="test-section">
+      <h3>Events Found</h3>
+      <div class="button-container">
+        <button class="export-button" onclick="exportToCSV()">Export to CSV</button>
+      </div>
+      <div id="eventsList" class="events-grid"></div>
+    </div>
+  </div>
+
+  <!-- ✅ Correct Script Paths -->
+     <script type="module" src="../../Shared/firebase-config.js"></script>
+    <script type="module" src="../../js/Registration/auth.js"></script>
+  <script type="module" src="../../js/Analytics/EventDashboard.js"></script>
+ 
+</body>
+
+</html>

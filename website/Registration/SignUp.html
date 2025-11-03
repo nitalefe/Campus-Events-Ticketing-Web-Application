@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up</title>
+    <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Montserrat font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/Registration/SignUp.css">
+</head>
+
+<body>
+    <div style="position:fixed; bottom:16px; right:32px; z-index:100;">
+        <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" style="width: 200px; height:auto;">
+    </div>
+    <div class="signup-container">
+        <h2>Sign Up</h2>
+        <form id="signupForm" action="#" method="post">
+            <div class="form-group">
+                <label for="fullname">Full Name</label>
+                <input type="text" id="fullname" name="fullname" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" name="confirm-password" required>
+            </div>
+            <div class="form-group">
+                <label for="role">Role</label>
+                <select id="role" name="role" required onchange="toggleFields()">
+                    <option value="" disabled selected>Select your role</option>
+                    <option value="student">Student</option>
+                    <option value="organizer">Organizer</option>
+                </select>
+            </div>
+            <div class="form-group" id="school-group" style="display:none;">
+                <label for="school">School</label>
+                <select id="school" name="school">
+                    <option value="" disabled selected>Select your school</option>
+                    <option value="Concordia">Concordia University</option>
+                    <option value="McGill">McGill University</option>
+                    <option value="UdeM">Université de Montréal</option>
+                    <option value="Polytechnique">Polytechnique Montréal</option>
+                    <option value="HEC">HEC Montréal</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="form-group" id="org-group" style="display:none;">
+                <label for="organization">Organization Name</label>
+                <input type="text" id="organization" name="organization">
+            </div>
+            <button type="submit" class="signup-btn">Create Account</button>
+        </form>
+        <div id="signup-error" style="color:red; text-align:center; margin-top:10px;"></div>
+        <div class="login-link">
+            Already have an account? <a href="SignIn.html">Sign In</a>
+        </div>
+    </div>
+    <script type="module" src="../../js/Registration/auth.js"></script>
+    <script type="module" src="../../js/Registration/registration.js"></script>
+
+</body>
+
+</html>

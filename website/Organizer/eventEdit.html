@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Event</title>
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/Organizer/eventEdit.css">
+</head>
+
+<body>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+      onclick="location.href='organizer-dashboard.html'">
+
+    <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
+    <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
+    <div class="toolbar-spacer"></div>
+    <button class="toolbar-btn" onclick="location.href='settings.html'">Settings</button>
+    <div id="authBtnContainer">
+      <button id="logout-btn" class="auth-btn">Log Out</button>
+    </div>
+  </div>
+
+  <!-- Edit Event Form -->
+  <div class="container">
+    <div class="card">
+      <h2>Edit Event</h2>
+      <div class="form-grid">
+        <div class="preview-card">
+          <!-- Full event page mock preview -->
+          <div class="preview-banner" id="previewBannerWrap">
+            <img id="previewImage" src="../../assets/images/event1.jpeg" alt="Banner Preview">
+            <div id="previewText" style="display:none; color:#888; margin-top:8px; font-size:0.9rem;">
+              Select a banner to see preview
+            </div>
+          </div>
+          <div class="preview-content">
+            <h3 id="previewTitle">Event Title</h3>
+            <div id="previewDateLoc" class="preview-meta">Date · Location</div>
+            <p id="previewDesc" class="preview-desc">Short description will appear here as you type. This is a condensed
+              preview of the event description.</p>
+            <div class="preview-actions">
+              <button class="btn btn-primary" disabled>Buy Tickets</button>
+              <button class="btn btn-secondary" disabled>More Info</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <form id="eventForm">
+            <div class="field-group">
+              <label for="eventName">Event Name</label>
+              <input type="text" id="eventName" name="eventName" required>
+            </div>
+
+            <div class="field-group">
+              <label for="eventDescription">Description</label>
+              <textarea id="eventDescription" name="eventDescription" rows="4" required></textarea>
+            </div>
+
+            <div class="field-group">
+              <label for="eventBanner">Event Banner</label>
+              <select id="eventBanner" name="eventBanner" required onchange="previewBanner()">
+                <option value="">Select Banner Image</option>
+                <option value="../../assets/images/event1.jpeg">Event Banner 1</option>
+                <option value="../../assets/images/event2.jpg">Event Banner 2</option>
+                <option value="../../assets/images/event3.jpeg">Event Banner 3</option>
+                <option value="../../assets/images/event4.jpeg">Event Banner 4</option>
+                <option value="../../assets/images/event5.jpg">Event Banner 5</option>
+                <option value="../../assets/images/event6.jpg">Event Banner 6</option>
+                <option value="../../assets/images/event7.jpg">Event Banner 7</option>
+                <option value="../../assets/images/event8.jpg">Event Banner 8</option>
+                <option value="../../assets/images/event9.jpg">Event Banner 9</option>
+                <option value="../../assets/images/event10.jpg">Event Banner 10</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label for="eventDate">Date</label>
+              <input type="date" id="eventDate" name="eventDate" required>
+            </div>
+
+            <div class="field-group">
+              <label for="eventTime">Time</label>
+              <input type="time" id="eventTime" name="eventTime" required>
+            </div>
+
+            <div class="field-group">
+              <label for="eventLocation">Location</label>
+              <input type="text" id="eventLocation" name="eventLocation" required>
+            </div>
+
+            <div class="field-group">
+              <label for="eventCategory">Category</label>
+              <select id="eventCategory" name="eventCategory" required>
+                <option value="">Select Category</option>
+                <option value="Workshop">Workshop</option>
+                <option value="Seminar">Seminar</option>
+                <option value="Concert">Concert</option>
+                <option value="Sports">Sports</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label for="capacity">Number of Tickets</label>
+              <input type="number" id="capacity" name="capacity" min="1" required>
+            </div>
+
+            <div class="field-group">
+              <label for="ticketPrice">Ticket Price ($)</label>
+              <input type="number" id="ticketPrice" name="ticketPrice" min="0" step="0.01" required>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+              <button type="button" class="btn btn-secondary"
+                onclick="location.href='organizer-dashboard.html'">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Banner Preview Script -->
+  <script>
+    function previewBanner() {
+      const bannerSelect = document.getElementById('eventBanner');
+      const previewImage = document.getElementById('previewImage');
+      const previewText = document.getElementById('previewText');
+
+      const setError = (msg) => {
+        previewImage.style.display = 'none';
+        previewText.textContent = msg;
+        previewText.style.display = 'block';
+        previewText.style.color = '#e74c3c';
+      };
+
+      if (bannerSelect && bannerSelect.value) {
+        previewText.style.display = 'none';
+        previewImage.style.display = 'block';
+        previewImage.src = bannerSelect.value;
+
+        previewImage.onerror = function () {
+          setError('Error loading banner preview');
+        };
+
+        previewImage.onload = function () {
+          previewText.style.color = '#888';
+          previewText.style.display = 'none';
+          previewImage.style.display = 'block';
+        };
+      } else {
+        previewImage.style.display = 'none';
+        previewText.textContent = 'Select a banner to see preview';
+        previewText.style.display = 'block';
+        previewText.style.color = '#888';
+      }
+    }
+
+    // Initialize preview if editing an existing event (or keep default state)
+    document.addEventListener('DOMContentLoaded', () => {
+      const bannerSelect = document.getElementById('eventBanner');
+      // if a value is preset (e.g., from script) preview it
+      if (bannerSelect && bannerSelect.value) previewBanner();
+      // wire inputs to preview live
+      const inputsToPreview = ['eventName', 'eventDescription', 'eventDate', 'eventTime', 'eventLocation'];
+      inputsToPreview.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const update = () => updatePreview();
+        el.addEventListener('input', update);
+        el.addEventListener('change', update);
+      });
+      // initial update
+      updatePreview();
+    });
+
+    function updatePreview() {
+      const title = document.getElementById('eventName').value || 'Event Title';
+      const desc = document.getElementById('eventDescription').value || 'Short description will appear here as you type.';
+      const date = document.getElementById('eventDate').value;
+      const time = document.getElementById('eventTime').value;
+      const loc = document.getElementById('eventLocation').value || 'Location';
+      const previewTitle = document.getElementById('previewTitle');
+      const previewDesc = document.getElementById('previewDesc');
+      const previewDateLoc = document.getElementById('previewDateLoc');
+      const bannerSelect = document.getElementById('eventBanner');
+
+      previewTitle.textContent = title;
+      previewDesc.textContent = desc.length > 220 ? desc.slice(0, 217) + '...' : desc;
+      let dateText = '';
+      if (date) {
+        try { dateText = new Date(date).toDateString(); } catch (e) { dateText = date; }
+      }
+      const timeText = time ? time : '';
+      previewDateLoc.textContent = [dateText, timeText, loc].filter(Boolean).join(' · ');
+
+      // update banner image if selected
+      const previewImage = document.getElementById('previewImage');
+      if (bannerSelect && bannerSelect.value) {
+        previewImage.src = bannerSelect.value;
+        previewImage.style.display = 'block';
+      }
+    }
+  </script>
+
+  <!-- Firebase + Auth -->
+  <script type="module" src="../../Shared/firebase-config.js"></script>
+  <script type="module" src="../../js/Registration/auth.js"></script>
+
+  <!-- Combined Events Script -->
+  <script type="module" src="../../js/Events/events.js"></script>
+</body>
+
+</html>
