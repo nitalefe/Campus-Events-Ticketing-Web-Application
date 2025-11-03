@@ -5,21 +5,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
-  <title>Student Dashboard</title>
+  <title>Administrator Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../css/Shared/dashboard.css">
   <link rel="stylesheet" href="../../css/Shared/toolbar.css">
 </head>
 
-<body class="student-page" data-event-page="eventPageStu.html">
+<body class="admin-page" data-event-page="eventPageAdmin.html">
 
   <!-- Toolbar (reuse shared styles) -->
   <div class="toolbar">
     <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
-      onclick="location.href='../Student/student-dashboard.html'">
+      onclick="location.href='admin-dashboard.html'">
 
-    <button class="toolbar-btn" onclick="location.href='../Student/student-dashboard.html'">Home</button>
-    <button class="toolbar-btn" onclick="location.href='../Student/myTickets.html'">My Tickets</button>
+    <button class="toolbar-btn" onclick="location.href='../admin-dashboard.html'">Home</button>
+    <button class="toolbar-btn" onclick="location.href='../'">See Organizers</button> <!-- <----------------------------- Here for the button for organizer management-->
     <div class="toolbar-spacer"></div>
     <!--to be added with 4th feature-->
     <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
@@ -125,7 +125,7 @@
         clone.style.display = 'block';
         const id = clone.getAttribute('data-event-id') || card.getAttribute('data-event-id');
         if (id) {
-          const target = document.body?.dataset?.eventPage || 'eventPageStu.html';
+          const target = document.body?.dataset?.eventPage || 'eventPageAdmin.html';
           clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; });
           clone.style.cursor = 'pointer';
         }
