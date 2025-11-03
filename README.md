@@ -48,6 +48,22 @@ The objective of this project is to develop a Campus Events & Ticketing Web Appl
 
 ---
 
+### 4. User Profiles & Following
+
+**Profiles**
+- Public user pages with name, photo, bio, and event history.
+
+**Following**
+- Follow users, organizers, or categories for event updates.
+
+**Feed**
+- Personalized feed showing new and upcoming events.
+
+**One-Way Inbox**
+- Students receive messages broadcasted by organizers and admins.
+- Organizers receive messages broadcasted by other organizers.
+
+
 ## Collaborators
 - **Nita Lefebvre** (40326541) — [@nitalefe](https://github.com/nitalefe) (**Team Leader**)
 - **Rakib Akter** (40317788) — [@rakib-akter](https://github.com/rakib-akter) (**Member**)
@@ -60,7 +76,6 @@ The objective of this project is to develop a Campus Events & Ticketing Web Appl
 ---
 
 ## Tech Stack / Languages Used
-- **Frontend**: React, JavaScript (html,css) (tbd)
-- **Backend**: Node.js, Firebase (tbd)
-- **Database and Hosting**: Firebase (tbd)
-- **Miscellaneous**:  (tbd)
+- **Frontend**: React, JavaScript (HTML,CSS)
+- **Backend**: Node.js, Firebase
+- **Database and Hosting**: Firebase
