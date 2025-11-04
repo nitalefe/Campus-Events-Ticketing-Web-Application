@@ -6,7 +6,7 @@
 // ------------------------------
 // Firebase Imports
 // ------------------------------
-import { auth, db } from "../../Shared/firebase-config.js";
+import { auth, db } from "../../js/Shared/firebase-config.js";
 import {
   collection,
   addDoc,

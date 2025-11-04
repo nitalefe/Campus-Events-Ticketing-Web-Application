@@ -38,13 +38,11 @@
     <button class="buy-ticket-btn" onclick="location.href='EventDashboard.html'">View Analytics</button>
 
     <!-- Firebase + Auth -->
-    <script type="module" src="../../Shared/firebase-config.js"></script>
-
     <script type="module" src="../../js/Registration/auth.js"></script>
 
     <!--LOADING EVENTS INTO THE EVENT PAGE -->
     <script type="module">
-      import { auth, db } from "../../Shared/firebase-config.js";
+      import { auth, db } from "../../js/Shared/firebase-config.js";
       import { doc, getDoc, updateDoc, setDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
       import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 

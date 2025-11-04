@@ -55,12 +55,11 @@
   </div>
 
   <!-- Firebase Scripts -->
-  <script type="module" src="../../Shared/firebase-config.js"></script>
   <script type="module" src="../../js/Registration/auth.js"></script>
 
   <!-- My Events Script -->
   <script type="module">
-    import { auth, db } from "../../Shared/firebase-config.js";
+    import { auth, db } from "../../js/Shared/firebase-config.js";
     import { collection, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
