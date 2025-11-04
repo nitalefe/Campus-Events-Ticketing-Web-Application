@@ -5,42 +5,6 @@ body {
     padding: 0;
 }
 
-.toolbar {
-    width: 100%;
-    background: rgba(0, 51, 102, 0.95);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    padding: 0 2vw;
-    height: clamp(60px, 8vh, 72px);
-    box-sizing: border-box;
-    box-shadow: 0 0.3vh 1vh rgba(0, 0, 0, 0.12);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.toolbar-logo {
-    height: clamp(40px, 6vh, 48px);
-    margin-right: clamp(20px, 3vw, 36px);
-    cursor: pointer;
-}
-
-.toolbar-btn {
-    background: rgba(255, 255, 255, 0.08);
-    border: none;
-    color: #fff;
-    font-size: clamp(0.9rem, 2.5vw, 1.08rem);
-    margin-right: clamp(16px, 2.5vw, 24px);
-    cursor: pointer;
-    padding: clamp(8px, 1.5vh, 10px) clamp(16px, 3vw, 22px);
-    border-radius: 0.4vw;
-}
-
-.toolbar-spacer {
-    flex: 1;
-}
-
 .auth-btn {
     background: linear-gradient(90deg, #6fa3ef 60%, #367bfc 100%);
     color: #fff;
