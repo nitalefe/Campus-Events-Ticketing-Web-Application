@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Sign In</title>
+    <title>Admin Sign In</title>
     <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Montserrat font -->
@@ -12,36 +12,41 @@
 </head>
 
 <body>
+    <!-- Floating logo -->
     <div style="position:fixed; bottom:16px; right:32px; z-index:100;">
         <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" style="width: 200px; height:auto;">
     </div>
+
+    <!-- Main container -->
     <div class="signin-container">
-        <h2>Sign In</h2>
-        <form id="signinForm" action="#" method="post">
+        <h2>Admin Sign In</h2>
+        <form id="adminSigninForm" action="#" method="post">
             <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="loginEmail" name="email" required>
+                <label for="email">Admin Email</label>
+                <input type="email" id="adminEmail" name="email" required>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="loginPassword" name="password" required>
+                <input type="password" id="adminPassword" name="password" required>
             </div>
-            <button type="submit" class="signin-btn">Sign In</button>
-            <div class="signup-link">
-                <a href="#" id="forgotPassword">Forgot Password?</a>
-            </div>
+            <button type="submit" class="signin-btn">Sign In as Admin</button>
         </form>
-        <div id="error-message" style="color:red; text-align:center; margin-top:10px;"></div>
+
+        <!-- Error message -->
+        <div id="admin-error-message" style="color:red; text-align:center; margin-top:10px;"></div>
+
+        <!-- Links -->
+        <div class="signup-link">
+        <a href="#" id="adminForgotPassword">Forgot Password?</a>
+        </div>
 
         <div class="signup-link">
-            Don't have an account? <a href="SignUp.html">Sign Up</a>
+            Not an admin? <a href="SignIn.html">Back to User Sign In</a>
         </div>
-        <div class="signup-link">
-            <a href="AdminSignin.html" id="adminSignUpLink"> Admin log in</a>
     </div>
-    </div>
+
+    <!-- Firebase logic -->
     <script type="module" src="../../js/Registration/auth.js"></script>
-    <script type="module" src="../../js/Registration/registration.js"></script>
 </body>
 
 </html>
