@@ -1,0 +1,188 @@
+body {
+    font-family: 'Montserrat', Arial, sans-serif;
+    background: linear-gradient(135deg, #367bfc 0%, #002976 100%);
+    margin: 0;
+    padding: 0;
+}
+
+.toolbar {
+    width: 100%;
+    background: rgba(0, 51, 102, 0.95);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 2vw;
+    height: clamp(60px, 8vh, 72px);
+    box-sizing: border-box;
+    box-shadow: 0 0.3vh 1vh rgba(0, 0, 0, 0.12);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.toolbar-logo {
+    height: clamp(40px, 6vh, 48px);
+    margin-right: clamp(20px, 3vw, 36px);
+    cursor: pointer;
+}
+
+.toolbar-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    color: #fff;
+    font-size: clamp(0.9rem, 2.5vw, 1.08rem);
+    margin-right: clamp(16px, 2.5vw, 24px);
+    cursor: pointer;
+    padding: clamp(8px, 1.5vh, 10px) clamp(16px, 3vw, 22px);
+    border-radius: 0.4vw;
+}
+
+.toolbar-spacer {
+    flex: 1;
+}
+
+.auth-btn {
+    background: linear-gradient(90deg, #6fa3ef 60%, #367bfc 100%);
+    color: #fff;
+    border: none;
+    border-radius: 0.4vw;
+    padding: clamp(8px, 1.5vh, 10px) clamp(16px, 3vw, 22px);
+}
+
+.container {
+    max-width: 900px;
+    margin: 48px auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 36px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.event-image {
+    width: 100%;
+    height: 340px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 24px;
+}
+
+.event-title {
+    font-size: 2em;
+    color: #002976;
+    margin-bottom: 12px;
+}
+
+.event-date-location {
+    color: #367bfc;
+    font-size: 1.1em;
+    margin-bottom: 16px;
+}
+
+.event-description {
+    font-size: 1.05em;
+    color: #333;
+    background: rgba(54, 123, 252, 0.05);
+    padding: 16px;
+    border-radius: 8px;
+}
+
+.admin-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.delete-btn {
+    background: linear-gradient(90deg, #ff0000 60%, #d30000 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.contact-btn {
+    background: rgba(0, 0, 0, 0.06);
+    border: none;
+    border-radius: 8px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+@media (max-width:768px) {
+    .container {
+        margin: 20px;
+        padding: 20px;
+    }
+
+    .event-image {
+        height: 200px;
+    }
+}
+
+/* Overlay (background) */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+
+/* Popup box */
+.popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 20px 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  z-index: 101;
+  width: 300px;
+  text-align: center;
+  font-family: "Montserrat", sans-serif;
+}
+
+.popup input {
+  width: 90%;
+  padding: 8px;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.popup-buttons {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.popup-btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.popup-btn.ok {
+  background-color: #007bff;
+  color: white;
+}
+
+.popup-btn.cancel {
+  background-color: #ccc;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, -45%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}

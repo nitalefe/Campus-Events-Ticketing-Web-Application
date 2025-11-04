@@ -27,10 +27,10 @@ const addScrollControls = () => {
     };
 
     left.addEventListener('click', () => {
-      scroller.scrollBy({left: -scrollBy(), behavior: 'smooth'});
+      scroller.scrollBy({ left: -scrollBy(), behavior: 'smooth' });
     });
     right.addEventListener('click', () => {
-      scroller.scrollBy({left: scrollBy(), behavior: 'smooth'});
+      scroller.scrollBy({ left: scrollBy(), behavior: 'smooth' });
     });
 
     const updateVisibility = () => {

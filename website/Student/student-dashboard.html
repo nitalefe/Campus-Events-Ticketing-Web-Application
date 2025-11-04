@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
   <title>Student Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../shared/dashboard.css">
+  <link rel="stylesheet" href="../../css/Shared/dashboard.css">
+  <link rel="stylesheet" href="../../css/Shared/toolbar.css">
 </head>
-<body data-event-page="eventPageStu.html">
+
+<body class="student-page" data-event-page="eventPageStu.html">
 
   <!-- Toolbar (reuse shared styles) -->
   <div class="toolbar">
-    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='../Student/student-dashboard.html'">
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+      onclick="location.href='../Student/student-dashboard.html'">
 
     <button class="toolbar-btn" onclick="location.href='../Student/student-dashboard.html'">Home</button>
     <button class="toolbar-btn" onclick="location.href='../Student/myTickets.html'">My Tickets</button>
@@ -33,7 +37,8 @@
   <div class="search-bar">
     <input type="text" class="search-input" placeholder="Search events...">
     <button class="search-btn" onclick="handleSearch()">Search</button>
-    <button id="clear-search" class="search-btn" style="display:none;margin-left:8px" onclick="clearSearchView()">Clear</button>
+    <button id="clear-search" class="search-btn" style="display:none;margin-left:8px"
+      onclick="clearSearchView()">Clear</button>
   </div>
 
   <!-- Dynamic event sections -->
@@ -42,7 +47,7 @@
       <!--Events for which tickets are already bought-->
       <div class="section-bar">My Events</div>
       <div class="events-container">
-        <div class="events" id="recommended-events"></div>
+        <div class="events" id="myEventsSection"></div>
       </div>
     </div>
 
@@ -78,20 +83,20 @@
   </div>
 
   <script type="module">
-    function clearSearchView(){
+    function clearSearchView() {
       document.getElementById('search-results-section').style.display = 'none';
       document.getElementById('clear-search').style.display = 'none';
       // show original sections
       document.querySelectorAll('.main-content > div').forEach(section => {
-        if(section.id !== 'search-results-section') section.style.display = '';
+        if (section.id !== 'search-results-section') section.style.display = '';
       });
       // remove cloned cards
-      const sr = document.getElementById('search-results'); while(sr && sr.firstChild) sr.removeChild(sr.firstChild);
+      const sr = document.getElementById('search-results'); while (sr && sr.firstChild) sr.removeChild(sr.firstChild);
     }
 
-    window.handleSearch = function() {
+    window.handleSearch = function () {
       const query = document.querySelector('.search-input').value.toLowerCase().trim();
-      if(!query){ clearSearchView(); return; }
+      if (!query) { clearSearchView(); return; }
 
       // collect matches from all event lists, deduplicating by data-event-id
       const matches = [];
@@ -99,9 +104,9 @@
       document.querySelectorAll('.events').forEach(list => {
         list.querySelectorAll('.event-card').forEach(card => {
           const id = card.getAttribute('data-event-id') || '';
-          if(seen.has(id)) return;
-          const title = (card.querySelector('.event-title') || {textContent:''}).textContent.toLowerCase();
-          if(title.includes(query)){
+          if (seen.has(id)) return;
+          const title = (card.querySelector('.event-title') || { textContent: '' }).textContent.toLowerCase();
+          if (title.includes(query)) {
             matches.push(card);
             seen.add(id);
           }
@@ -110,16 +115,16 @@
 
       // hide original sections
       document.querySelectorAll('.main-content > div').forEach(section => {
-        if(section.id !== 'search-results-section') section.style.display = 'none';
+        if (section.id !== 'search-results-section') section.style.display = 'none';
       });
 
       // populate search results container with clones
-      const sr = document.getElementById('search-results'); while(sr && sr.firstChild) sr.removeChild(sr.firstChild);
+      const sr = document.getElementById('search-results'); while (sr && sr.firstChild) sr.removeChild(sr.firstChild);
       matches.forEach(card => {
         const clone = card.cloneNode(true);
         clone.style.display = 'block';
         const id = clone.getAttribute('data-event-id') || card.getAttribute('data-event-id');
-        if(id){
+        if (id) {
           const target = document.body?.dataset?.eventPage || 'eventPageStu.html';
           clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; });
           clone.style.cursor = 'pointer';
@@ -140,4 +145,5 @@
   <script type="module" src="../../shared/scroll-controls.js"></script>
 
 </body>
+
 </html>
