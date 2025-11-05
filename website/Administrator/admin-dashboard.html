@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../css/Shared/dashboard.css">
   <link rel="stylesheet" href="../../css/Shared/toolbar.css">
+  <link rel="stylesheet" href="../../css/Administrator/admin-dashboard.css">
 </head>
 
 <body class="admin-page" data-event-page="eventPageAdmin.html">
@@ -28,58 +29,80 @@
     </div>
   </div>
 
-  <header>
-    <h1>Explore Events</h1>
-    <p>Discover events on campus and RSVP quickly.</p>
-  </header>
+  <div class="top-row page-max">
+    <header class="admin-header">
+      <div>
+        <h1>Administrator Dashboard</h1>
+        <p class="muted">Overview of new events, organizer requests, and global site metrics.</p>
+      </div>
+      <div class="header-actions">
+        <!-- control buttons moved below the header for clearer placement -->
+      </div>
+    </header>
 
-  <!-- Search -->
-  <div class="search-bar">
-    <input type="text" class="search-input" placeholder="Search events...">
-    <button class="search-btn" onclick="handleSearch()">Search</button>
-    <button id="clear-search" class="search-btn" style="display:none;margin-left:8px"
-      onclick="clearSearchView()">Clear</button>
+    <aside class="shortcuts-top">
+      <div class="section-bar">Shortcuts</div>
+      <div class="panel">
+  <button id="shortcut-organizer-requests" class="toolbar-btn primary">Organizer Requests</button>
+  <button id="shortcut-manage-orgs" class="toolbar-btn primary">Manage Organizations</button>
+  <button id="shortcut-send-message" class="toolbar-btn primary">Send Broadcast Message</button>
+  <button id="shortcut-site-settings" class="toolbar-btn primary">Site Settings</button>
+      </div>
+    </aside>
   </div>
 
-  <!-- Dynamic event sections -->
-  <div class="main-content">
-    <div>
-      <!--Events for which tickets are already bought-->
-      <div class="section-bar">My Events</div>
-      <div class="events-container">
-        <div class="events" id="myEventsSection"></div>
-      </div>
+  <!-- Header-level controls moved here so they appear just under the header -->
+  <div class="header-controls page-max">
+    <div class="header-actions">
+      <button id="sendMessageBtn" class="toolbar-btn primary">Send Broadcast Message</button>
+      <button id="manageOrgsBtn" class="toolbar-btn">Manage Organizations</button>
+    </div>
+  </div>
+
+  <!-- Admin quick stats and shortcuts -->
+  <div class="admin-quick">
+    <div class="card">
+      <div class="card-title">Website Users</div>
+      <div id="newEventsCount" class="card-count">0</div>
+  <div class="card-actions"><button id="viewNewEvents" class="toolbar-btn primary">View Users</button></div>
     </div>
 
-    <div>
-      <!--events saved by user-->
-      <div class="section-bar">Saved Events</div>
-      <div class="events-container">
-        <div class="events" id="saved-events"></div>
-      </div>
+    <div class="card">
+      <div class="card-title">Organizer Requests</div>
+      <div id="orgRequestsCount" class="card-count">0</div>
+  <div class="card-actions"><button id="viewOrgRequests" class="toolbar-btn primary">Review Requests</button></div>
     </div>
 
-    <div>
-      <!--upcoming events for the user's school'scampus-->
-      <div class="section-bar">Upcoming On Campus</div>
-      <div class="events-container">
-        <div class="events" id="upcoming-events"></div>
+    <div class="card">
+      <div class="card-title">Global Website Stats</div>
+      <div class="global-stats">
+        <div class="stat">
+          <div id="totalEvents" class="stat-value">0</div>
+          <div class="stat-label">Events</div>
+        </div>
+        <div class="stat">
+          <div id="totalUsers" class="stat-value">0</div>
+          <div class="stat-label">Users</div>
+        </div>
+        <div class="stat">
+          <div id="totalTickets" class="stat-value">0</div>
+          <div class="stat-label">Tickets Issued</div>
+        </div>
       </div>
     </div>
+  </div>
 
-    <div>
-      <div class="section-bar">Discover</div>
-      <div class="events-container">
-        <div class="events" id="discover-events"></div>
-      </div>
+  <!-- New Events (full-width) -->
+  <section class="full-width-section page-max">
+    <div class="section-bar">New Events</div>
+    <div class="events-container">
+      <div class="events" id="newEventsSection"></div>
     </div>
-    <!-- Search logic: consolidated search results (hidden by default) -->
-    <div id="search-results-section" style="display:none">
-      <div class="section-bar">Search Results</div>
-      <div class="events-container">
-        <div class="events" id="search-results"></div>
-      </div>
-    </div>
+  </section>
+
+  <!-- Main admin panels -->
+  <div class="main-content page-max">
+    <!-- (shortcuts moved to top-right) -->
   </div>
 
   <script type="module">
