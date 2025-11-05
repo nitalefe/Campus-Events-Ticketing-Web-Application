@@ -128,7 +128,7 @@ body.admin-page{background:var(--bg);color:#0f172a;font-family:Inter, system-ui,
 }
 
 /* Top row placing header and shortcuts */
-.top-row{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.top-row{display:flex;align-items:center;justify-content:space-between;gap:20px}
 .shortcuts-top{width:320px}
 .shortcuts-top .panel{padding:12px;display:flex;flex-direction:column;gap:14px}
 
