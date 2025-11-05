@@ -26,7 +26,7 @@
                 <label for="password">Password</label>
                 <input type="password" id="loginPassword" name="password" required>
             </div>
-            <button type="submit" class="signin-btn">Sign In</button>
+            <button type="submit" id="signinBtn" class="signin-btn">Sign In</button>
             <div class="signup-link">
                 <a href="#" id="forgotPassword">Forgot Password?</a>
             </div>
@@ -37,8 +37,25 @@
             Don't have an account? <a href="SignUp.html">Sign Up</a>
         </div>
     </div>
-    <script type="module" src="../../js/Registration/auth.js"></script>
-    <script type="module" src="../../js/Registration/registration.js"></script>
+        <script type="module" src="../../js/Registration/auth.js"></script>
+        <script type="module" src="../../js/Registration/registration.js"></script>
+
+        <!-- Safe fallback: don't let the browser perform a raw POST if module fails to load.
+                 This dispatches a 'submit' event to the form so the module's submit handler
+                 runs when available. If the module didn't load, dispatchEvent won't cause a POST. -->
+        <script>
+            (function () {
+                const btn = document.getElementById('signinBtn');
+                if (!btn) return;
+                btn.addEventListener('click', function () {
+                    const form = document.getElementById('signinForm');
+                    if (!form) return;
+                    // Dispatch the submit event so any JS handler (e.g. in auth.js) runs.
+                    const evt = new Event('submit', { cancelable: true, bubbles: true });
+                    form.dispatchEvent(evt);
+                });
+            })();
+        </script>
 </body>
 
 </html>
