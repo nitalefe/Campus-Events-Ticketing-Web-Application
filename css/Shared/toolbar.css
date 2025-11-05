@@ -1,5 +1,13 @@
+/* ensure no browser default margins push the toolbar down */
+html, body {
+	margin: 0;
+	padding: 0;
+}
+
 .toolbar {
-	width: 100%;
+	width: 100vw; /* span full viewport width */
+	left: 0;
+	right: 0;
 	background: rgba(0, 51, 102, 0.95);
 	color: #fff;
 	display: flex;

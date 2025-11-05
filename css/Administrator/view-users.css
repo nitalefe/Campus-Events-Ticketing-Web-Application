@@ -1,0 +1,117 @@
+/* Styles extracted from website/Administrator/view-users.html */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+
+body.view-users-page {
+  font-family: 'Montserrat', sans-serif;
+  /* Uniform background that remains consistent while scrolling */
+  background: radial-gradient(circle farthest-corner at 10% 20%, #367bfc 16.3%, #002976 100.2%);
+  background-attachment: fixed;
+  background-size: cover;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* top-align so content is fully visible and scrollable */
+  min-height: 100vh;
+  margin: 0;
+  /* nudge the page a bit higher under the shared toolbar without touching toolbar.css */
+  padding: 0.25rem 2rem 2.5rem;
+  /* increase the page top padding to match the slightly taller toolbar we override on this page */
+  padding-top: calc(env(safe-area-inset-top, 0px) + 22px);
+  box-sizing: border-box;
+  /* ensure there's breathing room at the bottom when scrolling */
+  overflow-y: auto;
+  padding-bottom: 3rem;
+}
+
+@media (max-height: 700px){
+  body.view-users-page{
+    justify-content: flex-start;
+    padding-top: 2rem;
+  }
+}
+
+h1.view-users-title {
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.filter-bar {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+select, button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+}
+
+select { background: #f6f6f6; }
+button.delete-btn {
+  background: #ff5252;
+  color: white;
+}
+button.role-btn {
+  background: #5d7bd0;
+  color: white;
+}
+
+table.view-users-table {
+  /* widen table to make better use of admin layout space */
+  width: 95%;
+  max-width: 1200px;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 3rem; /* add more space under the table so content doesn't butt against the page bottom */
+}
+
+table.view-users-table th, table.view-users-table td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+/* Layout the actions cell so the Assign Role button stays left and Delete sits on the far right */
+table.view-users-table tbody td:last-child {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-right: 1rem;
+}
+
+/* Push delete to the far right of the actions cell */
+.delete-btn {
+  margin-left: auto;
+}
+
+/* Ensure buttons remain usable on narrow screens */
+@media (max-width: 700px) {
+  table.view-users-table tbody td:last-child {
+    gap: 0.4rem;
+  }
+  .delete-btn, .role-btn {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Page-specific nudge: raise toolbar slightly to remove a tiny top gap (no edits to Shared/toolbar.css) */
+.toolbar {
+  /* keep the small upward nudge and add extra vertical padding so the toolbar appears taller on this page */
+  transform: translateY(-25px);
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+table.view-users-table th {
+  background: #5d7bd0;
+  color: white;
+}
