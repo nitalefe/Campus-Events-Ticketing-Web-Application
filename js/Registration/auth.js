@@ -1,5 +1,5 @@
 import { auth, db } from "../../Shared/firebase-config.js"; 
-
+import { getIdTokenResult } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -137,17 +137,12 @@ if (adminSigninForm) {
         return;
       }
 
-      const userDoc = await getDoc(doc(db, "users", user.uid));
-      if (!userDoc.exists()) {
-        errorMsg.textContent = "User record not found.";
-        return;
-      }
+      // ✅ Fetch the user's token to check custom claims
+      const tokenResult = await getIdTokenResult(user);
+      const isAdmin = tokenResult.claims.admin === true;
 
-      const userData = userDoc.data();
-
-      // ✅ Check admin privilege
-      if (userData.isAdmin === true) {
-        localStorage.setItem("userRole", userData.role);
+      if (isAdmin) {
+        console.log("✅ Custom claim confirmed admin");
         localStorage.setItem("isAdmin", "true");
         window.location.href = "../../website/Administrator/admin-dashboard.html";
       } else {

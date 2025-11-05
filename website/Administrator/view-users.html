@@ -101,33 +101,43 @@
     updateDoc,
     getDoc
   } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+  import { onAuthStateChanged, getIdTokenResult} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
   const usersTable = document.getElementById("usersTable");
   const filterRole = document.getElementById("filterRole");
   const refreshBtn = document.getElementById("refreshBtn");
 
   // 🧩 Step 1: Check if the current user is admin
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      console.log("⚠️ No user signed in.");
-      alert("Please sign in first.");
-      window.location.href = "../Registration/SignIn.html";
-      return;
-    }
+  // 🧩 Step 1: Check if the current user is admin (using custom claim)
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    console.log("⚠️ No user signed in.");
+    alert("Please sign in first.");
+    window.location.href = "../Registration/SignIn.html";
+    return;
+  }
 
-    const userSnap = await getDoc(doc(db, "users", user.uid));
-    const userData = userSnap.data();
+  try {
+    // ✅ Get user's token claims
+    const tokenResult = await getIdTokenResult(user);
+    const isAdmin = tokenResult.claims.admin === true;
 
-    if (userData?.isAdmin) {
-      console.log(`✅ Admin confirmed: ${user.email}`);
+    if (isAdmin) {
+      console.log(`✅ Admin confirmed via custom claim: ${user.email}`);
       loadUsers(); // proceed to load the table
     } else {
       console.log(`🚫 Not an admin: ${user.email}`);
       alert("Access denied — admins only.");
+      await signOut(auth);
       window.location.href = "../Registration/SignIn.html";
     }
-  });
+  } catch (error) {
+    console.error("Error checking admin status:", error);
+    alert("Error verifying access. Please try again.");
+    await signOut(auth);
+    window.location.href = "../Registration/SignIn.html";
+  }
+});
 
   // 🧩 Step 2: Function to load users into the table
   async function loadUsers(roleFilter = "all") {
