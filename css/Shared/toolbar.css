@@ -73,3 +73,19 @@
 	background: linear-gradient(90deg, #a3c8f7 60%, #367bfc 100%);
 	box-shadow: 0 0.3vh 0.9vh rgba(54, 123, 252, 0.22);
 }
+
+.toolbar-left,
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 2vw, 20px);
+}
+
+/* Make sure toolbar spacing works for any role (Student, Organizer, Admin) */
+.toolbar {
+  justify-content: flex-start;
+}
+
+.toolbar-spacer {
+  flex-grow: 1;
+}

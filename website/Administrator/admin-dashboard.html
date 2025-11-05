@@ -15,19 +15,25 @@
 
   <!-- Toolbar (reuse shared styles) -->
   <div class="toolbar">
-    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
-      onclick="location.href='admin-dashboard.html'">
+  <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+       onclick="location.href='dashboard.html'">
 
-    <button class="toolbar-btn" onclick="location.href='../admin-dashboard.html'">Home</button>
-    <button class="toolbar-btn" onclick="location.href='../'">See Organizers</button> <!-- <----------------------------- Here for the button for organizer management-->
-    <div class="toolbar-spacer"></div>
-    <!--to be added with 4th feature-->
-    <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
-    <div id="authBtnContainer">
-      <button id="logout-btn" class="auth-btn">Log Out</button>
-    </div>
+  <!-- LEFT buttons -->
+  <div class="toolbar-left">
+    <button class="toolbar-btn" onclick="location.href='dashboard.html'">Home</button>
+    <button class="toolbar-btn" onclick="location.href='view-users.html'">View Users</button>
+    <button class="toolbar-btn" onclick="location.href='manage-organizations.html'">Manage Organizations</button>
   </div>
 
+  <!-- SPACER pushes right buttons to end -->
+  <div class="toolbar-spacer"></div>
+
+  <!-- RIGHT buttons -->
+  <div class="toolbar-right">
+    <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
+    <button id="logout-btn" class="auth-btn">Log Out</button>
+  </div>
+</div>
   <header>
     <h1>Explore Events</h1>
     <p>Discover events on campus and RSVP quickly.</p>
@@ -43,22 +49,6 @@
 
   <!-- Dynamic event sections -->
   <div class="main-content">
-    <div>
-      <!--Events for which tickets are already bought-->
-      <div class="section-bar">My Events</div>
-      <div class="events-container">
-        <div class="events" id="myEventsSection"></div>
-      </div>
-    </div>
-
-    <div>
-      <!--events saved by user-->
-      <div class="section-bar">Saved Events</div>
-      <div class="events-container">
-        <div class="events" id="saved-events"></div>
-      </div>
-    </div>
-
     <div>
       <!--upcoming events for the user's school'scampus-->
       <div class="section-bar">Upcoming On Campus</div>

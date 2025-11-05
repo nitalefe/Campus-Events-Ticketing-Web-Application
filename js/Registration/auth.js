@@ -149,7 +149,7 @@ if (adminSigninForm) {
       if (userData.isAdmin === true) {
         localStorage.setItem("userRole", userData.role);
         localStorage.setItem("isAdmin", "true");
-        window.location.href = "../../website/Administrator/admin-dashboard.html"; 
+        window.location.href = "../../website/Administrator/admin-dashboard.html";
       } else {
         await signOut(auth);
         errorMsg.textContent = "Access denied — you are not an admin.";
