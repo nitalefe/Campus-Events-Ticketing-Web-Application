@@ -2,26 +2,69 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png" />
   <title>Student Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../css/Shared/dashboard.css">
-  <link rel="stylesheet" href="../../css/Shared/toolbar.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/Shared/dashboard.css" />
+  <link rel="stylesheet" href="../../css/Shared/toolbar.css" />
+  <style>
+    /* --- Date Filter styles (lightweight, blends with your theme) --- */
+    .filters-wrap {
+      max-width: 1100px;
+      margin: 10px auto 0;
+      padding: 0 16px;
+    }
+    .date-filter {
+      display: grid;
+      grid-template-columns: repeat(2, 180px) 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+    .date-filter label {
+      display: grid;
+      gap: 6px;
+      font-size: 12px;
+      color: #4b5563;
+    }
+    .date-filter input[type="date"] {
+      padding: 8px 10px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      background: #fff;
+    }
+    .df-presets { display: flex; flex-wrap: wrap; gap: 8px; }
+    .df-presets button,
+    .df-apply,
+    #df-clear {
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      cursor: pointer;
+    }
+    .df-presets button.active { border-color: #6d28d9; background: #f5f3ff; }
+    .df-apply { background: #4f46e5; color: #fff; border-color: #4f46e5; }
+    @media (max-width: 720px) {
+      .date-filter { grid-template-columns: 1fr 1fr; grid-auto-rows: auto; }
+      .df-presets { grid-column: 1 / -1; }
+      .df-apply { grid-column: 1 / -1; }
+    }
+    /* small helper for hidden rows during filtering */
+    .is-hidden { display: none !important; }
+  </style>
 </head>
 
 <body class="student-page" data-event-page="eventPageStu.html">
 
-  <!-- Toolbar (reuse shared styles) -->
+  <!-- Toolbar -->
   <div class="toolbar">
     <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
       onclick="location.href='../Student/student-dashboard.html'">
-
     <button class="toolbar-btn" onclick="location.href='../Student/student-dashboard.html'">Home</button>
     <button class="toolbar-btn" onclick="location.href='../Student/myTickets.html'">My Tickets</button>
     <div class="toolbar-spacer"></div>
-    <!--to be added with 4th feature-->
     <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
     <div id="authBtnContainer">
       <button id="logout-btn" class="auth-btn">Log Out</button>
@@ -37,88 +80,90 @@
   <div class="search-bar">
     <input type="text" class="search-input" placeholder="Search events...">
     <button class="search-btn" onclick="handleSearch()">Search</button>
-    <button id="clear-search" class="search-btn" style="display:none;margin-left:8px"
-      onclick="clearSearchView()">Clear</button>
+    <button id="clear-search" class="search-btn" style="display:none;margin-left:8px" onclick="clearSearchView()">Clear</button>
   </div>
 
-  <!-- Dynamic event sections -->
+  <!-- Date Filter -->
+  <div class="filters-wrap">
+    <form id="date-filter" class="date-filter">
+      <label>
+        <span>From</span>
+        <input id="df-from" type="date" />
+      </label>
+      <label>
+        <span>To</span>
+        <input id="df-to" type="date" />
+      </label>
+
+      <div class="df-presets">
+        <button type="button" data-preset="today">Today</button>
+        <button type="button" data-preset="week">This week</button>
+        <button type="button" data-preset="weekend">This weekend</button>
+        <button type="button" id="df-clear">Clear</button>
+      </div>
+
+      <button type="submit" class="df-apply">Apply</button>
+    </form>
+  </div>
+
+  <!-- Dynamic sections -->
   <div class="main-content">
     <div>
-      <!--Events for which tickets are already bought-->
       <div class="section-bar">My Events</div>
-      <div class="events-container">
-        <div class="events" id="myEventsSection"></div>
-      </div>
+      <div class="events-container"><div class="events" id="myEventsSection"></div></div>
     </div>
 
     <div>
-      <!--events saved by user-->
       <div class="section-bar">Saved Events</div>
-      <div class="events-container">
-        <div class="events" id="saved-events"></div>
-      </div>
+      <div class="events-container"><div class="events" id="saved-events"></div></div>
     </div>
 
     <div>
-      <!--upcoming events for the user's school'scampus-->
       <div class="section-bar">Upcoming On Campus</div>
-      <div class="events-container">
-        <div class="events" id="upcoming-events"></div>
-      </div>
+      <div class="events-container"><div class="events" id="upcoming-events"></div></div>
     </div>
 
     <div>
       <div class="section-bar">Discover</div>
-      <div class="events-container">
-        <div class="events" id="discover-events"></div>
-      </div>
+      <div class="events-container"><div class="events" id="discover-events"></div></div>
     </div>
-    <!-- Search logic: consolidated search results (hidden by default) -->
-    <div id="search-results-section" style="display:none">
+
+    <!-- Search results -->
+    <div id="search-results-section" class="is-hidden">
       <div class="section-bar">Search Results</div>
-      <div class="events-container">
-        <div class="events" id="search-results"></div>
-      </div>
+      <div class="events-container"><div class="events" id="search-results"></div></div>
     </div>
   </div>
 
+  <!-- Search + Date filter logic -->
   <script type="module">
+    // ---- SEARCH (existing) ----
     function clearSearchView() {
-      document.getElementById('search-results-section').style.display = 'none';
+      document.getElementById('search-results-section').classList.add('is-hidden');
       document.getElementById('clear-search').style.display = 'none';
-      // show original sections
       document.querySelectorAll('.main-content > div').forEach(section => {
-        if (section.id !== 'search-results-section') section.style.display = '';
+        if (section.id !== 'search-results-section') section.classList.remove('is-hidden');
       });
-      // remove cloned cards
       const sr = document.getElementById('search-results'); while (sr && sr.firstChild) sr.removeChild(sr.firstChild);
     }
-
     window.handleSearch = function () {
       const query = document.querySelector('.search-input').value.toLowerCase().trim();
       if (!query) { clearSearchView(); return; }
 
-      // collect matches from all event lists, deduplicating by data-event-id
-      const matches = [];
-      const seen = new Set();
+      const matches = []; const seen = new Set();
       document.querySelectorAll('.events').forEach(list => {
         list.querySelectorAll('.event-card').forEach(card => {
           const id = card.getAttribute('data-event-id') || '';
           if (seen.has(id)) return;
           const title = (card.querySelector('.event-title') || { textContent: '' }).textContent.toLowerCase();
-          if (title.includes(query)) {
-            matches.push(card);
-            seen.add(id);
-          }
+          if (title.includes(query)) { matches.push(card); seen.add(id); }
         });
       });
 
-      // hide original sections
       document.querySelectorAll('.main-content > div').forEach(section => {
-        if (section.id !== 'search-results-section') section.style.display = 'none';
+        if (section.id !== 'search-results-section') section.classList.add('is-hidden');
       });
 
-      // populate search results container with clones
       const sr = document.getElementById('search-results'); while (sr && sr.firstChild) sr.removeChild(sr.firstChild);
       matches.forEach(card => {
         const clone = card.cloneNode(true);
@@ -132,18 +177,135 @@
         sr.appendChild(clone);
       });
 
-      document.getElementById('search-results-section').style.display = '';
+      document.getElementById('search-results-section').classList.remove('is-hidden');
       document.getElementById('clear-search').style.display = '';
     };
-
     document.getElementById('clear-search').addEventListener('click', clearSearchView);
+
+    // ---- DATE FILTER (client-side, works with current cards) ----
+    const form = document.getElementById("date-filter");
+    const inputFrom = document.getElementById("df-from");
+    const inputTo   = document.getElementById("df-to");
+    const btnClear  = document.getElementById("df-clear");
+    const presets   = form.querySelectorAll("[data-preset]");
+
+    const startOfDay = (d)=> new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0,0,0,0);
+    const endOfDay   = (d)=> new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23,59,59,999);
+
+    function setPresetActive(key) {
+      presets.forEach(b => b.classList.toggle('active', b.dataset.preset === key));
+    }
+
+    function applyPreset(key) {
+      const now = new Date();
+      if (key === "today") {
+        inputFrom.valueAsDate = now; inputTo.valueAsDate = now;
+      } else if (key === "week") {
+        const day = now.getDay(); // 0 Sun..6 Sat
+        const diffToMon = (day + 6) % 7;
+        const monday = new Date(now); monday.setDate(now.getDate() - diffToMon);
+        const sunday = new Date(monday); sunday.setDate(monday.getDate() + 6);
+        inputFrom.valueAsDate = monday; inputTo.valueAsDate = sunday;
+      } else if (key === "weekend") {
+        const day = now.getDay();
+        const sat = new Date(now); sat.setDate(sat.getDate() + ((6 - day + 7) % 7));
+        const sun = new Date(sat); sun.setDate(sat.getDate() + 1);
+        inputFrom.valueAsDate = sat; inputTo.valueAsDate = sun;
+      }
+      setPresetActive(key);
+    }
+
+    presets.forEach(btn => {
+      btn.addEventListener("click", () => {
+        applyPreset(btn.dataset.preset);
+        form.dispatchEvent(new Event("submit"));
+      });
+    });
+
+    btnClear.addEventListener("click", () => {
+      inputFrom.value = ""; inputTo.value = ""; setPresetActive(null);
+      filterVisibleByDate(null, null);
+    });
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const from = inputFrom.value ? startOfDay(new Date(inputFrom.value)) : null;
+      const to   = inputTo.value   ? endOfDay(new Date(inputTo.value))     : null;
+      if (from && to && from > to) { // swap if user reversed
+        const tmp = from; (from = to), (to = tmp);
+        inputFrom.valueAsDate = from; inputTo.valueAsDate = to;
+      }
+      setPresetActive(null);
+      filterVisibleByDate(from, to);
+    });
+
+    // Annotate cards with timestamps and filter
+    function parseEventStart(card) {
+      // prefer data-start (ms). If absent, try <time datetime>, else parse text
+      const ds = card.getAttribute('data-start');
+      if (ds) { const n = Number(ds); if (!Number.isNaN(n)) return n; }
+
+      const t = card.querySelector('time[datetime]');
+      if (t && t.getAttribute('datetime')) {
+        const n = Date.parse(t.getAttribute('datetime')); if (!Number.isNaN(n)) return n;
+      }
+
+      // Heuristic: look for a child with class likely holding date text
+      const maybe = card.querySelector('.event-date, .date, .text-sm, .meta');
+      const text = (maybe?.textContent || card.textContent || '').trim();
+      const n = Date.parse(text);
+      return Number.isNaN(n) ? null : n;
+    }
+
+    // Watches for new cards (rendered by your Firestore loaders)
+    const mo = new MutationObserver(entries => {
+      entries.forEach(e => {
+        e.addedNodes.forEach(n => {
+          if (!(n instanceof HTMLElement)) return;
+          if (n.classList?.contains('event-card')) {
+            if (!n.hasAttribute('data-start')) {
+              const ts = parseEventStart(n);
+              if (ts) n.setAttribute('data-start', String(ts));
+            }
+          }
+        });
+      });
+    });
+    document.querySelectorAll('.events').forEach(list => {
+      mo.observe(list, { childList: true, subtree: true });
+    });
+
+    function filterVisibleByDate(from, to) {
+      // hide or show cards based on [data-start]
+      const lists = document.querySelectorAll('.events');
+      lists.forEach(list => {
+        list.querySelectorAll('.event-card').forEach(card => {
+          let ts = card.getAttribute('data-start');
+          if (!ts) { const parsed = parseEventStart(card); if (parsed) { ts = String(parsed); card.setAttribute('data-start', ts); } }
+          const n = ts ? Number(ts) : NaN;
+
+          let visible = true;
+          if (from && !(n >= +from)) visible = false;
+          if (to && !(n <= +to)) visible = false;
+
+          card.style.display = visible ? "" : "none";
+        });
+        // force chevron visibility recompute (scroll-controls listens to resize/scroll)
+        list.dispatchEvent(new Event('scroll'));
+      });
+
+      // If Search Results are open, re-run search so it respects the date range
+      const srOpen = !document.getElementById('search-results-section')?.classList.contains('is-hidden');
+      if (srOpen) window.handleSearch();
+    }
   </script>
 
+  <!-- Your existing scripts -->
   <script type="module" src="../../Shared/firebase-config.js"></script>
   <script type="module" src="../../js/Registration/auth.js"></script>
   <script type="module" src="../../js/Events/LoadEvents.js"></script>
   <script type="module" src="../../shared/scroll-controls.js"></script>
 
 </body>
-
 </html>
+
