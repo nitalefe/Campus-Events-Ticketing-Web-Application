@@ -5,7 +5,8 @@
 
 import { collection, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { auth, db } from "../../Shared/firebase-config.js";
+import { auth, db } from "../../js/Shared/firebase-config.js";
+import { getIdTokenResult, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
 const windowTitle = document.getElementById("pageTitle");
 
@@ -228,6 +229,8 @@ function exportToCSV() {
 }
 
 // Require admin role to view this page
+
+// Require admin role to view this page (via custom claim)
 onAuthStateChanged(auth, async (user) => {
   const status = document.getElementById("eventsStatus");
   if (!user) {
@@ -236,40 +239,33 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  // Check role
   try {
-    const usersRef = await import("https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js");
-  } catch (e) {
-    // no-op; simple import guard
-  }
-
-  // Attempt to read user's role from Firestore
-  try {
-    const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js");
-    const userDoc = await getDoc(doc(db, "users", user.uid));
-    if (!userDoc.exists()) {
-      status.textContent = "Access denied: user record not found.";
-      status.className = "status error";
-      return;
-    }
-    // New admin check: expect a boolean `isAdmin: true` on the users document
-    const isAdmin = !!userDoc.data().isAdmin;
+    // ✅ Fetch token with custom claims
+    const tokenResult = await getIdTokenResult(user);
+    const isAdmin = tokenResult.claims.admin === true;
 
     if (!isAdmin) {
-      // Access denied for non-admin users; redirect to sign in page
-      status.textContent = "Access denied: admin privileges required.";
+      console.warn(`🚫 Not an admin: ${user.email}`);
+      status.textContent = "Access denied — admin privileges required.";
       status.className = "status error";
-      // Redirect to sign-in; preserve return path if needed
+      await signOut(auth);
       window.location.href = "../../website/Registration/SignIn.html";
       return;
     }
 
-    // Authorized admin — load events
+    console.log(`✅ Admin confirmed via custom claim: ${user.email}`);
+    status.textContent = "Admin verified. Loading analytics...";
+    status.className = "status info";
+
+    // Proceed to load events
     applyFilters(user);
+
   } catch (err) {
-    console.error("Role check failed:", err);
-    status.textContent = "Error checking user role: " + (err.message || err);
+    console.error("Admin token verification failed:", err);
+    status.textContent = "Error verifying admin access.";
     status.className = "status error";
+    await signOut(auth);
+    window.location.href = "../../website/Registration/SignIn.html";
   }
 });
 

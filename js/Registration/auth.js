@@ -1,4 +1,6 @@
-import { auth, db } from "../../Shared/firebase-config.js";
+import { auth, db } from "../../js/Shared/firebase-config.js";
+import { getIdTokenResult } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
 
 import {
   createUserWithEmailAndPassword,
@@ -69,10 +71,10 @@ if (signupForm) {
   });
 }
 
-/* ---------------- SIGN IN ---------------- */
+/* ---------------- STUDENT / ORGANIZER SIGN IN ---------------- */
 const signinForm = document.getElementById('signinForm');
 if (signinForm) {
-  signinForm.addEventListener('submit', (e) => {
+  signinForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const email = document.getElementById('loginEmail').value;
@@ -80,49 +82,83 @@ if (signinForm) {
     const errorMsg = document.getElementById('error-message');
     errorMsg.textContent = "";
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then(async (userCredential) => {
-        const user = userCredential.user;
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-        if (!user.emailVerified) {
-          errorMsg.textContent = "Please verify your email before signing in.";
-          await signOut(auth);
-          return;
-        }
+      if (!user.emailVerified) {
+        errorMsg.textContent = "Please verify your email before signing in.";
+        await signOut(auth);
+        return;
+      }
 
-        // Get user role from Firestore
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          localStorage.setItem("userRole", userData.role);
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (!userDoc.exists()) {
+        errorMsg.textContent = "User record not found.";
+        return;
+      }
 
-          // Redirect by role
-          if (userData.role === "organizer") {
-            window.location.href = "../../website/Organizer/organizer-dashboard.html";
-          } else if (userData.role === "student") {
-            window.location.href = "../../website/Student/student-dashboard.html";;
-          } else {
-            window.location.href = "website.html"; // fallback
-          }
-        } else {
-          errorMsg.textContent = "User record not found.";
-        }
-      })
-      .catch((error) => {
-        console.error('Login error:', error.code);
-        if (
-          error.code === "auth/invalid-credential" ||
-          error.code === "auth/wrong-password" ||
-          error.code === "auth/user-not-found" ||
-          error.code === "auth/invalid-email"
-        ) {
-          errorMsg.textContent = "Invalid email or password. Please try again.";
-        } else {
-          errorMsg.textContent = "Something went wrong. Please try again later.";
-        }
-      });
+      const userData = userDoc.data();
+      localStorage.setItem("userRole", userData.role);
+      localStorage.setItem("isAdmin", userData.isAdmin ? "true" : "false");
+
+      // Redirect to main role dashboard
+      if (userData.role === "student") {
+        window.location.href = "../../website/Student/student-dashboard.html";
+      } else if (userData.role === "organizer") {
+        window.location.href = "../../website/Organizer/organizer-dashboard.html";
+      } else {
+        errorMsg.textContent = "Unknown role.";
+      }
+
+    } catch (error) {
+      console.error("Login error:", error);
+      errorMsg.textContent = "Invalid credentials.";
+    }
   });
 }
+
+/* ---------------- ADMIN SIGN IN ---------------- */
+const adminSigninForm = document.getElementById('adminSigninForm');
+if (adminSigninForm) {
+  adminSigninForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById('adminEmail').value;
+    const password = document.getElementById('adminPassword').value;
+    const errorMsg = document.getElementById('admin-error-message');
+    errorMsg.textContent = "";
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      if (!user.emailVerified) {
+        errorMsg.textContent = "Please verify your email before signing in.";
+        await signOut(auth);
+        return;
+      }
+
+      // ✅ Fetch the user's token to check custom claims
+      const tokenResult = await getIdTokenResult(user);
+      const isAdmin = tokenResult.claims.admin === true;
+
+      if (isAdmin) {
+        console.log("✅ Custom claim confirmed admin");
+        localStorage.setItem("isAdmin", "true");
+        window.location.href = "../../website/Administrator/admin-dashboard.html";
+      } else {
+        await signOut(auth);
+        errorMsg.textContent = "Access denied — you are not an admin.";
+      }
+
+    } catch (error) {
+      console.error("Admin login error:", error);
+      errorMsg.textContent = "Invalid admin credentials.";
+    }
+  });
+}
+
 
 /* ---------------- LOGOUT ---------------- */
 document.addEventListener('DOMContentLoaded', () => {

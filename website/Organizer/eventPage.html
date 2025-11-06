@@ -7,6 +7,7 @@
   <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../css/Organizer/eventPage.css">
+  <link rel="stylesheet" href="../../css/Shared/toolbar.css">
 </head>
 
 <body>
@@ -38,13 +39,11 @@
     <button class="buy-ticket-btn" onclick="location.href='EventDashboard.html'">View Analytics</button>
 
     <!-- Firebase + Auth -->
-    <script type="module" src="../../Shared/firebase-config.js"></script>
-
     <script type="module" src="../../js/Registration/auth.js"></script>
 
     <!--LOADING EVENTS INTO THE EVENT PAGE -->
     <script type="module">
-      import { auth, db } from "../../Shared/firebase-config.js";
+      import { auth, db } from "../../js/Shared/firebase-config.js";
       import { doc, getDoc, updateDoc, setDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
       import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 

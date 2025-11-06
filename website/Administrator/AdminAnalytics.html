@@ -8,6 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../css/Organizer/EventDashboard.css" />
+  <link rel="stylesheet" href="../../css/Shared/toolbar.css">
 </head>
 
 <body>
@@ -16,8 +17,6 @@
   <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='admin-dashboard.html'">
 
   <button class="toolbar-btn" onclick="location.href='admin-dashboard.html'">Home</button>
-  <button class="toolbar-btn" onclick="location.href='AdminAnalytics.html'">Analytics</button>
-  <button class="toolbar-btn" onclick="location.href='AdminEventCreation.html'">Create New Event</button>
     <div class="toolbar-spacer"></div>
     <div id="authBtnContainer">
       <button id="logout-btn" class="auth-btn">Log Out</button>
@@ -165,7 +164,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 
   <!-- Scripts -->
-  <script type="module" src="../../Shared/firebase-config.js"></script>
+  <script type="module" src="../../js/Shared/firebase-config.js"></script>
   <!-- Authentication helper (wires logout button and auth state redirects) -->
   <script type="module" src="../../js/Registration/auth.js"></script>
   <script type="module" src="../../js/AdminAnalytics/AdminEventDashboard.js"></script>
