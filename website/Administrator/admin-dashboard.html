@@ -20,8 +20,7 @@
        onclick="location.href='admin-dashboard.html'">
 
     <button class="toolbar-btn" onclick="location.href='admin-dashboard.html'">Home</button>
-    <button class="toolbar-btn" onclick="location.href='../'">See Organizers</button> 
-    <!---AYAN OVER HERE-->
+      <button class="toolbar-btn" onclick="location.href='AdminAnalytics.html'">Analytics</button>
     <button id="previewOrganizerBtn" class="toolbar-btn" onclick="location.href='Previewpage.html'">Preview</button>
     <div class="toolbar-spacer"></div>
     <!--to be added with 4th feature-->
@@ -46,7 +45,6 @@
       <div class="section-bar">Shortcuts</div>
       <div class="panel">
   <button id="shortcut-organizer-requests" class="toolbar-btn primary">Organizer Requests</button>
-  <button id="shortcut-manage-orgs" class="toolbar-btn primary">Manage Organizations</button>
   <button id="shortcut-send-message" class="toolbar-btn primary">Send Broadcast Message</button>
   <button id="shortcut-site-settings" class="toolbar-btn primary">Site Settings</button>
       </div>
@@ -57,7 +55,6 @@
   <div class="header-controls page-max">
     <div class="header-actions">
       <button id="sendMessageBtn" class="toolbar-btn primary">Send Broadcast Message</button>
-      <button id="manageOrgsBtn" class="toolbar-btn">Manage Organizations</button>
     </div>
   </div>
 
@@ -66,7 +63,7 @@
     <div class="card">
       <div class="card-title">Website Users</div>
       <div id="newEventsCount" class="card-count">0</div>
-  <div class="card-actions"><button id="viewNewEvents" class="toolbar-btn primary" onclick="window.open('../Administrator/view-users.html','_blank')">View Users</button></div>
+  <div class="card-actions"><button id="viewNewEvents" class="toolbar-btn primary" onclick="location.href='../Administrator/view-users.html','_blank'">View Users</button></div>
     </div>
 
     <div class="card">
@@ -87,8 +84,6 @@
           <div class="stat-label">Users</div>
         </div>
         <div class="stat">
-          <div id="totalTickets" class="stat-value">0</div>
-          <div class="stat-label">Tickets Issued</div>
         </div>
       </div>
     </div>
@@ -108,79 +103,58 @@
   </div>
 
   <script type="module">
-    import { auth } from "../../js/Shared/firebase-config.js";
-    import { getIdTokenResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-  
-    function clearSearchView() {
-      document.getElementById('search-results-section').style.display = 'none';
-      document.getElementById('clear-search').style.display = 'none';
-      // show original sections
-      document.querySelectorAll('.main-content > div').forEach(section => {
-        if (section.id !== 'search-results-section') section.style.display = '';
-      });
-      // remove cloned cards
-      const sr = document.getElementById('search-results'); while (sr && sr.firstChild) sr.removeChild(sr.firstChild);
-    }
+  import { auth, db } from "../../js/Shared/firebase-config.js";
+import { getIdTokenResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-    window.handleSearch = function () {
-      const query = document.querySelector('.search-input').value.toLowerCase().trim();
-      if (!query) { clearSearchView(); return; }
+// Real-time website stats (users + events only)
+function setupLiveGlobalStats() {
+  const totalEventsEl = document.getElementById("totalEvents");
+  const totalUsersEl = document.getElementById("totalUsers");
 
-      // collect matches from all event lists, deduplicating by data-event-id
-      const matches = [];
-      const seen = new Set();
-      document.querySelectorAll('.events').forEach(list => {
-        list.querySelectorAll('.event-card').forEach(card => {
-          const id = card.getAttribute('data-event-id') || '';
-          if (seen.has(id)) return;
-          const title = (card.querySelector('.event-title') || { textContent: '' }).textContent.toLowerCase();
-          if (title.includes(query)) {
-            matches.push(card);
-            seen.add(id);
-          }
-        });
-      });
+  // 🔹 Listen to "events" collection in real time
+  onSnapshot(collection(db, "events"), (snapshot) => {
+    const totalEvents = snapshot.size;
+    totalEventsEl.textContent = totalEvents.toLocaleString();
+    console.log(`📊 Live update — Events: ${totalEvents}`);
+  }, (error) => {
+    console.error("❌ Error listening to events:", error);
+  });
 
-      // hide original sections
-      document.querySelectorAll('.main-content > div').forEach(section => {
-        if (section.id !== 'search-results-section') section.style.display = 'none';
-      });
+  // 🔹 Listen to "users" collection in real time
+  onSnapshot(collection(db, "users"), (snapshot) => {
+    const totalUsers = snapshot.size;
+    totalUsersEl.textContent = totalUsers.toLocaleString();
+    console.log(`📊 Live update — Users: ${totalUsers}`);
+  }, (error) => {
+    console.error("❌ Error listening to users:", error);
+  });
+}
 
-      // populate search results container with clones
-      const sr = document.getElementById('search-results'); while (sr && sr.firstChild) sr.removeChild(sr.firstChild);
-      matches.forEach(card => {
-        const clone = card.cloneNode(true);
-        clone.style.display = 'block';
-        const id = clone.getAttribute('data-event-id') || card.getAttribute('data-event-id');
-        if (id) {
-          const target = document.body?.dataset?.eventPage || 'eventPageAdmin.html';
-          clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; });
-          clone.style.cursor = 'pointer';
-        }
-        sr.appendChild(clone);
-      });
-
-      document.getElementById('search-results-section').style.display = '';
-      document.getElementById('clear-search').style.display = '';
-    };
-
-    document.getElementById('clear-search').addEventListener('click', clearSearchView);
-    
+// 🧩 Admin access check (via custom claim)
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "../Registration/SignIn.html";
     return;
   }
 
-  const tokenResult = await getIdTokenResult(user);
-  if (!tokenResult.claims.admin) {
-    alert("Unauthorized access — only admins allowed.");
+  try {
+    const tokenResult = await getIdTokenResult(user);
+    if (!tokenResult.claims.admin) {
+      alert("Unauthorized access — only admins allowed.");
+      await signOut(auth);
+      window.location.href = "../Registration/SignIn.html";
+    } else {
+      console.log("✅ Admin verified — live global stats enabled.");
+      setupLiveGlobalStats(); // 🔥 start real-time listeners
+    }
+  } catch (error) {
+    console.error("Admin check failed:", error);
     await signOut(auth);
     window.location.href = "../Registration/SignIn.html";
-  } else {
-    console.log("✅ Admin verified — access granted.");
   }
-  });
+});
+
   </script>
 
   <script type="module" src="../../js/Registration/auth.js"></script>
