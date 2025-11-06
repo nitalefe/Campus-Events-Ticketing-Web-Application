@@ -56,8 +56,12 @@
     const titleEl = document.querySelector(".event-title");
     const descEl = document.querySelector(".event-description");
     const dateLocEl = document.querySelector(".event-date-location");
-    const bannerEl = document.getElementById("eventBanner");
-    const saveBtn = document.getElementById("saveBtn");
+  const bannerEl = document.getElementById("eventBanner");
+  const saveBtn = document.getElementById("saveBtn");
+  const contactBtn = document.getElementById("contactBtn");
+
+  // keep the loaded event data available for handlers
+  let loadedEventData = null;
 
     // --------------------------------------------------
     // 1️⃣ Load event details
@@ -77,7 +81,9 @@
         return;
       }
 
-      const data = snap.data();
+  const data = snap.data();
+  // cache loaded data for handlers (contact lookup, etc.)
+  loadedEventData = data;
       titleEl.textContent = data.eventName || "Untitled Event";
       descEl.innerHTML = data.eventDescription || "No description available.";
 
@@ -93,6 +99,103 @@
         bannerEl.src = "https://via.placeholder.com/900x340";
         bannerEl.alt = "Event Banner";
       }
+    }
+
+    // ----------------------------
+    // Contact Organizer — show popup with creator email
+    // ----------------------------
+    async function showOrganizerContactForLoadedEvent() {
+      if (!loadedEventData) {
+        alert('Event data not loaded yet.');
+        return;
+      }
+
+      // Prefer an explicit organizer email on the event doc if present
+      let email = loadedEventData.organizerEmail || loadedEventData.organizer_email || '';
+
+      // Otherwise, try to resolve createdBy -> users/{uid}.email
+      if (!email && loadedEventData.createdBy) {
+        try {
+          const userRef = doc(db, 'users', loadedEventData.createdBy);
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists()) {
+            const ud = userSnap.data();
+            email = ud.email || '';
+          }
+        } catch (err) {
+          console.error('Error fetching organizer user:', err);
+        }
+      }
+
+      // Build a small modal if we have an email, else show a friendly message
+      const overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.inset = '0';
+      overlay.style.background = 'rgba(0,0,0,0.45)';
+      overlay.style.display = 'flex';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+      overlay.style.zIndex = 9999;
+
+      const modal = document.createElement('div');
+      modal.style.background = '#fff';
+      modal.style.padding = '16px 18px';
+      modal.style.borderRadius = '10px';
+      modal.style.maxWidth = '420px';
+      modal.style.width = 'min(92%,420px)';
+      modal.style.boxShadow = '0 8px 30px rgba(0,0,0,0.25)';
+      modal.style.color = '#0b254a';
+      modal.style.fontFamily = 'inherit';
+
+      const h = document.createElement('h3');
+      h.textContent = 'Contact Organizer';
+      h.style.margin = '0 0 8px 0';
+      h.style.fontSize = '1.05rem';
+      modal.appendChild(h);
+
+      if (email) {
+        const p = document.createElement('p');
+        p.textContent = 'Organizer email:';
+        p.style.margin = '0 0 6px 0';
+        p.style.fontWeight = '600';
+        modal.appendChild(p);
+
+        const link = document.createElement('a');
+        link.href = `mailto:${email}`;
+        link.textContent = email;
+        link.style.color = '#1a56db';
+        link.style.fontWeight = '600';
+        link.style.wordBreak = 'break-all';
+        modal.appendChild(link);
+      } else {
+        const p = document.createElement('p');
+        p.textContent = "Organizer's contact information is not available.";
+        p.style.margin = '0';
+        modal.appendChild(p);
+      }
+
+      const actions = document.createElement('div');
+      actions.style.display = 'flex';
+      actions.style.justifyContent = 'flex-end';
+      actions.style.gap = '8px';
+      actions.style.marginTop = '14px';
+
+      const closeBtn = document.createElement('button');
+      closeBtn.textContent = 'Close';
+      closeBtn.style.padding = '8px 12px';
+      closeBtn.style.border = 'none';
+      closeBtn.style.borderRadius = '8px';
+      closeBtn.style.background = 'linear-gradient(90deg,#e0e6ff,#cfe0ff)';
+      closeBtn.style.cursor = 'pointer';
+      closeBtn.onclick = () => document.body.removeChild(overlay);
+
+      actions.appendChild(closeBtn);
+      modal.appendChild(actions);
+
+      overlay.appendChild(modal);
+      document.body.appendChild(overlay);
+      // allow closing by clicking outside
+      overlay.addEventListener('click', (ev) => { if (ev.target === overlay) document.body.removeChild(overlay); });
     }
 
     // ----------------------------
@@ -164,6 +267,86 @@
         saveBtn.onclick = () => toggleSaveEvent(user);
       }
     });
+
+    // wire contact button outside auth flow so any visitor can click
+    if (contactBtn) {
+      contactBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        showOrganizerContactForLoadedEvent();
+      });
+    }
+
+    // ----------------------------
+    // Add to Calendar
+    // ----------------------------
+    const calendarBtn = document.getElementById('calendarBtn');
+    function toICalDate(d) {
+      // Return YYYYMMDDTHHMMSSZ (UTC)
+      const iso = new Date(d).toISOString();
+      return iso.replace(/[-:]/g, '').split('.')[0] + 'Z';
+    }
+    function escapeICal(text) {
+      if (!text) return '';
+      return String(text).replace(/\\r\\n|\\r|\\n/g, '\\n').replace(/,/g, '\\,');
+    }
+
+    if (calendarBtn) {
+      calendarBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!loadedEventData) {
+          alert('Event data not loaded yet.');
+          return;
+        }
+
+        // derive start/end
+        const start = loadedEventData.eventDateTime && typeof loadedEventData.eventDateTime.toDate === 'function'
+          ? loadedEventData.eventDateTime.toDate()
+          : (loadedEventData.eventDateTime ? new Date(loadedEventData.eventDateTime) : new Date());
+        const end = new Date(start.getTime() + (2 * 60 * 60 * 1000)); // default 2 hours
+
+        const title = loadedEventData.eventName || 'Event';
+        const description = (loadedEventData.eventDescription || '').replace(/<[^>]*>/g, '');
+        const location = loadedEventData.eventLocation || '';
+        const uid = `${eventId || Math.random().toString(36).slice(2)}@evently.local`;
+
+        const now = new Date();
+        const ics = [
+          'BEGIN:VCALENDAR',
+          'VERSION:2.0',
+          'PRODID:-//Evently//EN',
+          'BEGIN:VEVENT',
+          `UID:${uid}`,
+          `DTSTAMP:${toICalDate(now)}`,
+          `DTSTART:${toICalDate(start)}`,
+          `DTEND:${toICalDate(end)}`,
+          `SUMMARY:${escapeICal(title)}`,
+          `DESCRIPTION:${escapeICal(description)}`,
+          `LOCATION:${escapeICal(location)}`,
+          'END:VEVENT',
+          'END:VCALENDAR'
+        ].join('\r\n');
+
+        // download .ics
+        try {
+          const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${(title.replace(/[^a-z0-9]+/gi, '_') || 'event')}.ics`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+        } catch (err) {
+          console.error('Could not create ICS file', err);
+        }
+
+        // open Google Calendar event editor
+        const gDates = `${toICalDate(start)}/${toICalDate(end)}`;
+        const gUrl = `https://calendar.google.com/calendar/r/eventedit?text=${encodeURIComponent(title)}&dates=${gDates}&details=${encodeURIComponent(description)}&location=${encodeURIComponent(location)}`;
+        window.open(gUrl, '_blank');
+      });
+    }
   </script>
 </body>
 
