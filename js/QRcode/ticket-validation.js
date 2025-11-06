@@ -1,7 +1,8 @@
 //dont think were using this file but keeping it here for reference in case we need to come back to it for
 
 // ticket-validation.js
-import { db } from "../../Shared/firebase-config.js"; // <-- path from QRcode/ to Shared/
+// Read-only verification (no auth required, no writes)
+import { db } from "../../js/Shared/firebase-config.js";
 import {
   doc,
   runTransaction,
