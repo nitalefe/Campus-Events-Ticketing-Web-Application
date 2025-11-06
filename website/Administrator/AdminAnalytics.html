@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin — Event Analytics</title>
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/Organizer/EventDashboard.css" />
+  <link rel="stylesheet" href="../../css/Shared/toolbar.css">
+</head>
+
+<body>
+  <!-- Toolbar -->
+  <div class="toolbar">
+  <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='admin-dashboard.html'">
+
+  <button class="toolbar-btn" onclick="location.href='admin-dashboard.html'">Home</button>
+    <div class="toolbar-spacer"></div>
+    <div id="authBtnContainer">
+      <button id="logout-btn" class="auth-btn">Log Out</button>
+    </div>
+    <!-- (production) admin override removed -->
+  </div>
+
+  <div class="container">
+    <div class="hero">
+      <div>
+        <h1 id="pageTitle">Admin — Event Analytics</h1>
+        <p>Global view: all events and metrics across all schools</p>
+      </div>
+      <div class="hero-actions">
+      </div>
+    </div>
+  
+      <!-- Tabs: Events | Charts -->
+  <div style="display:flex;gap:8px;align-items:center;margin:1rem auto;">
+        <button id="tabBtnEvents" class="btn" style="background:#367bfc;color:#fff;">Events</button>
+        <button id="tabBtnCharts" class="btn">Charts</button>
+        <div style="flex:1"></div>
+      </div>
+
+      <div id="tab-events">
+        <div class="test-section">
+      <h3>Filters</h3>
+      <div class="filter-grid">
+        <div class="filter-item">
+          <label for="eventFilter">Category</label>
+          <select id="eventFilter" onchange="applyFilters()">
+            <option value="all">All Categories</option>
+            <option value="Academic">Academic</option>
+            <option value="Music">Music</option>
+            <option value="Sports">Sports</option>
+            <option value="Technology">Technology</option>
+            <option value="Cultural">Cultural</option>
+            <option value="Social">Social</option>
+            <option value="Networking">Networking</option>
+            <option value="Career">Career</option>
+            <option value="Workshop">Workshop</option>
+          </select>
+        </div>
+
+        <div class="filter-item">
+          <label for="schoolFilter">Available to</label>
+          <select id="schoolFilter" onchange="applyFilters()">
+            <option value="all">All Universities</option>
+            <option value="concordia">Concordia University</option>
+            <option value="mcgill">McGill University</option>
+            <option value="udem">Université de Montréal</option>
+            <option value="polytechnique">Polytechnique Montréal</option>
+            <option value="hec">HEC Montréal</option>
+            <option value="uqam">UQAM</option>
+          </select>
+        </div>
+
+        <div class="filter-item">
+          <label for="dateFrom">From</label>
+          <input type="date" id="dateFrom" onchange="applyFilters()" />
+        </div>
+
+        <div class="filter-item">
+          <label for="dateTo">To</label>
+          <input type="date" id="dateTo" onchange="applyFilters()" />
+        </div>
+      </div>
+
+      <div id="eventsStatus" class="status info">Loading events...</div>
+    </div>
+      
+      <div class="test-section">
+        <h3>Events Found</h3>
+        <div class="button-container">
+          <button class="export-button" onclick="exportToCSV()">Export to CSV</button>
+        </div>
+        <div id="eventsList" class="events-grid"></div>
+      </div>
+    </div>
+
+    <div id="tab-charts" style="display:none;">
+  <div class="chart-card chart-card--tall">
+        <div class="chart-card-toolbar" aria-hidden="false">
+          <label for="topMetric">Top metric:</label>
+          <select id="topMetric">
+            <option value="revenue">Revenue</option>
+            <option value="ticketsSold">Tickets Sold</option>
+          </select>
+          <label for="topN">Top N:</label>
+          <select id="topN" style="width:80px;">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+          </select>
+          <button id="refreshTop" class="btn" data-auto-refresh="true">Refresh</button>
+        </div>
+        <div class="chart-card-body">
+          <canvas id="topEventsChart" height="400"></canvas>
+        </div>
+      </div>
+      <!-- Fill-rate distribution -->
+  <div class="chart-card chart-card--small">
+        <div class="chart-card-toolbar">
+          <label for="fillBins">Bins:</label>
+          <input id="fillBins" type="number" value="10" min="4" max="50" style="width:80px;" />
+          <button id="clearFillFilter" class="btn" style="background:#f97316;">Clear fill filter</button>
+          <div style="flex:1"></div>
+          <div id="fillNote" style="color:#6b7280;font-size:0.9rem;">Shows distribution of fill rate (ticketsSold / capacity).</div>
+        </div>
+        <div class="chart-card-body">
+          <canvas id="fillRateChart" height="260"></canvas>
+        </div>
+      </div>
+      <!-- Events per Organizer -->
+  <div class="chart-card chart-card--medium" id="chartsToolbar">
+        <div class="chart-card-toolbar">
+          <label for="orgMetric">Organizer metric:</label>
+          <select id="orgMetric">
+            <option value="revenue">Revenue</option>
+            <option value="eventsCount">Events Count</option>
+          </select>
+          <label for="orgTopN">Top N:</label>
+          <input id="orgTopN" type="number" value="10" min="1" max="100" style="width:80px;" />
+          <button id="refreshOrg" class="btn" data-auto-refresh="true">Refresh</button>
+          <button id="clearOrganizerFilter" class="btn" style="background:#f43f5e;">Clear organizer filter</button>
+          <div style="flex:1"></div>
+          <div id="organizerNote" style="color:#6b7280;font-size:0.9rem;">Shows top organizers by revenue or number of events.</div>
+        </div>
+        <div class="chart-card-body">
+          <canvas id="organizersChart" height="320"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Chart.js (global) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Chart.js datalabels plugin for bar labels -->
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+
+  <!-- Scripts -->
+  <script type="module" src="../../js/Shared/firebase-config.js"></script>
+  <!-- Authentication helper (wires logout button and auth state redirects) -->
+  <script type="module" src="../../js/Registration/auth.js"></script>
+  <script type="module" src="../../js/AdminAnalytics/AdminEventDashboard.js"></script>
+  <script>
+    // Tab switching (small client helper)
+    (function () {
+      const tEvents = document.getElementById('tabBtnEvents');
+      const tCharts = document.getElementById('tabBtnCharts');
+      const sEvents = document.getElementById('tab-events');
+      const sCharts = document.getElementById('tab-charts');
+      if (!tEvents || !tCharts || !sEvents || !sCharts) return;
+      function showEvents() {
+        sEvents.style.display = '';
+        sCharts.style.display = 'none';
+        tEvents.style.background = '#367bfc'; tEvents.style.color = '#fff';
+        tCharts.style.background = ''; tCharts.style.color = '';
+      }
+      function showCharts() {
+        sEvents.style.display = 'none';
+        sCharts.style.display = '';
+        tCharts.style.background = '#367bfc'; tCharts.style.color = '#fff';
+        tEvents.style.background = ''; tEvents.style.color = '';
+      }
+      tEvents.addEventListener('click', showEvents);
+      tCharts.addEventListener('click', showCharts);
+      // default: events
+      showEvents();
+    })();
+  </script>
+
+</body>
+
+</html>
