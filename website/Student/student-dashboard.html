@@ -9,51 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../css/Shared/dashboard.css" />
   <link rel="stylesheet" href="../../css/Shared/toolbar.css" />
-  <style>
-    /* --- Date Filter styles (lightweight, blends with your theme) --- */
-    .filters-wrap {
-      max-width: 1100px;
-      margin: 10px auto 0;
-      padding: 0 16px;
-    }
-    .date-filter {
-      display: grid;
-      grid-template-columns: repeat(2, 180px) 1fr auto;
-      gap: 10px;
-      align-items: end;
-    }
-    .date-filter label {
-      display: grid;
-      gap: 6px;
-      font-size: 12px;
-      color: #4b5563;
-    }
-    .date-filter input[type="date"] {
-      padding: 8px 10px;
-      border: 1px solid #e5e7eb;
-      border-radius: 10px;
-      background: #fff;
-    }
-    .df-presets { display: flex; flex-wrap: wrap; gap: 8px; }
-    .df-presets button,
-    .df-apply,
-    #df-clear {
-      padding: 8px 12px;
-      border-radius: 10px;
-      border: 1px solid #e5e7eb;
-      background: #fff;
-      cursor: pointer;
-    }
-    .df-presets button.active { border-color: #6d28d9; background: #f5f3ff; }
-    .df-apply { background: #4f46e5; color: #fff; border-color: #4f46e5; }
-    @media (max-width: 720px) {
-      .date-filter { grid-template-columns: 1fr 1fr; grid-auto-rows: auto; }
-      .df-presets { grid-column: 1 / -1; }
-      .df-apply { grid-column: 1 / -1; }
-    }
-    /* small helper for hidden rows during filtering */
-    .is-hidden { display: none !important; }
-  </style>
+  <!-- moved filter styles to shared CSS (`css/Shared/dashboard.css`) -->
 </head>
 
 <body class="student-page" data-event-page="eventPageStu.html">
@@ -84,8 +40,10 @@
   </div>
 
   <!-- Date Filter -->
-  <div class="filters-wrap">
-    <form id="date-filter" class="date-filter">
+  <div class="filter-panel">
+    <div class="filter-title">Filter</div>
+    <div class="filters-wrap">
+      <form id="date-filter" class="date-filter">
       <label>
         <span>From</span>
         <input id="df-from" type="date" />
@@ -102,8 +60,34 @@
         <button type="button" id="df-clear">Clear</button>
       </div>
 
+      <label style="display:flex;align-items:center;gap:8px;white-space:nowrap;">
+        <span style="color:inherit;font-weight:600">University:</span>
+        <select id="filterUniversity" name="filterUniversity">
+          <option value="">All universities</option>
+          <option value="Concordia">Concordia University</option>
+          <option value="McGill">McGill University</option>
+          <option value="UdeM">Université de Montréal</option>
+          <option value="Polytechnique">Polytechnique Montréal</option>
+          <option value="HEC">HEC Montréal</option>
+          <option value="UQAM">UQAM</option>
+        </select>
+      </label>
+
+      <!-- Category filter checkboxes (match eventCreation.html options) -->
+      <div class="category-row">
+        <span class="category-title">Category:</span>
+        <div class="category-controls">
+          <label class="cat-option"><input type="checkbox" name="filterCategory" value="Workshop">Workshop</label>
+          <label class="cat-option"><input type="checkbox" name="filterCategory" value="Seminar">Seminar</label>
+          <label class="cat-option"><input type="checkbox" name="filterCategory" value="Concert">Concert</label>
+          <label class="cat-option"><input type="checkbox" name="filterCategory" value="Sports">Sports</label>
+          <label class="cat-option"><input type="checkbox" name="filterCategory" value="Other">Other</label>
+        </div>
+      </div>
+
       <button type="submit" class="df-apply">Apply</button>
-    </form>
+      </form>
+    </div>
   </div>
 
   <!-- Dynamic sections -->
@@ -239,6 +223,26 @@
       filterVisibleByDate(from, to);
     });
 
+    // University filter select (choose a specific university or All)
+    const filterUniversity = document.getElementById('filterUniversity');
+    if (filterUniversity) {
+      filterUniversity.addEventListener('change', () => {
+        const from = inputFrom.value ? startOfDay(new Date(inputFrom.value)) : null;
+        const to   = inputTo.value   ? endOfDay(new Date(inputTo.value))     : null;
+        filterVisibleByDate(from, to);
+      });
+    }
+
+    // Category filter checkboxes (workshop, seminar, concert, sports, other)
+    const categoryCheckboxes = Array.from(document.querySelectorAll('input[name="filterCategory"]'));
+    if (categoryCheckboxes.length) {
+      categoryCheckboxes.forEach(cb => cb.addEventListener('change', () => {
+        const from = inputFrom.value ? startOfDay(new Date(inputFrom.value)) : null;
+        const to   = inputTo.value   ? endOfDay(new Date(inputTo.value))     : null;
+        filterVisibleByDate(from, to);
+      }));
+    }
+
     // Annotate cards with timestamps and filter
     function parseEventStart(card) {
       // prefer data-start (ms). If absent, try <time datetime>, else parse text
@@ -278,6 +282,26 @@
     function filterVisibleByDate(from, to) {
       // hide or show cards based on [data-start]
       const lists = document.querySelectorAll('.events');
+      const selectedUni = document.getElementById('filterUniversity')?.value || '';
+      const selectedCategories = Array.from(document.querySelectorAll('input[name="filterCategory"]:checked')).map(n => n.value.toLowerCase());
+
+      // helper: determines whether a card matches the selected university
+      function isUniversityEvent(card, selected) {
+        if (!selected) return true; // no filtering
+        // prefer explicit data attribute if present (data-open-to="Concordia,McGill")
+        const openAttr = card.getAttribute('data-open-to') || card.dataset.openTo;
+        if (openAttr) {
+          const arr = String(openAttr).split(/[,;]+/).map(s => s.trim().toLowerCase()).filter(Boolean);
+          if (arr.includes(selected.toLowerCase())) return true;
+        }
+        // check event-location or title text for university keyword
+        const loc = (card.querySelector('.event-location')?.textContent || '').toLowerCase();
+        const title = (card.querySelector('.event-title')?.textContent || '').toLowerCase();
+        if (loc.includes(selected.toLowerCase()) || title.includes(selected.toLowerCase())) return true;
+        // fallback: generic university keyword match
+        const keywords = ['university', 'campus', 'school'];
+        return keywords.some(k => loc.includes(k) || title.includes(k));
+      }
       lists.forEach(list => {
         list.querySelectorAll('.event-card').forEach(card => {
           let ts = card.getAttribute('data-start');
@@ -287,6 +311,18 @@
           let visible = true;
           if (from && !(n >= +from)) visible = false;
           if (to && !(n <= +to)) visible = false;
+          if (selectedUni && !isUniversityEvent(card, selectedUni)) visible = false;
+          // category filtering: if any category is selected, the card must match one
+          if (selectedCategories.length > 0) {
+            const cat = (card.getAttribute('data-category') || card.dataset.category || '').toLowerCase().trim();
+            const matches = cat ? selectedCategories.includes(cat) : selectedCategories.some(sc => {
+              // fallback: check visible text for the category word
+              const title = (card.querySelector('.event-title')?.textContent || '').toLowerCase();
+              const loc = (card.querySelector('.event-location')?.textContent || '').toLowerCase();
+              return title.includes(sc) || loc.includes(sc);
+            });
+            if (!matches) visible = false;
+          }
 
           card.style.display = visible ? "" : "none";
         });

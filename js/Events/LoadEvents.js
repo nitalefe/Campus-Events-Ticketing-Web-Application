@@ -26,6 +26,8 @@ function createEventCard(eventData, eventId) {
   const card = document.createElement("div");
   card.className = "event-card";
   card.setAttribute("data-event-id", eventId);
+  // expose the event category on the card for client-side filters
+  card.setAttribute("data-category", eventData.eventCategory || "");
 
   const bannerSrc = eventData.banner || "https://via.placeholder.com/260x140";
 
@@ -35,6 +37,7 @@ function createEventCard(eventData, eventId) {
     <div class="event-title">${eventData.eventName}</div>
     <div class="event-date">${eventData.eventDateTime?.toDate().toDateString()}</div>
     <div class="event-location">${eventData.eventLocation}</div>
+    <div class="event-category" style="display:none">${eventData.eventCategory || ''}</div>
   `;
 
   card.addEventListener("click", () => {
