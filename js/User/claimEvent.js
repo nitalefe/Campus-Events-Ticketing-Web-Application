@@ -12,7 +12,7 @@ import {
   arrayUnion
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { auth, db } from "../../Shared/firebase-config.js";
+import { auth, db } from "../../js/Shared/firebase-config.js";
 
 // Get event ID from URL parameters
 // const eventID = "khBBjlAZtTMYtrqOtZ8J"; // Test event ID

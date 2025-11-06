@@ -2,7 +2,7 @@
 
 // ticket-validation.js
 // Read-only verification (no auth required, no writes)
-import { db } from "../../Shared/firebase-config.js";
+import { db } from "../../js/Shared/firebase-config.js";
 import {
   doc,
   getDoc,

@@ -9,20 +9,22 @@
     <!-- Montserrat font from Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../css/Organizer/Attendee.css">
+    <link rel="stylesheet" href="../../css/Shared/toolbar.css">
 </head>
 
 <body>
+    <!-- Toolbar -->
     <div class="toolbar">
-        <div class="toolbar-left">
-            <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
-                onclick="location.href='organizer-dashboard.html'">
+        <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+            onclick="location.href='organizer-dashboard.html'">
 
-            <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
-            <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
-        </div>
+        <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
+        <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
+        <!-- Isnt it this page ? -->
         <div class="toolbar-spacer"></div>
-        <div class="toolbar-right">
-            <button class="toolbar-btn" onclick="location.href='settings.html'">Settings</button>
+        <button class="toolbar-btn" onclick="location.href='settings.html'">Settings</button>
+        <!-- im guessing this is a to do -->
+        <div id="authBtnContainer">
             <button id="logout-btn" class="auth-btn">Log Out</button>
         </div>
     </div>
