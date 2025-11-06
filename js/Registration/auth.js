@@ -1,4 +1,6 @@
 import { auth, db } from "../../js/Shared/firebase-config.js";
+import { getIdTokenResult } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
 
 import {
   createUserWithEmailAndPassword,
@@ -87,7 +89,6 @@ if (signupForm) {
   });
 }
 
-
 /* ---------------- SIGN IN ---------------- */
 const signinForm = document.getElementById('signinForm');
 if (signinForm) {
@@ -163,6 +164,48 @@ if (signinForm) {
       });
   });
 }
+
+/* ---------------- ADMIN SIGN IN ---------------- */
+const adminSigninForm = document.getElementById('adminSigninForm');
+if (adminSigninForm) {
+  adminSigninForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById('adminEmail').value;
+    const password = document.getElementById('adminPassword').value;
+    const errorMsg = document.getElementById('admin-error-message');
+    errorMsg.textContent = "";
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      if (!user.emailVerified) {
+        errorMsg.textContent = "Please verify your email before signing in.";
+        await signOut(auth);
+        return;
+      }
+
+      // ✅ Fetch the user's token to check custom claims
+      const tokenResult = await getIdTokenResult(user);
+      const isAdmin = tokenResult.claims.admin === true;
+
+      if (isAdmin) {
+        console.log("✅ Custom claim confirmed admin");
+        localStorage.setItem("isAdmin", "true");
+        window.location.href = "../../website/Administrator/admin-dashboard.html";
+      } else {
+        await signOut(auth);
+        errorMsg.textContent = "Access denied — you are not an admin.";
+      }
+
+    } catch (error) {
+      console.error("Admin login error:", error);
+      errorMsg.textContent = "Invalid admin credentials.";
+    }
+  });
+}
+
 
 /* ---------------- LOGOUT ---------------- */
 document.addEventListener('DOMContentLoaded', () => {

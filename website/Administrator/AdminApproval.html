@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Organizer Approval — Admin</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/Administrator/AdminApproval.css" />
+</head>
+<body>
+  <div class="toolbar">
+    <div class="title">Admin — Organizer Approvals</div>
+    <div class="nav" role="navigation" aria-label="admin navigation">
+      <button onclick="location.href='organizer-dashboard.html'">Home</button>
+      <button onclick="location.href='AdminApproval.html'">Requests</button>
+    </div>
+
+    <div class="auth-area">
+      <div id="signin-form" class="signin-form" style="display:flex">
+        <input id="adminEmail" type="email" placeholder="admin@example.com" />
+        <input id="adminPassword" type="password" placeholder="password" />
+        <button id="signin-btn" class="signin-btn">Sign in</button>
+      </div>
+
+      <div id="user-badge" class="user-badge">
+        <span id="user-email"></span>
+      </div>
+
+      <button id="logout-btn">Log out</button>
+    </div>
+  </div>
+
+  <div class="page-wrap">
+    <div class="card">
+      <div class="header-row">
+        <div class="header-left">
+          <h1>Organizer Accounts Approval</h1>
+          <div class="muted">Review and manage organizer requests</div>
+        </div>
+
+        <div class="controls">
+          <input id="searchInput" type="search" placeholder="Search name, email or UID" />
+          <button id="refreshBtn" class="btn">Refresh</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table aria-label="organizer-requests">
+          <thead>
+            <tr>
+              <th>Full name</th>
+              <th>Email / UID</th>
+              <th>Status</th>
+              <th>Requested At</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="organizersTbody"></tbody>
+        </table>
+        <div id="emptyState" class="empty" style="display:none">No organizer requests found.</div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="../../js/Administrator/AdminApproval.js"></script>
+</body>
+</html>

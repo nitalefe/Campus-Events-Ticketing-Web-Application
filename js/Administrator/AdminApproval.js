@@ -8,9 +8,9 @@ import {
 
 let auth = null;
 let db = null;
-function log(...args){ console.log('[AdminApproval]', ...args); }
-function warn(...args){ console.warn('[AdminApproval]', ...args); }
-function err(...args){ console.error('[AdminApproval]', ...args); }
+function log(...args) { console.log('[AdminApproval]', ...args); }
+function warn(...args) { console.warn('[AdminApproval]', ...args); }
+function err(...args) { console.error('[AdminApproval]', ...args); }
 
 // Whitelist admin emails here (case-insensitive). Add team admin emails.
 const ADMIN_WHITELIST = [
@@ -18,7 +18,7 @@ const ADMIN_WHITELIST = [
   // 'otheradmin@example.com'
 ];
 
-function isWhitelistedAdmin(email){
+function isWhitelistedAdmin(email) {
   if (!email) return false;
   return ADMIN_WHITELIST.some(e => e.toLowerCase() === String(email).toLowerCase());
 }
@@ -46,19 +46,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const ORG_COLLECTION = 'organizers';
   if (!tbody) { err('organizersTbody element not found'); return; }
 
-  function escapeHtml(s=''){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;'); }
+  function escapeHtml(s = '') { return String(s).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;'); }
 
-  function createRow(id, data){
+  function createRow(id, data) {
     const tr = document.createElement('tr');
     const displayName = data?.displayName || '(No name)';
     const email = data?.email || '';
     const uid = data?.uid || id;
     // Prefer explicit status field; fall back to boolean `approved`
     const status = (data?.status && String(data.status).toLowerCase()) ||
-                   (data?.approved ? 'approved' : 'pending');
+      (data?.approved ? 'approved' : 'pending');
     const requestedAt = (data?.createdAt && data.createdAt.seconds)
       ? new Date(data.createdAt.seconds * 1000).toLocaleString()
-      : (data?.requestedAt && data.requestedAt.seconds ? new Date(data.requestedAt.seconds*1000).toLocaleString() : '-');
+      : (data?.requestedAt && data.requestedAt.seconds ? new Date(data.requestedAt.seconds * 1000).toLocaleString() : '-');
 
     tr.innerHTML = `
       <td>
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let unsubscribe = null;
 
-  async function getFreshClaims(user){
+  async function getFreshClaims(user) {
     try {
       const idTokenResult = await getIdTokenResult(user, true); // force refresh
       return idTokenResult?.claims || {};
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  async function startIfAdmin(user){
+  async function startIfAdmin(user) {
     if (!user) return;
     const claims = await getFreshClaims(user);
     log('ID token claims:', claims);
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupRealtime();
   }
 
-  async function setupRealtime(){
+  async function setupRealtime() {
     log('Setting up realtime listener for organizer requests...');
     try {
       const user = auth.currentUser;
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) { err('setupRealtime exception:', e); fallbackFetch(); }
   }
 
-  async function fallbackFetch(){
+  async function fallbackFetch() {
     try {
       log('Running fallback fetch...');
       const collRef = collection(db, ORG_COLLECTION);
@@ -160,8 +160,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (d) { if (!confirm('Disapprove this organizer account?')) return; await performApproval(d.dataset.id, false); return; }
   });
 
-  async function performApproval(id, value){
-    try{
+  async function performApproval(id, value) {
+    try {
       const user = auth.currentUser;
       if (!user) { alert('You must be signed in as an admin to perform this action.'); return; }
 
@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const badge = tr.querySelector('.badge');
             if (badge) {
               badge.textContent = value ? 'Approved' : 'Disapproved';
-              badge.classList.remove('approved','pending','disapproved');
+              badge.classList.remove('approved', 'pending', 'disapproved');
               badge.classList.add(value ? 'approved' : 'disapproved');
             }
             const approveBtn = tr.querySelector('button.action-approve');
@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } catch (e) { warn('Failed to update row UI after action', e); }
 
-    } catch(e){
+    } catch (e) {
       err('performApproval failed', e);
       alert('Failed to perform action. See console.');
     }
@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         refreshBtn.disabled = true;
         if (typeof unsubscribe === 'function') {
-          try { unsubscribe(); } catch(e){ /* ignore */ }
+          try { unsubscribe(); } catch (e) { /* ignore */ }
         }
         await fallbackFetch();
         setupRealtime();
