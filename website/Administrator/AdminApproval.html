@@ -6,32 +6,26 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- ✅ Shared styles -->
+  <link rel="stylesheet" href="../../css/Shared/toolbar.css">
+  <link rel="stylesheet" href="../../css/Shared/dashboard.css">
   <link rel="stylesheet" href="../../css/Administrator/AdminApproval.css" />
 </head>
-<body>
+
+<body class="admin-page" data-event-page="eventPageAdmin.html">
+  <!-- ✅ Toolbar -->
   <div class="toolbar">
-    <div class="title">Admin — Organizer Approvals</div>
-    <div class="nav" role="navigation" aria-label="admin navigation">
-      <button onclick="location.href='organizer-dashboard.html'">Home</button>
-      <button onclick="location.href='AdminApproval.html'">Requests</button>
-    </div>
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+         onclick="location.href='admin-dashboard.html'">
 
-    <div class="auth-area">
-      <div id="signin-form" class="signin-form" style="display:flex">
-        <input id="adminEmail" type="email" placeholder="admin@example.com" />
-        <input id="adminPassword" type="password" placeholder="password" />
-        <button id="signin-btn" class="signin-btn">Sign in</button>
-      </div>
-
-      <div id="user-badge" class="user-badge">
-        <span id="user-email"></span>
-      </div>
-
-      <button id="logout-btn">Log out</button>
-    </div>
+    <button class="toolbar-btn" onclick="location.href='admin-dashboard.html'">Home</button>
+    <div class="toolbar-spacer"></div>
+    <button id="logout-btn" class="auth-btn">Log Out</button>
   </div>
 
   <div class="page-wrap">
+    <!-- 🔹 SECTION 1: Pending Organizer Requests -->
     <div class="card">
       <div class="header-row">
         <div class="header-left">
@@ -46,7 +40,7 @@
       </div>
 
       <div class="table-wrap">
-        <table aria-label="organizer-requests">
+        <table aria-label="pending-requests">
           <thead>
             <tr>
               <th>Full name</th>
@@ -58,10 +52,37 @@
           </thead>
           <tbody id="organizersTbody"></tbody>
         </table>
-        <div id="emptyState" class="empty" style="display:none">No organizer requests found.</div>
+        <div id="emptyState" class="empty" style="display:none">No pending organizer requests found.</div>
+      </div>
+    </div>
+
+    <!-- 🔹 SECTION 2: Past Decisions -->
+    <div class="card" style="margin-top: 2rem;">
+      <div class="header-row">
+        <div class="header-left">
+          <h2>Past Decisions</h2>
+          <div class="muted">View previously approved or disapproved organizers</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table aria-label="past-decisions">
+          <thead>
+            <tr>
+              <th>Full name</th>
+              <th>Email / UID</th>
+              <th>Status</th>
+              <th>Reviewed At</th>
+            </tr>
+          </thead>
+          <tbody id="pastTbody"></tbody>
+        </table>
+        <div id="pastEmptyState" class="empty" style="display:none">No past decisions yet.</div>
       </div>
     </div>
   </div>
+
+  <!-- ✅ JS logic -->
   <script type="module" src="../../js/Administrator/AdminApproval.js"></script>
 </body>
 </html>
