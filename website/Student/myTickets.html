@@ -8,6 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../css/User/myTickets.css">
+  <link rel="stylesheet" href="../../css/Shared/toolbar.css">
 </head>
 
 <body>
@@ -37,12 +38,11 @@
   </div>
 
   <!-- Firebase + Auth -->
-  <script type="module" src="../../Shared/firebase-config.js"></script>
   <script type="module" src="../../js/Registration/auth.js"></script>
 
   <!-- 🟢 Load actual tickets -->
   <script type="module">
-    import { auth, db } from "../../Shared/firebase-config.js";
+    import { auth, db } from "../../js/Shared/firebase-config.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
     import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 

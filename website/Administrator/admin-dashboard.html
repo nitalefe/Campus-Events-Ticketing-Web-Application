@@ -17,12 +17,12 @@
   <!-- Toolbar (reuse shared styles) -->
   <div class="toolbar">
   <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
-       onclick="location.href='dashboard.html'">
+       onclick="location.href='admin-dashboard.html'">
 
-    <button class="toolbar-btn" onclick="location.href='../admin-dashboard.html'">Home</button>
+    <button class="toolbar-btn" onclick="location.href='admin-dashboard.html'">Home</button>
     <button class="toolbar-btn" onclick="location.href='../'">See Organizers</button> 
     <!---AYAN OVER HERE-->
-    <button id="previewOrganizerBtn" class="toolbar-btn" onclick="window.open('../Administrator/Previewpage.html ','_blank')">Preview</button>
+    <button id="previewOrganizerBtn" class="toolbar-btn" onclick="location.href='Previewpage.html'">Preview</button>
     <div class="toolbar-spacer"></div>
     <!--to be added with 4th feature-->
     <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
@@ -108,7 +108,7 @@
   </div>
 
   <script type="module">
-    import { auth } from "../../Shared/firebase-config.js";
+    import { auth } from "../../js/Shared/firebase-config.js";
     import { getIdTokenResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
   
     function clearSearchView() {
@@ -183,10 +183,9 @@ onAuthStateChanged(auth, async (user) => {
   });
   </script>
 
-  <script type="module" src="../../Shared/firebase-config.js"></script>
   <script type="module" src="../../js/Registration/auth.js"></script>
   <script type="module" src="../../js/Events/LoadEvents.js"></script>
-  <script type="module" src="../../shared/scroll-controls.js"></script>
+  <script type="module" src="../../js/Shared/scroll-controls.js"></script>
 
 </body>
 

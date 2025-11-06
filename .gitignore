@@ -66,6 +66,7 @@ Desktop.ini
 # macOS
 .AppleDouble
 .LSOverride
+.DS_Store
 
 # ----------------------------
 # Other files
@@ -75,7 +76,8 @@ Desktop.ini
 *.tar.gz
 *.rar
 
-
+.idea/
+node_modules/
 # ----------------------------
 # Private api keys
 firebaseConfig.js

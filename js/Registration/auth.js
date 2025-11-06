@@ -1,5 +1,7 @@
-import { auth, db } from "../../Shared/firebase-config.js"; 
+import { auth, db } from "../../js/Shared/firebase-config.js";
 import { getIdTokenResult } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
