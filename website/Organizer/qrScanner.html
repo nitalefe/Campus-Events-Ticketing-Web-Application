@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 <head>
   <meta charset="UTF-8" />
   <title>QR Ticket Scanner</title>
@@ -232,10 +231,10 @@
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 </head>
 
-
 <body>
   <div class="toolbar">
-    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='organizer-dashboard.html'">
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+      onclick="location.href='organizer-dashboard.html'">
 
 
     <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
@@ -284,39 +283,39 @@
     function parseEventAndAttendee(decryptedText) {
       const parts = (decryptedText || "").split("/");
       if (parts.length !== 2 || !parts[0] || !parts[1]) {
-        return { ok:false, message:"Invalid QR format. Expected eventID/attendeeID." };
+        return { ok: false, message: "Invalid QR format. Expected eventID/attendeeID." };
       }
-      return { ok:true, eventId: parts[0], attendeeId: parts[1] };
+      return { ok: true, eventId: parts[0], attendeeId: parts[1] };
     }
 
 
     // -------- Mock validator (replace with Firestore later) ----------
-    const MOCK = { "myEvent123": new Set(["alice001","bob002","carol003"]) };
+    const MOCK = { "myEvent123": new Set(["alice001", "bob002", "carol003"]) };
     const USED_KEY = "ticket_used_set_v1";
     const loadUsed = () => new Set(JSON.parse(localStorage.getItem(USED_KEY) || "[]"));
     const saveUsed = s => localStorage.setItem(USED_KEY, JSON.stringify([...s]));
     async function validateMock(eventId, attendeeId) {
-      if (!MOCK[eventId]) return { ok:false, message:"❌ Event not found (mock)." };
-      if (!MOCK[eventId].has(attendeeId)) return { ok:false, message:"❌ Not registered (mock)." };
+      if (!MOCK[eventId]) return { ok: false, message: "❌ Event not found (mock)." };
+      if (!MOCK[eventId].has(attendeeId)) return { ok: false, message: "❌ Not registered (mock)." };
       const used = loadUsed(), key = `${eventId}/${attendeeId}`;
-      if (used.has(key)) return { ok:false, message:"❌ Ticket already used (mock)." };
+      if (used.has(key)) return { ok: false, message: "❌ Ticket already used (mock)." };
       used.add(key); saveUsed(used);
-      return { ok:true, message:"✅ Ticket validated (mock). Entry granted." };
+      return { ok: true, message: "✅ Ticket validated (mock). Entry granted." };
     }
 
 
     // -------- Camera setup & scanning ----------
     const statusEl = document.getElementById("scanStatus");
-    const setStatus = (msg, ok=null) => {
+    const setStatus = (msg, ok = null) => {
       statusEl.textContent = msg;
-      statusEl.className = "status" + (ok===null ? "" : ok ? " ok" : " err");
+      statusEl.className = "status" + (ok === null ? "" : ok ? " ok" : " err");
     };
 
 
     const cameraSel = document.getElementById("cameraSel");
     const startBtn = document.getElementById("startBtn");
-    const stopBtn  = document.getElementById("stopBtn");
-    const scanner  = new Html5Qrcode("reader");
+    const stopBtn = document.getElementById("stopBtn");
+    const scanner = new Html5Qrcode("reader");
 
 
     // Populate cameras
@@ -324,7 +323,7 @@
       cameraSel.innerHTML = "";
       devices.forEach((d, idx) => {
         const opt = document.createElement("option");
-        opt.value = d.id; opt.textContent = d.label || `Camera ${idx+1}`;
+        opt.value = d.id; opt.textContent = d.label || `Camera ${idx + 1}`;
         cameraSel.appendChild(opt);
       });
       if (devices.length === 0) setStatus("No cameras found.", false);
@@ -348,7 +347,7 @@
           cameraSel.value || { facingMode: "environment" },
           { fps: 10, qrbox: { width: 260, height: 260 } },
           onDecoded,
-          () => {}
+          () => { }
         );
         setStatus("Camera started. Aim at QR code…");
       } catch (e) {

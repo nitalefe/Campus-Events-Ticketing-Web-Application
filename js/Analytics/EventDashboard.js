@@ -130,7 +130,7 @@ async function applyFilters(user) {
           eventDateTime: data.eventDateTime?.toDate(),
         },
       ];
-window.currentFilteredEvents = events;
+      window.currentFilteredEvents = events;
       status.textContent = `Showing analytics for "${data.eventName}"`;
       status.className = "status success";
       displayEvents(events);
@@ -234,7 +234,7 @@ onAuthStateChanged(auth, (user) => {
     return;
   }
   applyFilters(user);
-  
+
 });
 
 // Expose for HTML buttons

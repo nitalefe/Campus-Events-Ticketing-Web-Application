@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Event Page</title>
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/Administrator/eventPageAdmin.css">
+  <link rel="stylesheet" href="../../css/Shared/toolbar.css">
+</head>
+
+<body>
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+      onclick="location.href='../Student/student-dashboard.html'">
+
+    <button class="toolbar-btn" onclick="location.href='admin-dashboard.html'">Home</button>
+    <button class="toolbar-btn" onclick="location.href='../'">See Organizers</button> <!-- <----------------------------- Here for the button for organizer management-->
+    <div class="toolbar-spacer"></div>
+    <!--to be added with 4th feature-->
+    <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
+    <div id="authBtnContainer">
+      <button id="logout-btn" class="auth-btn">Log Out</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <img id="eventBanner" src="https://via.placeholder.com/900x340" class="event-image" alt="Event Banner">
+    <h1 class="event-title">Loading...</h1>
+    <div class="event-date-location"></div>
+    <div class="event-description">Loading event details...</div>
+
+    <div class="admin-actions">
+      <button id="deleteBtn" class="delete-btn">Purge Event</button>
+      <button id="contactBtn" class="contact-btn">Contact Organizer</button>
+    </div>
+  </div>
+  
+  <!-- Message Organizer Popup -->
+  <div id="overlay-Organizer" class="overlay"></div>
+  <div id="popup-Organizer" class="popup">
+    <h2 id="popup-Organizer-title">Contact Organizer</h2>
+    <input type="text" id="popup-input-field" placeholder="Write your message..." />
+    <div class="popup-buttons">
+      <button class="popup-btn ok" id="popup-input-ok">Send</button>
+      <button class="popup-btn cancel" id="popup-input-cancel">Cancel</button>
+    </div>
+  </div>
+  
+  <!--  Popup -->
+  <div id="overlay-alert" class="overlay"></div>
+  <div id="popup-alert" class="popup">
+    <p id="popup-alert-text"></p>
+    <div class="popup-buttons">
+      <button class="popup-btn ok" id="popup-message-ok">OK</button>
+    </div>
+  </div>
+
+  <script type="module" src="../../js/Administrator/eventPageAdmin.js"></script>
+</body>
+
+</html>

@@ -102,7 +102,7 @@ startBtn.addEventListener("click", async () => {
       { deviceId: { exact: selectedId } },
       { fps: 10, qrbox: { width: 260, height: 260 } },
       onDecoded,
-      () => {} // ignore per-frame decode errors
+      () => { } // ignore per-frame decode errors
     );
 
     setStatus("Camera started. Aim at a QR code…", null);
