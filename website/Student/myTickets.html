@@ -81,7 +81,9 @@
 
       // Clicking the card opens event page
       card.addEventListener("click", () => {
-        window.location.href = `eventPageStu.html?id=${eventId}`;
+        //window.location.href = `eventPageStu.html?id=${eventId}`;//this opens event page
+        window.location.href = `qrGenerator.html?id=${eventId}`;//this opens the QR ticket
+
       });
 
       return card;
