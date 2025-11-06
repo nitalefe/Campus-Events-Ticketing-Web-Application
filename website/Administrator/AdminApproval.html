@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Organizer Approval — Admin</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- ✅ Shared styles -->
+  <link rel="stylesheet" href="../../css/Shared/toolbar.css">
+  <link rel="stylesheet" href="../../css/Shared/dashboard.css">
+  <link rel="stylesheet" href="../../css/Administrator/AdminApproval.css" />
+</head>
+
+<body class="admin-page" data-event-page="eventPageAdmin.html">
+  <!-- ✅ Toolbar -->
+  <div class="toolbar">
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+         onclick="location.href='admin-dashboard.html'">
+
+    <button class="toolbar-btn" onclick="location.href='admin-dashboard.html'">Home</button>
+    <div class="toolbar-spacer"></div>
+    <button id="logout-btn" class="auth-btn">Log Out</button>
+  </div>
+
+  <div class="page-wrap">
+    <!-- 🔹 SECTION 1: Pending Organizer Requests -->
+    <div class="card">
+      <div class="header-row">
+        <div class="header-left">
+          <h1>Organizer Accounts Approval</h1>
+          <div class="muted">Review and manage organizer requests</div>
+        </div>
+
+        <div class="controls">
+          <input id="searchInput" type="search" placeholder="Search name, email or UID" />
+          <button id="refreshBtn" class="btn">Refresh</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table aria-label="pending-requests">
+          <thead>
+            <tr>
+              <th>Full name</th>
+              <th>Email / UID</th>
+              <th>Status</th>
+              <th>Requested At</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="organizersTbody"></tbody>
+        </table>
+        <div id="emptyState" class="empty" style="display:none">No pending organizer requests found.</div>
+      </div>
+    </div>
+
+    <!-- 🔹 SECTION 2: Past Decisions -->
+    <div class="card" style="margin-top: 2rem;">
+      <div class="header-row">
+        <div class="header-left">
+          <h2>Past Decisions</h2>
+          <div class="muted">View previously approved or disapproved organizers</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table aria-label="past-decisions">
+          <thead>
+            <tr>
+              <th>Full name</th>
+              <th>Email / UID</th>
+              <th>Status</th>
+              <th>Reviewed At</th>
+            </tr>
+          </thead>
+          <tbody id="pastTbody"></tbody>
+        </table>
+        <div id="pastEmptyState" class="empty" style="display:none">No past decisions yet.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ JS logic -->
+  <script type="module" src="../../js/Administrator/AdminApproval.js"></script>
+</body>
+</html>

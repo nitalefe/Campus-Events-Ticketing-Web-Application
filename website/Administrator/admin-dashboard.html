@@ -44,7 +44,7 @@
     <aside class="shortcuts-top">
       <div class="section-bar">Shortcuts</div>
       <div class="panel">
-  <button id="shortcut-organizer-requests" class="toolbar-btn primary">Organizer Requests</button>
+  <button id="shortcut-organizer-requests" class="toolbar-btn primary" onclick="location.href='AdminApproval.html'">Organizer Requests</button>
   <button id="shortcut-send-message" class="toolbar-btn primary">Send Broadcast Message</button>
   <button id="shortcut-site-settings" class="toolbar-btn primary">Site Settings</button>
       </div>
@@ -62,14 +62,14 @@
   <div class="admin-quick">
     <div class="card">
       <div class="card-title">Website Users</div>
-      <div id="newEventsCount" class="card-count">0</div>
+      <div id="totalUsers" class="card-count">0</div>
   <div class="card-actions"><button id="viewNewEvents" class="toolbar-btn primary" onclick="location.href='../Administrator/view-users.html','_blank'">View Users</button></div>
     </div>
 
     <div class="card">
       <div class="card-title">Organizer Requests</div>
       <div id="orgRequestsCount" class="card-count">0</div>
-  <div class="card-actions"><button id="viewOrgRequests" class="toolbar-btn primary">Review Requests</button></div>
+  <div class="card-actions"><button id="viewOrgRequests" class="toolbar-btn primary" onclick="location.href='AdminApproval.html'">Review Requests</button></div>
     </div>
 
     <div class="card">
@@ -80,7 +80,7 @@
           <div class="stat-label">Events</div>
         </div>
         <div class="stat">
-          <div id="totalUsers" class="stat-value">0</div>
+          <div id="globalUsers" class="stat-value">0</div>
           <div class="stat-label">Users</div>
         </div>
         <div class="stat">
@@ -102,36 +102,60 @@
     <!-- (shortcuts moved to top-right) -->
   </div>
 
-  <script type="module">
-  import { auth, db } from "../../js/Shared/firebase-config.js";
-import { getIdTokenResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+<script type="module">
+import { auth, db } from "../../js/Shared/firebase-config.js";
+import {
+  getIdTokenResult,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-// Real-time website stats (users + events only)
+// ===============================
+// 🔹 Real-Time Website Stats
+// ===============================
 function setupLiveGlobalStats() {
   const totalEventsEl = document.getElementById("totalEvents");
   const totalUsersEl = document.getElementById("totalUsers");
+  const orgRequestsCountEl = document.getElementById("orgRequestsCount");
 
-  // 🔹 Listen to "events" collection in real time
+  // 🔹 Live count of "events"
   onSnapshot(collection(db, "events"), (snapshot) => {
-    const totalEvents = snapshot.size;
-    totalEventsEl.textContent = totalEvents.toLocaleString();
-    console.log(`📊 Live update — Events: ${totalEvents}`);
-  }, (error) => {
-    console.error("❌ Error listening to events:", error);
-  });
+    totalEventsEl.textContent = snapshot.size.toLocaleString();
+    console.log(`📊 Live update — Events: ${snapshot.size}`);
+  }, (error) => console.error("❌ Error listening to events:", error));
 
-  // 🔹 Listen to "users" collection in real time
-  onSnapshot(collection(db, "users"), (snapshot) => {
-    const totalUsers = snapshot.size;
-    totalUsersEl.textContent = totalUsers.toLocaleString();
-    console.log(`📊 Live update — Users: ${totalUsers}`);
-  }, (error) => {
-    console.error("❌ Error listening to users:", error);
-  });
+ onSnapshot(collection(db, "users"), (snapshot) => {
+  const count = snapshot.size.toLocaleString();
+  const totalUsersEl = document.getElementById("totalUsers");
+  const globalUsersEl = document.getElementById("globalUsers"); // new ID
+
+  if (totalUsersEl) totalUsersEl.textContent = count;
+  if (globalUsersEl) globalUsersEl.textContent = count; // sync global stats too
+
+  console.log(`👥 Live update — Users: ${count}`);
+});
+
+  // 🔹 Live count of *pending* organizer requests
+  const pendingQuery = query(
+    collection(db, "organizers"),
+    where("status", "in", ["pending", null])
+  );
+
+  onSnapshot(pendingQuery, (snapshot) => {
+    orgRequestsCountEl.textContent = snapshot.size.toLocaleString();
+    console.log(`🕓 Live update — Pending organizer requests: ${snapshot.size}`);
+  }, (error) => console.error("❌ Error listening to organizer requests:", error));
 }
 
-// 🧩 Admin access check (via custom claim)
+// ===============================
+// 🧩 Admin Access Check
+// ===============================
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "../Registration/SignIn.html";
@@ -146,7 +170,7 @@ onAuthStateChanged(auth, async (user) => {
       window.location.href = "../Registration/SignIn.html";
     } else {
       console.log("✅ Admin verified — live global stats enabled.");
-      setupLiveGlobalStats(); // 🔥 start real-time listeners
+      setupLiveGlobalStats(); // Start real-time listeners
     }
   } catch (error) {
     console.error("Admin check failed:", error);
@@ -154,8 +178,7 @@ onAuthStateChanged(auth, async (user) => {
     window.location.href = "../Registration/SignIn.html";
   }
 });
-
-  </script>
+</script>
 
   <script type="module" src="../../js/Registration/auth.js"></script>
   <script type="module" src="../../js/Events/LoadEvents.js"></script>
