@@ -1,116 +1,46 @@
 <!doctype html>
 <html lang="en">
+
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Event QR</title>
-  <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; padding: 24px; background: #fafafa; color: #111; }
-    .wrap { max-width: 720px; margin: 0 auto; }
-    h1 { font-size: 1.25rem; margin: 0 0 16px; }
-    .panel { background: #fff; border: 1px solid #e6e6e6; border-radius: 12px; padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
-    form { display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: end; margin-bottom: 16px; }
-    label { display: block; font-size: .85rem; color: #555; margin-bottom: 6px; }
-    input[type="text"] { width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 8px; font-size: 0.95rem; }
-    .row { display: flex; align-items: center; gap: 10px; }
-    button { padding: 10px 14px; border: 0; border-radius: 10px; background: #111; color: #fff; cursor: pointer; font-weight: 600; }
-    button:disabled { opacity: .6; cursor: not-allowed; }
-    #status { font-size: .9rem; color: #666; margin-bottom: 10px; min-height: 1.2em; }
-    #qrcode { display: grid; place-items: center; width: 320px; height: 320px; background: #fff; border-radius: 12px; border: 1px dashed #ddd; margin: 0 auto; }
-    .hint { font-size: .85rem; color: #777; text-align: center; margin-top: 8px; }
-  </style>
+ <meta charset="utf-8" />
+ <meta name="viewport" content="width=device-width,initial-scale=1" />
+ <title>Event QR</title>
+ <link rel="stylesheet" href="../../css/User/qrGenerator.css" />
+ <style>
+   body {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     height: 100vh;
+     background: #f8f8f8;
+     margin: 0;
+     font-family: sans-serif;
+   }
+   #qrcode {
+     width: 300px;
+     height: 300px;
+     background: white;
+     padding: 20px;
+     border-radius: 12px;
+     box-shadow: 0 0 10px rgba(0,0,0,0.1);
+   }
+ </style>
 </head>
+
+
 <body>
-  <div class="wrap">
-    <h1>Event QR Code</h1>
-    <div class="panel">
-      <div id="status"></div>
-      <form id="qrForm">
-        <div>
-          <label for="eid">Event ID</label>
-          <input id="eid" name="eid" type="text" placeholder="e.g., evt_123" required />
-        </div>
-        <div>
-          <label for="aid">Attendee ID</label>
-          <input id="aid" name="aid" type="text" placeholder="e.g., att_456" required />
-        </div>
-        <div class="row" style="align-self: start;">
-          <label class="row" style="margin:0;">
-            <input id="enc" type="checkbox" />
-            Encrypt
-          </label>
-          <button id="genBtn" type="submit">Generate</button>
-        </div>
-      </form>
+ <div id="qrcode" aria-label="QR code will appear here"></div>
 
-      <div id="qrcode" aria-label="QR code will appear here"></div>
-      <div class="hint">Use URL params: <code>?eid=evt_123&aid=att_456&enc=1</code></div>
-    </div>
-  </div>
 
-  <!-- qrcode.js must load BEFORE the module that calls new QRCode(...) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+ <!-- QRCode.js must load BEFORE the generator script -->
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" crossorigin="anonymous"
+   referrerpolicy="no-referrer"></script>
 
-  <!-- Your generator module in /Script -->
 
-  <script type="module" src="../../js/QRcode/generator.js"></script>
-
-  <script>
-    const $ = (id) => document.getElementById(id);
-    const setStatus = (msg) => { const n = $("status"); if (n) n.textContent = msg || ""; };
-
-    // Boot from URL params if provided
-    (async function bootFromParams() {
-      const p = new URLSearchParams(location.search);
-      const eid = p.get("eid");
-      const aid = p.get("aid");
-      const enc = p.get("enc") === "1";
-
-      if (eid) $("eid").value = eid;
-      if (aid) $("aid").value = aid;
-      if (enc) $("enc").checked = true;
-
-      if (eid && aid && typeof window.setIdsAndRenderQR === "function") {
-        setStatus("Generating QR from URL parameters…");
-        try {
-          await window.setIdsAndRenderQR(eid, aid, { encrypt: enc });
-          setStatus("");
-        } catch (e) {
-          console.error(e);
-          setStatus("Failed to generate QR from URL params.");
-        }
-      }
-    })();
-
-    // Form submit → generate QR
-    $("qrForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const eid = $("eid").value.trim();
-      const aid = $("aid").value.trim();
-      const enc = $("enc").checked;
-
-      if (!eid || !aid) {
-        setStatus("Please provide both Event ID and Attendee ID.");
-        return;
-      }
-
-      if (typeof window.setIdsAndRenderQR !== "function") {
-        setStatus("QR module not loaded. Check the path: ./Script/generator.js");
-        return;
-      }
-
-      $("genBtn").disabled = true;
-      setStatus("Generating QR…");
-      try {
-        await window.setIdsAndRenderQR(eid, aid, { encrypt: enc });
-        setStatus("");
-      } catch (err) {
-        console.error(err);
-        setStatus("Failed to generate QR. See console.");
-      } finally {
-        $("genBtn").disabled = false;
-      }
-    });
-  </script>
+ <!-- Your QR generation script -->
+ <script type="module" src="../../js/QRcode/generator.js"></script>
 </body>
+
+
 </html>
