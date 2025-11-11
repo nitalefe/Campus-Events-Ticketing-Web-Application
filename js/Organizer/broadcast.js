@@ -1,0 +1,162 @@
+import { auth, db } from "../../js/Shared/firebase-config.js";
+import { onAuthStateChanged, signOut, getIdTokenResult } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+const accessNote = document.getElementById("accessNote");
+const form = document.getElementById("broadcastForm");
+const titleInput = document.getElementById("title");
+const messageInput = document.getElementById("message");
+const targetSelect = document.getElementById("targetSelect");
+const sendBtn = document.getElementById("sendBtn");
+const formMsg = document.getElementById("formMsg");
+
+let currentUser = null;
+
+function showError(msg) {
+  formMsg.textContent = msg;
+}
+
+onAuthStateChanged(auth, async (user) => {
+  currentUser = user;
+  if (!user) {
+    accessNote.textContent = "You must be signed in as an organizer or admin to send broadcasts.";
+    form.style.display = "none";
+    return;
+  }
+
+  // Fetch user role from users collection and token claims for admin
+  try {
+    const usersRef = await (await import("https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js")).doc;
+  } catch (e) {
+    // no-op: using simpler path below
+  }
+
+  try {
+    // get user doc to read role
+    const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js");
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    const userData = userDoc.exists() ? userDoc.data() : {};
+    const role = userData?.role || "student";
+
+    // also check admin custom claim
+    let isAdmin = false;
+    try {
+      const tokenResult = await getIdTokenResult(user);
+      isAdmin = tokenResult?.claims?.admin === true;
+    } catch (e) {
+      console.warn("Could not read token claims:", e);
+    }
+
+    // If user is an organizer, ensure they have been approved (mirror auth.js behavior)
+    if (role === "organizer") {
+      try {
+        const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js");
+        const orgSnap = await getDoc(doc(db, "organizers", user.uid));
+        if (orgSnap.exists()) {
+          const org = orgSnap.data();
+          const approved = org.approved === true;
+          const status = (org.status || "").toLowerCase();
+          if (!approved || status !== "approved") {
+            let reason = "Your organizer account is not approved yet. An administrator must approve your request.";
+            if (status === "disapproved") reason = "Your organizer account has been disapproved. Please contact the administrator.";
+            accessNote.textContent = reason;
+            form.style.display = "none";
+            return;
+          }
+        } else {
+          // no organizers doc; block until admin creates one or fixes records
+          accessNote.textContent = "Organizer record not found. Contact support.";
+          form.style.display = "none";
+          return;
+        }
+      } catch (e) {
+        console.error("Failed to verify organizer approval:", e);
+        accessNote.textContent = "Could not verify organizer approval. Try refreshing.";
+        form.style.display = "none";
+        return;
+      }
+    }
+
+    if (role === "organizer" || isAdmin) {
+      accessNote.textContent = `Signed in as ${userData.fullname || user.email} (${role}${isAdmin ? ", admin" : ""}). You can send broadcasts.`;
+      form.style.display = "block";
+      return;
+    }
+
+    // not allowed
+    accessNote.textContent = "Access denied — only organizers and admins can send broadcasts.";
+    form.style.display = "none";
+    // Optional: sign out non-authorized users trying to access organizer pages
+    // await signOut(auth);
+  } catch (e) {
+    console.error("Error checking role:", e);
+    accessNote.textContent = "Could not verify access. Try refreshing.";
+    form.style.display = "none";
+  }
+});
+
+// Send broadcast
+sendBtn.addEventListener("click", async () => {
+  formMsg.textContent = "";
+  if (!currentUser) return showError("Not signed in.");
+  const text = messageInput.value.trim();
+  const title = titleInput.value.trim();
+  const target = targetSelect.value; // students | organizers | both
+
+  if (!text) return showError("Please enter a message to send.");
+
+  const targets = [];
+  if (target === "students") targets.push("student");
+  else if (target === "organizers") targets.push("organizer");
+  else targets.push("student", "organizer");
+
+  try {
+    const senderName = (await (await import("https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js")).getDoc((await import("https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js")).doc(db, "users", currentUser.uid))).data()?.fullname || currentUser.email || "";
+
+    // Re-check approval server-side equivalent: if not admin, ensure organizer approved
+    let isAdmin = false;
+    try {
+      const tokenResult = await getIdTokenResult(currentUser);
+      isAdmin = tokenResult?.claims?.admin === true;
+    } catch (e) { /* ignore */ }
+
+    if (!isAdmin) {
+      try {
+        const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js");
+        const orgSnap = await getDoc(doc(db, "organizers", currentUser.uid));
+        if (!orgSnap.exists()) throw new Error("Organizer record not found.");
+        const org = orgSnap.data();
+        const approved = org.approved === true;
+        const status = (org.status || "").toLowerCase();
+        if (!approved || status !== "approved") throw new Error("Organizer not approved.");
+      } catch (e) {
+        console.error("Organizer approval check failed before send:", e);
+        return showError("You are not approved to send broadcasts.");
+      }
+    }
+
+    await addDoc(collection(db, "broadcasts"), {
+      title: title || null,
+      message: text,
+      targets: targets,
+      senderUid: currentUser.uid,
+      senderName: senderName,
+      createdAt: serverTimestamp(),
+    });
+
+    messageInput.value = "";
+    titleInput.value = "";
+    formMsg.style.color = "green";
+    formMsg.textContent = "Broadcast sent.";
+    setTimeout(() => (formMsg.textContent = ""), 3000);
+  } catch (e) {
+    console.error("Failed to send broadcast:", e);
+    showError("Failed to send broadcast. Try again.");
+  }
+});
+
+// Simple logout wiring (matches project behavior)
+document.addEventListener("DOMContentLoaded", () => {
+  const logoutBtn = document.getElementById("logout-btn");
+  if (logoutBtn) logoutBtn.addEventListener("click", async () => { try { await signOut(auth); window.location.href = "../Registration/SignIn.html"; } catch (e) { alert("Error logging out."); } });
+});

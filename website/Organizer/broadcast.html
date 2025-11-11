@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Broadcast Messages</title>
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/Shared/toolbar.css">
+  <style>
+    .container { max-width:800px; margin:40px auto; padding:16px; }
+    textarea { width:100%; min-height:120px; padding:8px; font-size:14px }
+    .row { display:flex; gap:8px; align-items:center; margin-top:8px }
+    .pill { padding:6px 12px; border-radius:20px; border:1px solid #ccc }
+    .error { color:#c0392b }
+  </style>
+</head>
+
+<body>
+  <div class="toolbar">
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='../Organizer/organizer-dashboard.html'">
+    <button class="toolbar-btn" onclick="location.href='../Organizer/organizer-dashboard.html'">Home</button>
+    <!-- Organizer quick links added into the blue toolbar -->
+    <button class="toolbar-btn" onclick="location.href='EventDashboard.html'">Events</button>
+    <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create Event</button>
+    <button class="toolbar-btn" onclick="location.href='myEvents.html'">My Events</button>
+    <button class="toolbar-btn" onclick="location.href='eventEdit.html'">Edit Event</button>
+    <button class="toolbar-btn" onclick="location.href='eventPage.html'">Event Page</button>
+    <button class="toolbar-btn" onclick="location.href='Attendee.html'">Attendees</button>
+    <button class="toolbar-btn" onclick="location.href='qrScanner.html'">QR Scanner</button>
+    <button class="toolbar-btn" onclick="location.href='broadcast.html'">Broadcast</button>
+    <div class="toolbar-spacer"></div>
+    <div id="authBtnContainer">
+      <button id="logout-btn" class="auth-btn">Log Out</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1>Send Broadcast Message</h1>
+    <p id="accessNote">Checking access...</p>
+
+    <div id="broadcastForm" style="display:none">
+      <label for="title">Title (optional)</label>
+      <input id="title" class="pill" placeholder="Short title">
+
+      <label for="message">Message</label>
+      <textarea id="message" placeholder="Write your broadcast message here..."></textarea>
+
+      <div class="row">
+        <label>Send to:</label>
+        <select id="targetSelect" class="pill">
+          <option value="students">Students</option>
+          <option value="organizers">Organizers</option>
+          <option value="both">All (Students & Organizers)</option>
+        </select>
+        <button id="sendBtn" class="pill">Send Broadcast</button>
+      </div>
+
+      <p id="formMsg" class="error"></p>
+    </div>
+  </div>
+
+  <script type="module" src="../../js/Organizer/broadcast.js"></script>
+</body>
+
+</html>

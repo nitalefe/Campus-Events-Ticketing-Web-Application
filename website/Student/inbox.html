@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Inbox</title>
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/Shared/toolbar.css">
+  <style>
+    .container { max-width:900px; margin:36px auto; padding:16px }
+    .broadcast {
+      border:1px solid #ddd;
+      padding:12px;
+      border-radius:6px;
+      margin-bottom:10px;
+      /* allow long text to wrap and expand the box height */
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      min-height: 48px;
+    }
+    .meta { color:#666; font-size:13px }
+    .title { font-weight:700 }
+  </style>
+</head>
+
+<body>
+  <div class="toolbar">
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='../Student/student-dashboard.html'">
+    <button class="toolbar-btn" onclick="location.href='../Student/student-dashboard.html'">Home</button>
+    <!-- Student quick links added into the blue toolbar -->
+    <button class="toolbar-btn" onclick="location.href='inbox.html'">Inbox</button>
+    <button class="toolbar-btn" onclick="location.href='eventPageStu.html'">Events</button>
+    <button class="toolbar-btn" onclick="location.href='claimEvent.html'">Claim Event</button>
+  <button class="toolbar-btn" onclick="location.href='myTickets.html'">My Tickets</button>
+    <div class="toolbar-spacer"></div>
+    <div id="authBtnContainer">
+      <button id="logout-btn" class="auth-btn">Log Out</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1>Inbox</h1>
+    <p id="loading">Loading messages...</p>
+    <div id="messages"></div>
+  </div>
+
+  <script type="module" src="../../js/User/inbox.js"></script>
+</body>
+
+</html>
