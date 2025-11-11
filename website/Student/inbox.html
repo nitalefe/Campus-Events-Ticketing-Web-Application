@@ -8,21 +8,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../css/Shared/toolbar.css">
+  <link rel="stylesheet" href="../../css/User/eventPageStu.css">
   <style>
-    .container { max-width:900px; margin:36px auto; padding:16px }
+    .container { max-width:1000px; margin:24px auto; padding:16px }
+    .event-image { width:100%; border-radius:8px; max-height:300px; object-fit:cover; display:block; }
+    .event-title { margin-top:16px; font-size:28px }
+    .event-description.muted { color:#666; margin-bottom:18px }
     .broadcast {
-      border:1px solid #ddd;
-      padding:12px;
-      border-radius:6px;
-      margin-bottom:10px;
-      /* allow long text to wrap and expand the box height */
+      background:#fff;
+      border:1px solid #e6e6e6;
+      padding:14px 16px;
+      border-radius:8px;
+      margin-bottom:12px;
       white-space: normal;
       overflow-wrap: anywhere;
       word-break: break-word;
-      min-height: 48px;
+      min-height: 56px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
     }
-    .meta { color:#666; font-size:13px }
+    .meta { color:#666; font-size:13px; margin-top:8px }
     .title { font-weight:700 }
+    /* center container content like event page */
+    .messages-list { margin-top:12px }
+  /* message UI improvements */
+  .sender-badge { display:inline-block; background:#eef3ff; color:#12306b; padding:4px 8px; border-radius:999px; font-size:12px; margin-right:8px }
+  .message-text { margin-top:8px; white-space:normal; overflow-wrap:anywhere; }
+  .message-text.collapsed { max-height:5.2em; overflow:hidden; }
+  .show-more { display:inline-block; margin-top:8px; color:#367bfc; cursor:pointer; font-weight:600 }
   </style>
 </head>
 
@@ -32,8 +44,6 @@
     <button class="toolbar-btn" onclick="location.href='../Student/student-dashboard.html'">Home</button>
     <!-- Student quick links added into the blue toolbar -->
     <button class="toolbar-btn" onclick="location.href='inbox.html'">Inbox</button>
-    <button class="toolbar-btn" onclick="location.href='eventPageStu.html'">Events</button>
-    <button class="toolbar-btn" onclick="location.href='claimEvent.html'">Claim Event</button>
   <button class="toolbar-btn" onclick="location.href='myTickets.html'">My Tickets</button>
     <div class="toolbar-spacer"></div>
     <div id="authBtnContainer">
@@ -42,9 +52,11 @@
   </div>
 
   <div class="container">
-    <h1>Inbox</h1>
+  <h1 class="event-title">Inbox</h1>
+    <div class="event-description muted">Your announcements and updates from organizers and admins.</div>
+
     <p id="loading">Loading messages...</p>
-    <div id="messages"></div>
+    <div id="messages" class="messages-list"></div>
   </div>
 
   <script type="module" src="../../js/User/inbox.js"></script>

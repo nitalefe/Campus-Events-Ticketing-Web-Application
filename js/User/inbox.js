@@ -9,9 +9,53 @@ function renderMessage(doc) {
   const data = doc.data();
   const wrapper = document.createElement("div");
   wrapper.className = "broadcast";
-  const title = data.title ? `<div class="title">${escapeHtml(data.title)}</div>` : "";
-  const meta = `<div class="meta">From: ${escapeHtml(data.senderName || "Unknown")} — ${data.createdAt?.toDate ? data.createdAt.toDate().toLocaleString() : ""}</div>`;
-  wrapper.innerHTML = `${title}<div>${escapeHtml(data.message)}</div>${meta}`;
+
+  // Title
+  if (data.title) {
+    const titleEl = document.createElement("div");
+    titleEl.className = "title";
+    titleEl.textContent = data.title;
+    wrapper.appendChild(titleEl);
+  }
+
+  // Meta: sender badge + timestamp
+  const metaEl = document.createElement("div");
+  metaEl.className = "meta";
+  const senderBadge = document.createElement("span");
+  senderBadge.className = "sender-badge";
+  senderBadge.textContent = data.senderName || "Unknown";
+  metaEl.appendChild(senderBadge);
+
+  const timeEl = document.createElement("span");
+  timeEl.style.marginLeft = "8px";
+  const ts = data.createdAt?.toDate ? data.createdAt.toDate() : null;
+  timeEl.textContent = ts ? formatTimestamp(ts) : "";
+  metaEl.appendChild(timeEl);
+  wrapper.appendChild(metaEl);
+
+  // Message body with collapse/expand
+  const msgEl = document.createElement("div");
+  msgEl.className = "message-text";
+  msgEl.textContent = data.message || "";
+
+  // Collapse long messages by default
+  const COLLAPSE_THRESHOLD = 300; // characters
+  let isCollapsed = (msgEl.textContent.length > COLLAPSE_THRESHOLD);
+  if (isCollapsed) msgEl.classList.add("collapsed");
+
+  wrapper.appendChild(msgEl);
+
+  if (isCollapsed) {
+    const toggle = document.createElement("span");
+    toggle.className = "show-more";
+    toggle.textContent = "Show more";
+    toggle.addEventListener("click", () => {
+      const nowCollapsed = msgEl.classList.toggle("collapsed");
+      toggle.textContent = nowCollapsed ? "Show more" : "Show less";
+    });
+    wrapper.appendChild(toggle);
+  }
+
   messagesEl.appendChild(wrapper);
 }
 
@@ -19,6 +63,16 @@ function renderMessage(doc) {
 function escapeHtml(str) {
   if (!str) return "";
   return String(str).replace(/[&<>"']/g, (s) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[s]));
+}
+
+// Friendly timestamp: show relative time for recent messages, otherwise locale date
+function formatTimestamp(date) {
+  const now = new Date();
+  const diff = Math.floor((now - date) / 1000); // seconds
+  if (diff < 60) return `${diff}s ago`;
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return date.toLocaleString();
 }
 
 onAuthStateChanged(auth, async (user) => {
