@@ -1,6 +1,6 @@
 import { auth, db } from "../../js/Shared/firebase-config.js";
 import { onAuthStateChanged, signOut, getIdTokenResult } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { collection, addDoc, serverTimestamp, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 const accessNote = document.getElementById("accessNote");
 const form = document.getElementById("broadcastForm");
@@ -11,6 +11,69 @@ const sendBtn = document.getElementById("sendBtn");
 const formMsg = document.getElementById("formMsg");
 
 let currentUser = null;
+
+const prevLoading = document.getElementById("prevLoading");
+const prevContainer = document.getElementById("prevBroadcasts");
+
+function renderPrevBroadcast(doc) {
+  const data = doc.data();
+  const wrapper = document.createElement("div");
+  wrapper.className = "broadcast";
+
+  if (data.title) {
+    const titleEl = document.createElement("div");
+    titleEl.className = "title";
+    titleEl.textContent = data.title;
+    wrapper.appendChild(titleEl);
+  }
+
+  const metaEl = document.createElement("div");
+  metaEl.className = "meta";
+  const time = data.createdAt?.toDate ? data.createdAt.toDate().toLocaleString() : "";
+  metaEl.textContent = `Sent: ${time}`;
+  wrapper.appendChild(metaEl);
+
+  const msgEl = document.createElement("div");
+  msgEl.className = "message-text";
+  msgEl.textContent = data.message || "";
+  wrapper.appendChild(msgEl);
+
+  // prepend so newest on top when inserting sequentially
+  prevContainer.appendChild(wrapper);
+}
+
+async function loadPreviousBroadcasts(uid) {
+  if (!prevContainer) return;
+  prevContainer.innerHTML = "";
+  if (prevLoading) prevLoading.style.display = "block";
+
+  try {
+    const broadcastsRef = collection(db, "broadcasts");
+    // Avoid composite index requirement by querying by senderUid only,
+    // then sorting client-side by createdAt (desc).
+    const q = query(broadcastsRef, where("senderUid", "==", uid));
+    const snap = await getDocs(q);
+    if (prevLoading) prevLoading.style.display = "none";
+    if (snap.empty) {
+      prevContainer.innerHTML = "<p class='muted'>You haven't sent any broadcasts yet.</p>";
+      return;
+    }
+
+    // Convert to array and sort by createdAt desc (handle missing timestamps)
+    const docs = [];
+    snap.forEach(d => docs.push(d));
+    docs.sort((a, b) => {
+      const aTs = a.data().createdAt?.toDate ? a.data().createdAt.toDate().getTime() : 0;
+      const bTs = b.data().createdAt?.toDate ? b.data().createdAt.toDate().getTime() : 0;
+      return bTs - aTs;
+    });
+
+    docs.forEach(d => renderPrevBroadcast(d));
+  } catch (e) {
+    console.error("Failed to load previous broadcasts:", e);
+    if (prevLoading) prevLoading.textContent = "Could not load broadcasts.";
+  }
+}
 
 function showError(msg) {
   formMsg.textContent = msg;
@@ -80,6 +143,8 @@ onAuthStateChanged(auth, async (user) => {
     if (role === "organizer" || isAdmin) {
       accessNote.textContent = `Signed in as ${userData.fullname || user.email} (${role}${isAdmin ? ", admin" : ""}). You can send broadcasts.`;
       form.style.display = "block";
+      // load organizer's previous broadcasts
+      try { await loadPreviousBroadcasts(user.uid); } catch (e) { console.warn(e); }
       return;
     }
 
@@ -149,6 +214,8 @@ sendBtn.addEventListener("click", async () => {
     formMsg.style.color = "green";
     formMsg.textContent = "Broadcast sent.";
     setTimeout(() => (formMsg.textContent = ""), 3000);
+    // refresh previous broadcasts list
+    try { await loadPreviousBroadcasts(currentUser.uid); } catch (e) { console.warn("refresh failed", e); }
   } catch (e) {
     console.error("Failed to send broadcast:", e);
     showError("Failed to send broadcast. Try again.");

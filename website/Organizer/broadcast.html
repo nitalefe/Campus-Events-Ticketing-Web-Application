@@ -23,6 +23,21 @@
   /* left-align hero text */
   .hero > div { text-align: left; }
   .hero .muted { text-align: left; }
+  /* message UI improvements (match student inbox) */
+  .sender-badge { display:inline-block; background:#eef3ff; color:#12306b; padding:4px 8px; border-radius:999px; font-size:12px; margin-right:8px }
+  .message-text { margin-top:8px; white-space:normal; overflow-wrap:anywhere; }
+  .message-text.collapsed { max-height:5.2em; overflow:hidden; }
+  .show-more { display:inline-block; margin-top:8px; color:#367bfc; cursor:pointer; font-weight:600 }
+  /* separators for previous broadcasts for better visibility */
+  .messages-list .broadcast {
+    border-top: 1px solid #e9eef6;
+    padding-top:12px;
+    margin-top:12px;
+    /* subtle gray background to visually separate entries */
+    background-color: #f6f8fb;
+    border-radius: 6px;
+  }
+  .messages-list .broadcast:first-child { margin-top:0; border-top: none; padding-top:0; background-color: transparent; border-radius: 0; }
   </style>
 </head>
 
@@ -74,6 +89,18 @@
         </div>
 
         <p id="formMsg" class="error"></p>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- Previous broadcasts in their own card for visual separation -->
+  <div class="container">
+    <div class="prev-card" style="max-width:1000px; margin:18px auto;">
+      <div class="broadcast-card">
+        <h3 style="margin-top:0; margin-bottom:8px">Your previous broadcasts</h3>
+        <p id="prevLoading" class="muted">Loading your broadcasts...</p>
+        <div id="prevBroadcasts" class="messages-list"></div>
       </div>
     </div>
   </div>
