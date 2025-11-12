@@ -194,9 +194,95 @@
       }
     });
 
+<<<<<<< Updated upstream
 
 
     
+=======
+    // wire contact button outside auth flow so any visitor can click
+    if (contactBtn) {
+      contactBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        showOrganizerContactForLoadedEvent();
+      });
+    }
+
+    // ----------------------------
+    // Add to Calendar
+    // ----------------------------
+    const calendarBtn = document.getElementById('calendarBtn');
+    function toICalDate(d) {
+      // Return YYYYMMDDTHHMMSSZ (UTC)
+      const iso = new Date(d).toISOString();
+      return iso.replace(/[-:]/g, '').split('.')[0] + 'Z';
+    }
+    function escapeICal(text) {
+      if (!text) return '';
+      return String(text).replace(/\\r\\n|\\r|\\n/g, '\\n').replace(/,/g, '\\,');
+    }
+
+    if (calendarBtn) {
+      calendarBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!loadedEventData) {
+          alert('Event data not loaded yet.');
+          return;
+        }
+
+        // derive start/end
+        const start = loadedEventData.eventDateTime && typeof loadedEventData.eventDateTime.toDate === 'function'
+          ? loadedEventData.eventDateTime.toDate()
+          : (loadedEventData.eventDateTime ? new Date(loadedEventData.eventDateTime) : new Date());
+        const end = new Date(start.getTime() + (2 * 60 * 60 * 1000)); // default 2 hours
+
+        const title = loadedEventData.eventName || 'Event';
+        const description = (loadedEventData.eventDescription || '').replace(/<[^>]*>/g, '');
+        const location = loadedEventData.eventLocation || '';
+        const uid = `${eventId || Math.random().toString(36).slice(2)}@evently.local`;
+
+        const now = new Date();
+        const ics = [
+          'BEGIN:VCALENDAR',
+          'VERSION:2.0',
+          'PRODID:-//Evently//EN',
+          'BEGIN:VEVENT',
+          `UID:${uid}`,
+          `DTSTAMP:${toICalDate(now)}`,
+          `DTSTART:${toICalDate(start)}`,
+          `DTEND:${toICalDate(end)}`,
+          `SUMMARY:${escapeICal(title)}`,
+          `DESCRIPTION:${escapeICal(description)}`,
+          `LOCATION:${escapeICal(location)}`,
+          'END:VEVENT',
+          'END:VCALENDAR'
+        ].join('\r\n');
+
+        // download .ics
+        try {
+          const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${(title.replace(/[^a-z0-9]+/gi, '_') || 'event')}.ics`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+        } catch (err) {
+          console.error('Could not create ICS file', err);
+        }
+
+        // open Google Calendar event editor
+        const gDates = `${toICalDate(start)}/${toICalDate(end)}`;
+        const gUrl = `https://calendar.google.com/calendar/r/eventedit?text=${encodeURIComponent(title)}&dates=${gDates}&details=${encodeURIComponent(description)}&location=${encodeURIComponent(location)}`;
+        window.open(gUrl, '_blank');
+      });
+    }
+=======
+
+
+    
+>>>>>>> main
   </script>
 </body>
 

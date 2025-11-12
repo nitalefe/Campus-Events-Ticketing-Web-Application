@@ -1,0 +1,211 @@
+<svg viewBox="0 0 1400 1000" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#333333" />
+    </marker>
+    <filter id="shadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+      <feOffset dx="0" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.15"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1400" height="1000" fill="#ffffff"/>
+  
+  <!-- Title -->
+  <text x="700" y="35" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#1a1a1a" text-anchor="middle">Evently Platform Component Diagram</text>
+  
+  <!-- Top Row Components -->
+  
+  <!-- Authentication Service -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="80" width="200" height="100" fill="#e8f4f8" stroke="#333333" stroke-width="1.5" rx="4"/>
+    <text x="90" y="95" font-family="Arial, sans-serif" font-size="10" fill="#333333">&lt;&lt;component&gt;&gt;</text>
+    <text x="180" y="130" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#333333" text-anchor="middle">Authentication</text>
+    <text x="180" y="145" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#333333" text-anchor="middle">Service</text>
+    <rect x="275" y="115" width="25" height="35" fill="#ffffff" stroke="#333333" stroke-width="1.5"/>
+    <rect x="280" y="120" width="6" height="6" fill="#333333"/>
+    <rect x="280" y="129" width="6" height="6" fill="#333333"/>
+    <rect x="280" y="138" width="6" height="6" fill="#333333"/>
+  </g>
+  
+  <!-- User Management Service -->
+  <g filter="url(#shadow)">
+    <rect x="350" y="80" width="200" height="100" fill="#fff4e6" stroke="#333333" stroke-width="1.5" rx="4"/>
+    <text x="360" y="95" font-family="Arial, sans-serif" font-size="10" fill="#333333">&lt;&lt;component&gt;&gt;</text>
+    <text x="450" y="130" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#333333" text-anchor="middle">User Management</text>
+    <text x="450" y="145" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#333333" text-anchor="middle">Service</text>
+    <rect x="545" y="115" width="25" height="35" fill="#ffffff" stroke="#333333" stroke-width="1.5"/>
+    <rect x="550" y="120" width="6" height="6" fill="#333333"/>
+    <rect x="550" y="129" width="6" height="6" fill="#333333"/>
+    <rect x="550" y="138" width="6" height="6" fill="#333333"/>
+  </g>
+  
+  <!-- Event Management Service -->
+  <g filter="url(#shadow)">
+    <rect x="620" y="80" width="200" height="100" fill="#e8f5e9" stroke="#333333" stroke-width="1.5" rx="4"/>
+    <text x="630" y="95" font-family="Arial, sans-serif" font-size="10" fill="#333333">&lt;&lt;component&gt;&gt;</text>
+    <text x="720" y="130" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#333333" text-anchor="middle">Event Management</text>
+    <text x="720" y="145" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#333333" text-anchor="middle">Service</text>
+    <rect x="815" y="115" width="25" height="35" fill="#ffffff" stroke="#333333" stroke-width="1.5"/>
+    <rect x="820" y="120" width="6" height="6" fill="#333333"/>
+    <rect x="820" y="129" width="6" height="6" fill="#333333"/>
+    <rect x="820" y="138" width="6" height="6" fill="#333333"/>
+  </g>
+  
+  <!-- Analytics Service -->
+  <g filter="url(#shadow)">
+    <rect x="890" y="80" width="200" height="100" fill="#fce4ec" stroke="#333333" stroke-width="1.5" rx="4"/>
+    <text x="900" y="95" font-family="Arial, sans-serif" font-size="10" fill="#333333">&lt;&lt;component&gt;&gt;</text>
+    <text x="990" y="130" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#333333" text-anchor="middle">Analytics</text>
+    <text x="990" y="145" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#333333" text-anchor="middle">Service</text>
+    <rect x="1085" y="115" width="25" height="35" fill="#ffffff" stroke="#333333" stroke-width="1.5"/>
+    <rect x="1090" y="120" width="6" height="6" fill="#333333"/>
+    <rect x="1090" y="129" width="6" height="6" fill="#333333"/>
+    <rect x="1090" y="138" width="6" height="6" fill="#333333"/>
+  </g>
+  
+  <!-- Middle Row - Central Hub -->
+  
+  <!-- Firebase/Firestore Database -->
+  <g filter="url(#shadow)">
+    <rect x="500" y="350" width="280" height="120" fill="#fff9c4" stroke="#333333" stroke-width="1.5" rx="4"/>
+    <text x="510" y="365" font-family="Arial, sans-serif" font-size="10" fill="#333333">&lt;&lt;database&gt;&gt;</text>
+    <text x="640" y="405" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#333333" text-anchor="middle">Firebase Firestore</text>
+    <text x="640" y="430" font-family="Arial, sans-serif" font-size="11" fill="#666666" text-anchor="middle">Collections: users, events, organizers, broadcasting</text>
+    <circle cx="640" cy="290" r="25" fill="none" stroke="#333333" stroke-width="2"/>
+    <line x1="615" y1="290" x2="665" y2="290" stroke="#333333" stroke-width="2"/>
+    <line x1="640" y1="265" x2="640" y2="315" stroke="#333333" stroke-width="2"/>
+    <text x="640" y="340" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#333333" text-anchor="middle">DataHub</text>
+  </g>
+  
+  <!-- Bottom Row Components -->
+  
+  <!-- Ticket Service -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="600" width="200" height="100" fill="#e1f5fe" stroke="#333333" stroke-width="1.5" rx="4"/>
+    <text x="90" y="615" font-family="Arial, sans-serif" font-size="10" fill="#333333">&lt;&lt;component&gt;&gt;</text>
+    <text x="180" y="650" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#333333" text-anchor="middle">Ticket Service</text>
+    <text x="180" y="665" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#333333" text-anchor="middle">(QR Generation)</text>
+    <rect x="275" y="635" width="25" height="35" fill="#ffffff" stroke="#333333" stroke-width="1.5"/>
+    <rect x="280" y="640" width="6" height="6" fill="#333333"/>
+    <rect x="280" y="649" width="6" height="6" fill="#333333"/>
+    <rect x="280" y="658" width="6" height="6" fill="#333333"/>
+  </g>
+  
+  <!-- Notification Service -->
+  <g filter="url(#shadow)">
+    <rect x="350" y="600" width="200" height="100" fill="#f3e5f5" stroke="#333333" stroke-width="1.5" rx="4"/>
+    <text x="360" y="615" font-family="Arial, sans-serif" font-size="10" fill="#333333">&lt;&lt;component&gt;&gt;</text>
+    <text x="450" y="650" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#333333" text-anchor="middle">Notification</text>
+    <text x="450" y="665" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#333333" text-anchor="middle">Service</text>
+    <rect x="545" y="635" width="25" height="35" fill="#ffffff" stroke="#333333" stroke-width="1.5"/>
+    <rect x="550" y="640" width="6" height="6" fill="#333333"/>
+    <rect x="550" y="649" width="6" height="6" fill="#333333"/>
+    <rect x="550" y="658" width="6" height="6" fill="#333333"/>
+  </g>
+  
+  <!-- Moderation Service -->
+  <g filter="url(#shadow)">
+    <rect x="620" y="600" width="200" height="100" fill="#ffebee" stroke="#333333" stroke-width="1.5" rx="4"/>
+    <text x="630" y="615" font-family="Arial, sans-serif" font-size="10" fill="#333333">&lt;&lt;component&gt;&gt;</text>
+    <text x="720" y="650" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#333333" text-anchor="middle">Moderation</text>
+    <text x="720" y="665" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#333333" text-anchor="middle">Service</text>
+    <rect x="815" y="635" width="25" height="35" fill="#ffffff" stroke="#333333" stroke-width="1.5"/>
+    <rect x="820" y="640" width="6" height="6" fill="#333333"/>
+    <rect x="820" y="649" width="6" height="6" fill="#333333"/>
+    <rect x="820" y="658" width="6" height="6" fill="#333333"/>
+  </g>
+  
+  <!-- Search Service -->
+  <g filter="url(#shadow)">
+    <rect x="890" y="600" width="200" height="100" fill="#e0f2f1" stroke="#333333" stroke-width="1.5" rx="4"/>
+    <text x="900" y="615" font-family="Arial, sans-serif" font-size="10" fill="#333333">&lt;&lt;component&gt;&gt;</text>
+    <text x="990" y="650" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#333333" text-anchor="middle">Search &amp; Filter</text>
+    <text x="990" y="665" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#333333" text-anchor="middle">Service</text>
+    <rect x="1085" y="635" width="25" height="35" fill="#ffffff" stroke="#333333" stroke-width="1.5"/>
+    <rect x="1090" y="640" width="6" height="6" fill="#333333"/>
+    <rect x="1090" y="649" width="6" height="6" fill="#333333"/>
+    <rect x="1090" y="658" width="6" height="6" fill="#333333"/>
+  </g>
+  
+  <!-- Right Side Components -->
+  
+  <!-- Organization Service -->
+  <g filter="url(#shadow)">
+    <rect x="1160" y="350" width="200" height="100" fill="#ffe0b2" stroke="#333333" stroke-width="1.5" rx="4"/>
+    <text x="1170" y="365" font-family="Arial, sans-serif" font-size="10" fill="#333333">&lt;&lt;component&gt;&gt;</text>
+    <text x="1260" y="400" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#333333" text-anchor="middle">Organization</text>
+    <text x="1260" y="415" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#333333" text-anchor="middle">Service</text>
+    <rect x="1135" y="385" width="25" height="35" fill="#ffffff" stroke="#333333" stroke-width="1.5"/>
+    <rect x="1140" y="390" width="6" height="6" fill="#333333"/>
+    <rect x="1140" y="399" width="6" height="6" fill="#333333"/>
+    <rect x="1140" y="408" width="6" height="6" fill="#333333"/>
+  </g>
+  
+  <!-- Connection Lines -->
+  
+  <!-- Authentication to DataHub -->
+  <line x1="180" y1="180" x2="180" y2="250" stroke="#333333" stroke-width="1.5"/>
+  <line x1="180" y1="250" x2="615" y2="290" stroke="#333333" stroke-width="1.5"/>
+  
+  <!-- User Management to DataHub -->
+  <line x1="450" y1="180" x2="450" y2="260" stroke="#333333" stroke-width="1.5"/>
+  <line x1="450" y1="260" x2="620" y2="290" stroke="#333333" stroke-width="1.5"/>
+  
+  <!-- Event Management to DataHub -->
+  <line x1="720" y1="180" x2="640" y2="265" stroke="#333333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Analytics to DataHub -->
+  <line x1="990" y1="180" x2="990" y2="260" stroke="#333333" stroke-width="1.5"/>
+  <line x1="990" y1="260" x2="665" y2="290" stroke="#333333" stroke-width="1.5"/>
+  
+  <!-- DataHub to Ticket Service -->
+  <line x1="580" y1="470" x2="180" y2="600" stroke="#333333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- DataHub to Notification Service -->
+  <line x1="600" y1="470" x2="450" y2="600" stroke="#333333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- DataHub to Moderation Service -->
+  <line x1="640" y1="470" x2="720" y2="600" stroke="#333333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- DataHub to Search Service -->
+  <line x1="700" y1="470" x2="990" y2="600" stroke="#333333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- DataHub to Organization Service -->
+  <line x1="780" y1="400" x2="1135" y2="400" stroke="#333333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Organization Service to User Management -->
+  <line x1="1160" y1="380" x2="950" y2="150" stroke="#333333" stroke-width="1.5" stroke-dasharray="5,5"/>
+  <line x1="950" y1="150" x2="550" y2="150" stroke="#333333" stroke-width="1.5" stroke-dasharray="5,5"/>
+  
+  <!-- Legend -->
+  <g>
+    <rect x="1160" y="600" width="200" height="120" fill="#f9f9f9" stroke="#333333" stroke-width="1" rx="4"/>
+    <text x="1260" y="625" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#333333" text-anchor="middle">Legend</text>
+    
+    <line x1="1180" y1="645" x2="1220" y2="645" stroke="#333333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+    <text x="1230" y="650" font-family="Arial, sans-serif" font-size="10" fill="#333333">Dependency</text>
+    
+    <line x1="1180" y1="665" x2="1220" y2="665" stroke="#333333" stroke-width="1.5" stroke-dasharray="5,5"/>
+    <text x="1230" y="670" font-family="Arial, sans-serif" font-size="10" fill="#333333">Association</text>
+    
+    <rect x="1180" y="680" width="30" height="20" fill="#ffffff" stroke="#333333" stroke-width="1.5"/>
+    <rect x="1185" y="685" width="5" height="5" fill="#333333"/>
+    <rect x="1185" y="692" width="5" height="5" fill="#333333"/>
+    <text x="1220" y="694" font-family="Arial, sans-serif" font-size="10" fill="#333333">Interface</text>
+  </g>
+  
+  <!-- Database Collections Labels -->
+  <text x="520" y="505" font-family="Arial, sans-serif" font-size="9" fill="#666666">• users</text>
+  <text x="580" y="505" font-family="Arial, sans-serif" font-size="9" fill="#666666">• events</text>
+  <text x="660" y="505" font-family="Arial, sans-serif" font-size="9" fill="#666666">• organizers</text>
+  <text x="560" y="520" font-family="Arial, sans-serif" font-size="9" fill="#666666">• broadcasting</text>
+</svg>
