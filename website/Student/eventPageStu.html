@@ -46,6 +46,7 @@
       <button id="saveBtn" class="save-btn">Save Event</button>
       <button id="calendarBtn" class="save-btn">Add to Calendar</button>
       <button id="contactBtn" class="save-btn">Contact Organizer</button>
+      <button id="followBtn" class="save-btn">Follow Organizer</button>
 
             <button id="viewTicketBtn" class="save-btn"
     onclick="location.href='qrGenerator.html?id=' + new URLSearchParams(window.location.search).get('id')">
@@ -61,6 +62,7 @@
     import { auth, db } from "../../js/Shared/firebase-config.js";
     import { doc, getDoc, updateDoc, setDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    
 
     const params = new URLSearchParams(window.location.search);
     const eventId = params.get("id");
@@ -192,11 +194,77 @@
         // 👇 toggleSaveEvent now works
         saveBtn.onclick = () => toggleSaveEvent(user);
       }
-    });
-
-
-
     
+
+// --- Follow/Unfollow functionality ---
+const followBtn = document.getElementById("followBtn");
+
+// --- Get event info ---
+const eventRef = doc(db, "events", eventId);
+const eventSnap = await getDoc(eventRef);
+
+if (!eventSnap.exists()) {
+  console.warn(`Event with ID ${eventId} not found.`);
+  followBtn.style.display = "none";
+} else {
+  const eventData = eventSnap.data();
+  const organizerID = eventData?.createdBy;
+
+  if (!organizerID) {
+    console.warn("No 'createdBy' field found for this event.");
+    followBtn.style.display = "none";
+  } else {
+    // --- Get user info ---
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      console.warn("User document not found.");
+      followBtn.style.display = "none";
+    } else {
+      const userData = userSnap.data();
+      let following = userData.following || [];
+      let alreadyFollowing = following.includes(organizerID);
+
+      // --- Update button UI ---
+      followBtn.style.display = "inline-block";
+      followBtn.textContent = alreadyFollowing ? "Unfollow Organizer" : "Follow Organizer";
+
+      // --- Click behavior ---
+      followBtn.onclick = async () => {
+        try {
+          if (alreadyFollowing) {
+            // Inline unfollow logic
+            await updateDoc(userRef, {
+              following: arrayRemove(organizerID),
+            });
+            alert("You have unfollowed this organizer.");
+            followBtn.textContent = "Follow Organizer";
+          } else {
+            // Inline follow logic
+            await updateDoc(userRef, {
+              following: arrayUnion(organizerID),
+            });
+            alert("You are now following this organizer!");
+            followBtn.textContent = "Unfollow Organizer";
+          }
+
+          // toggle state locally so button text stays correct
+          alreadyFollowing = !alreadyFollowing;
+        } catch (err) {
+          console.error("Error updating follow state:", err);
+          alert("Something went wrong. Please try again.");
+        }
+      };
+    }
+  }
+}
+
+
+
+
+
+});//end OnAuthStateChange
   </script>
 </body>
 
