@@ -39,20 +39,9 @@
       onclick="location.href='claimEvent.html?id=' + new URLSearchParams(window.location.search).get('id')">
       Buy Ticket
     </button>
-
-
-
-
       <button id="saveBtn" class="save-btn">Save Event</button>
       <button id="calendarBtn" class="save-btn">Add to Calendar</button>
       <button id="contactBtn" class="save-btn">Contact Organizer</button>
-
-            <button id="viewTicketBtn" class="save-btn"
-    onclick="location.href='qrGenerator.html?id=' + new URLSearchParams(window.location.search).get('id')">
-    View Ticket
-  </button>
-
-
     </div>
   </div>
 
@@ -64,10 +53,6 @@
 
     const params = new URLSearchParams(window.location.search);
     const eventId = params.get("id");
-
-    const viewTicketBtn = document.getElementById("viewTicketBtn");
-
-
 
     const titleEl = document.querySelector(".event-title");
     const descEl = document.querySelector(".event-description");
@@ -146,19 +131,6 @@
       console.log("[eventPage] Auth user:", user?.uid || "No user");
       await loadEventDetails(user);
 
-      //add view ticket logic here
-      const userRef = doc(db, "users", user.uid);
-      const userSnap = await getDoc(userRef);
-      const params = new URLSearchParams(window.location.search);
-      const eventId = params.get("id");
-      if (Object.values(userSnap.data().claimedEvents || {}).includes(eventId)) {
-        viewTicketBtn.style.display = "inline-block";
-        viewTicketBtn.onclick = () =>
-          location.href = `qrGenerator.html?id=${eventId}`;
-      } else {
-        viewTicketBtn.style.display = "none";
-      }
-
       if (!saveBtn) return;
       saveBtn.style.display = "none";
 
@@ -193,10 +165,6 @@
         saveBtn.onclick = () => toggleSaveEvent(user);
       }
     });
-
-
-
-    
   </script>
 </body>
 
