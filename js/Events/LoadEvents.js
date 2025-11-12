@@ -28,7 +28,7 @@ function createEventCard(eventData, eventId) {
   card.setAttribute("data-event-id", eventId);
   // expose the event category on the card for client-side filters
   card.setAttribute("data-category", eventData.eventCategory || "");
-  // expose openTo (may be array) for university filtering
+  // expose openTo from the event (can be array or string) for university filtering
   const openToAttr = Array.isArray(eventData.openTo) ? eventData.openTo.join(',') : (eventData.openTo || '');
   if (openToAttr) card.setAttribute('data-open-to', openToAttr);
 

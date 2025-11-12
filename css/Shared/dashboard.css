@@ -519,3 +519,51 @@ header p {
 	z-index: 10;
 	text-shadow: 0 0.1vh 0.2vh rgba(0, 0, 0, 0.2);
 }
+
+/* Search / filter results panel: ensure it occupies the top slot when shown
+	 and hide the main content while results are active. This prevents the
+	 results block from being pushed to the bottom by collapsing layout gaps. */
+.search-results-section {
+	/* full-bleed background area but let inner container be centered */
+	width: 100%;
+	max-width: none;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+.search-results-section .events-container {
+	background: #fff;
+	/* make the results container full-bleed (edge-to-edge) */
+	width: 100vw;
+	max-width: none;
+	margin: 0;
+	padding: clamp(20px, 4vw, 48px) 8vw; /* generous vertical padding and responsive side padding */
+	box-shadow: 0 8px 20px rgba(13, 71, 161, 0.04);
+	border-radius: 0; /* full-bleed should not be rounded at edges */
+}
+
+/* Make the search header match the visual style of other section headers (.section-bar) */
+.search-header {
+	font-weight: 700;
+	color: var(--primary);
+	background: #e8eeff;
+	padding: 10px 16px;
+	border-radius: 6px;
+	margin: 12px auto 18px auto;
+	display: inline-block;
+}
+
+.search-header .search-count { margin-left: 8px; color: #233241; font-weight: 600 }
+
+.search-query { color: #233241; font-weight: 600 }
+
+/* Hidden/shown states (use classes from JS). Keep .is-hidden for backward compatibility. */
+.search-results-section.is-hidden { display: none !important; }
+.search-results-section.show { display: block !important; animation: fadeInUp 220ms ease both; }
+
+.main-content.collapsed { display: none !important; }
+
+@keyframes fadeInUp {
+	from { opacity: 0; transform: translateY(8px); }
+	to   { opacity: 1; transform: translateY(0); }
+}

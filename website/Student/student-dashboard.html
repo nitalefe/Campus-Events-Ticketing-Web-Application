@@ -91,6 +91,14 @@
   </div>
 
   <!-- Dynamic sections -->
+  <!-- Search results (sibling placed here so it occupies same visual area as main content) -->
+  <div id="search-results-section" class="is-hidden search-results-section">
+    <div class="search-header">Results <span id="search-count" class="search-count"></span> — <span id="search-query-text" class="search-query"></span></div>
+    <div class="events-container">
+      <div class="events" id="search-results"></div>
+      <div id="no-results" class="no-results" style="display:none;padding:20px;color:#0b254a;font-weight:600">No events match your filters.</div>
+    </div>
+  </div>
   <div class="main-content">
     <div>
       <div class="section-bar">My Events</div>
@@ -112,57 +120,63 @@
       <div class="events-container"><div class="events" id="discover-events"></div></div>
     </div>
 
-    <!-- Search results -->
-    <div id="search-results-section" class="is-hidden">
-      <div class="section-bar">Search Results</div>
-      <div class="events-container"><div class="events" id="search-results"></div></div>
     </div>
-  </div>
+
 
   <!-- Search + Date filter logic -->
   <script type="module">
     // ---- SEARCH (existing) ----
     function clearSearchView() {
-      document.getElementById('search-results-section').classList.add('is-hidden');
+      // clear the input and restore the dashboard view
+      const input = document.querySelector('.search-input'); if (input) input.value = '';
       document.getElementById('clear-search').style.display = 'none';
-      document.querySelectorAll('.main-content > div').forEach(section => {
-        if (section.id !== 'search-results-section') section.classList.remove('is-hidden');
-      });
-      const sr = document.getElementById('search-results'); while (sr && sr.firstChild) sr.removeChild(sr.firstChild);
+      // delegate to filterVisibleByDate to restore UI
+      filterVisibleByDate(null, null);
     }
+
     window.handleSearch = function () {
-      const query = document.querySelector('.search-input').value.toLowerCase().trim();
+      const queryRaw = document.querySelector('.search-input')?.value || '';
+      const query = queryRaw.toLowerCase().trim();
       if (!query) { clearSearchView(); return; }
 
+      const lists = document.querySelectorAll('.events');
       const matches = []; const seen = new Set();
-      document.querySelectorAll('.events').forEach(list => {
+      lists.forEach(list => {
         list.querySelectorAll('.event-card').forEach(card => {
           const id = card.getAttribute('data-event-id') || '';
           if (seen.has(id)) return;
           const title = (card.querySelector('.event-title') || { textContent: '' }).textContent.toLowerCase();
-          if (title.includes(query)) { matches.push(card); seen.add(id); }
+          const desc = (card.querySelector('.event-desc') || { textContent: '' }).textContent.toLowerCase();
+          if (title.includes(query) || desc.includes(query)) { matches.push(card); seen.add(id); }
         });
       });
 
-      document.querySelectorAll('.main-content > div').forEach(section => {
-        if (section.id !== 'search-results-section') section.classList.add('is-hidden');
-      });
+      // populate results container
+      const sr = document.getElementById('search-results');
+      const srSection = document.getElementById('search-results-section');
+      const noResults = document.getElementById('no-results');
+      if (sr) {
+        while (sr.firstChild) sr.removeChild(sr.firstChild);
+        matches.forEach(card => {
+          const clone = card.cloneNode(true);
+          clone.style.display = 'block';
+          const id = clone.getAttribute('data-event-id') || card.getAttribute('data-event-id');
+          if (id) { const target = document.body?.dataset?.eventPage || 'eventPageStu.html'; clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; }); clone.style.cursor = 'pointer'; }
+          sr.appendChild(clone);
+        });
+      }
 
-      const sr = document.getElementById('search-results'); while (sr && sr.firstChild) sr.removeChild(sr.firstChild);
-      matches.forEach(card => {
-        const clone = card.cloneNode(true);
-        clone.style.display = 'block';
-        const id = clone.getAttribute('data-event-id') || card.getAttribute('data-event-id');
-        if (id) {
-          const target = document.body?.dataset?.eventPage || 'eventPageStu.html';
-          clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; });
-          clone.style.cursor = 'pointer';
-        }
-        sr.appendChild(clone);
-      });
-
-      document.getElementById('search-results-section').classList.remove('is-hidden');
-      document.getElementById('clear-search').style.display = '';
+      // show results and collapse main
+      const main = document.querySelector('.main-content'); if (main) main.classList.add('collapsed');
+      if (srSection) {
+        srSection.classList.remove('is-hidden');
+        srSection.classList.add('show');
+        try { srSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+      }
+      if (noResults) noResults.style.display = matches.length === 0 ? '' : 'none';
+      const countEl = document.getElementById('search-count'); if (countEl) countEl.textContent = `(${matches.length})`;
+      const qText = document.getElementById('search-query-text'); if (qText) qText.textContent = queryRaw;
+      const clearBtn = document.getElementById('clear-search'); if (clearBtn) clearBtn.style.display = '';
     };
     document.getElementById('clear-search').addEventListener('click', clearSearchView);
 
@@ -280,62 +294,107 @@
     });
 
     function filterVisibleByDate(from, to) {
-      // hide or show cards based on [data-start]
+      // When any filter is active (from/to/university/category) collapse the main content
+      // and show a single results container. Otherwise restore full dashboard view.
       const lists = document.querySelectorAll('.events');
       const selectedUni = document.getElementById('filterUniversity')?.value || '';
       const selectedCategories = Array.from(document.querySelectorAll('input[name="filterCategory"]:checked')).map(n => n.value.toLowerCase());
 
-      // helper: determines whether a card matches the selected university
+      const isFilteringActive = Boolean(from || to || selectedUni || selectedCategories.length > 0);
+      const srSection = document.getElementById('search-results-section');
+      const sr = document.getElementById('search-results');
+      const noResults = document.getElementById('no-results');
+
       function isUniversityEvent(card, selected) {
-        if (!selected) return true; // no filtering
-        // prefer explicit data attribute if present (data-open-to="Concordia,McGill")
-        const openAttr = card.getAttribute('data-open-to') || card.dataset.openTo;
-        if (openAttr) {
-          const arr = String(openAttr).split(/[,;]+/).map(s => s.trim().toLowerCase()).filter(Boolean);
-          if (arr.includes(selected.toLowerCase())) return true;
+        if (!selected) return true;
+        const selectedNorm = String(selected).toLowerCase().replace(/[^a-z0-9]+/g, '');
+        let openAttr = card.getAttribute('data-open-to') || card.dataset.openTo || '';
+        if (!openAttr) openAttr = (card.querySelector('.event-open-to')?.textContent || '').trim();
+        if (openAttr && openAttr.trim() !== '') {
+          const arr = String(openAttr).split(/[,;]+/).map(s => s.trim()).filter(Boolean);
+          const norm = arr.map(a => a.toLowerCase().replace(/[^a-z0-9]+/g, ''));
+          if (norm.includes(selectedNorm)) return true;
+          if (norm.some(n => n.includes(selectedNorm) || selectedNorm.includes(n))) return true;
+          return false;
         }
-        // check event-location or title text for university keyword
-        const loc = (card.querySelector('.event-location')?.textContent || '').toLowerCase();
-        const title = (card.querySelector('.event-title')?.textContent || '').toLowerCase();
-        if (loc.includes(selected.toLowerCase()) || title.includes(selected.toLowerCase())) return true;
-        // fallback: generic university keyword match
-        const keywords = ['university', 'campus', 'school'];
-        return keywords.some(k => loc.includes(k) || title.includes(k));
+        return true;
       }
+
+      function isCategoryMatch(card, selectedCats) {
+        if (!selectedCats || selectedCats.length === 0) return true;
+        const cat = (card.getAttribute('data-category') || card.dataset.category || '').toLowerCase().trim();
+        if (cat) return selectedCats.includes(cat);
+        const title = (card.querySelector('.event-title')?.textContent || '').toLowerCase();
+        const loc = (card.querySelector('.event-location')?.textContent || '').toLowerCase();
+        return selectedCats.some(sc => title.includes(sc) || loc.includes(sc));
+      }
+
+      function isDateMatch(card, fromDate, toDate) {
+        let ts = card.getAttribute('data-start');
+        if (!ts) { const parsed = parseEventStart(card); if (parsed) { ts = String(parsed); card.setAttribute('data-start', ts); } }
+        const n = ts ? Number(ts) : NaN;
+        if (fromDate && !(n >= +fromDate)) return false;
+        if (toDate && !(n <= +toDate)) return false;
+        return true;
+      }
+
+      if (!isFilteringActive) {
+        // restore normal view
+        const main = document.querySelector('.main-content'); if (main) main.classList.remove('collapsed');
+        lists.forEach(list => { list.querySelectorAll('.event-card').forEach(card => card.style.display = ''); list.dispatchEvent(new Event('scroll')); });
+        if (sr) while (sr.firstChild) sr.removeChild(sr.firstChild);
+        if (srSection) { srSection.classList.remove('show'); setTimeout(() => srSection.classList.add('is-hidden'), 380); }
+        if (noResults) noResults.style.display = 'none';
+        const qText = document.getElementById('search-query-text'); if (qText) qText.textContent = '';
+        const countEl = document.getElementById('search-count'); if (countEl) countEl.textContent = '';
+        return;
+      }
+
+      // collect matches
+      const matches = []; const seen = new Set();
       lists.forEach(list => {
         list.querySelectorAll('.event-card').forEach(card => {
-          let ts = card.getAttribute('data-start');
-          if (!ts) { const parsed = parseEventStart(card); if (parsed) { ts = String(parsed); card.setAttribute('data-start', ts); } }
-          const n = ts ? Number(ts) : NaN;
-
-          let visible = true;
-          if (from && !(n >= +from)) visible = false;
-          if (to && !(n <= +to)) visible = false;
-          if (selectedUni && !isUniversityEvent(card, selectedUni)) visible = false;
-          // category filtering: if any category is selected, the card must match one
-          if (selectedCategories.length > 0) {
-            const cat = (card.getAttribute('data-category') || card.dataset.category || '').toLowerCase().trim();
-            const matches = cat ? selectedCategories.includes(cat) : selectedCategories.some(sc => {
-              // fallback: check visible text for the category word
-              const title = (card.querySelector('.event-title')?.textContent || '').toLowerCase();
-              const loc = (card.querySelector('.event-location')?.textContent || '').toLowerCase();
-              return title.includes(sc) || loc.includes(sc);
-            });
-            if (!matches) visible = false;
-          }
-
-          card.style.display = visible ? "" : "none";
+          if (!isDateMatch(card, from, to)) return;
+          if (!isUniversityEvent(card, selectedUni)) return;
+          if (!isCategoryMatch(card, selectedCategories)) return;
+          const id = card.getAttribute('data-event-id') || '';
+          if (!seen.has(id)) { seen.add(id); matches.push(card); }
         });
-        // force chevron visibility recompute (scroll-controls listens to resize/scroll)
-        list.dispatchEvent(new Event('scroll'));
       });
 
-      // If Search Results are open, re-run search so it respects the date range
-      const srOpen = !document.getElementById('search-results-section')?.classList.contains('is-hidden');
-      if (srOpen) window.handleSearch();
+      // populate results container (always visible when filtering)
+      if (sr) {
+        while (sr.firstChild) sr.removeChild(sr.firstChild);
+        matches.forEach(card => {
+          const clone = card.cloneNode(true);
+          clone.style.display = 'block';
+          const id = clone.getAttribute('data-event-id') || card.getAttribute('data-event-id');
+          if (id) { const target = document.body?.dataset?.eventPage || 'eventPageStu.html'; clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; }); clone.style.cursor = 'pointer'; }
+          sr.appendChild(clone);
+        });
+      }
+
+      // show the results panel and collapse the main content
+      const main = document.querySelector('.main-content'); if (main) main.classList.add('collapsed');
+  if (srSection) { srSection.classList.remove('is-hidden'); srSection.classList.add('show'); try { srSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} }
+
+      // update header count and query text to describe filters
+      const countEl = document.getElementById('search-count'); if (countEl) countEl.textContent = `(${matches.length})`;
+      const parts = [];
+      if (selectedUni) parts.push(selectedUni);
+      if (selectedCategories.length) parts.push(selectedCategories.join(', '));
+      if (from || to) { const fromStr = from ? new Date(+from).toLocaleDateString() : ''; const toStr = to ? new Date(+to).toLocaleDateString() : ''; parts.push(`${fromStr}${from && to ? ' – ' : ''}${toStr}`.trim()); }
+      const qText = document.getElementById('search-query-text'); if (qText) qText.textContent = parts.join(' | ') || 'filters applied';
+
+      if (noResults) noResults.style.display = matches.length === 0 ? '' : 'none';
+
+      // recompute chevrons
+      lists.forEach(list => list.dispatchEvent(new Event('scroll')));
     }
   </script>
 
+  <!-- Your existing scripts -->
+  <script type="module" src="../../Shared/firebase-config.js"></script>
   <script type="module" src="../../js/Registration/auth.js"></script>
   <script type="module" src="../../js/Events/LoadEvents.js"></script>
   <script type="module" src="../../js/Shared/scroll-controls.js"></script>
