@@ -5,33 +5,37 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
-  <title>Organizer Home Page</title>
+  <title>Administrator Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../css/Shared/dashboard.css">
   <link rel="stylesheet" href="../../css/Shared/toolbar.css">
 </head>
 
-<body class="organizer-page">
+<body class="admin-page" data-event-page="eventPageAdmin.html">
 
-  <!-- Toolbar -->
+  <!-- Toolbar (reuse shared styles) -->
   <div class="toolbar">
-    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
-      onclick="location.href='organizer-dashboard.html'">
+  <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+       onclick="location.href='admin-dashboard.html'">
 
-    <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
-    <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
-    <button class="toolbar-btn" onclick="location.href='myEvents.html'">My Events</button>
-    <div class="toolbar-spacer"></div>
-    <button class="toolbar-btn" onclick="location.href='settings.html'">Settings</button>
-    <button class="toolbar-btn" onclick="location.href='profile.html'">Profile</button>
-    <div id="authBtnContainer">
-      <button id="logout-btn" class="auth-btn">Log Out</button>
-    </div>
+  <!-- LEFT buttons -->
+  <div class="toolbar-left">
+    <button class="toolbar-btn" onclick="location.href='admin-dashboard.html'">Home</button>
+
   </div>
 
+  <!-- SPACER pushes right buttons to end -->
+  <div class="toolbar-spacer"></div>
+
+  <!-- RIGHT buttons -->
+  <div class="toolbar-right">
+    <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
+    <button id="logout-btn" class="auth-btn">Log Out</button>
+  </div>
+</div>
   <header>
-    <h1>Organizer Home Page</h1>
-    <p>Welcome! Here are your upcoming events.</p>
+    <h1>Explore Events</h1>
+    <p>Discover events on campus and RSVP quickly.</p>
   </header>
 
   <!-- Search -->
@@ -45,46 +49,40 @@
   <!-- Dynamic event sections -->
   <div class="main-content">
     <div>
-      <div class="section-bar">Your Upcoming Events</div>
+      <!--upcoming events for the user's school'scampus-->
+      <div class="section-bar">Upcoming On Campus</div>
       <div class="events-container">
         <div class="events" id="upcoming-events"></div>
       </div>
     </div>
+
     <div>
-      <div class="section-bar">New Events</div>
-      <div class="events-container">
-        <div class="events" id="new-events"></div>
-      </div>
-    </div>
-    <div>
-      <div class="section-bar">Recommended Events</div>
-      <div class="events-container">
-        <div class="events" id="recommended-events"></div>
-      </div>
-    </div>
-    <div>
-      <div class="section-bar">Discover Events</div>
+      <div class="section-bar">Discover</div>
       <div class="events-container">
         <div class="events" id="discover-events"></div>
       </div>
     </div>
-  </div>
-
-  <div id="search-results-section" style="display:none">
-    <div class="section-bar">Search Results</div>
-    <div class="events-container">
-      <div class="events" id="search-results"></div>
+    <!-- Search logic: consolidated search results (hidden by default) -->
+    <div id="search-results-section" style="display:none">
+      <div class="section-bar">Search Results</div>
+      <div class="events-container">
+        <div class="events" id="search-results"></div>
+      </div>
     </div>
-  </div>
   </div>
 
   <script type="module">
+    import { auth } from "../../js/Shared/firebase-config.js";
+    import { getIdTokenResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+  
     function clearSearchView() {
       document.getElementById('search-results-section').style.display = 'none';
       document.getElementById('clear-search').style.display = 'none';
+      // show original sections
       document.querySelectorAll('.main-content > div').forEach(section => {
         if (section.id !== 'search-results-section') section.style.display = '';
       });
+      // remove cloned cards
       const sr = document.getElementById('search-results'); while (sr && sr.firstChild) sr.removeChild(sr.firstChild);
     }
 
@@ -92,6 +90,7 @@
       const query = document.querySelector('.search-input').value.toLowerCase().trim();
       if (!query) { clearSearchView(); return; }
 
+      // collect matches from all event lists, deduplicating by data-event-id
       const matches = [];
       const seen = new Set();
       document.querySelectorAll('.events').forEach(list => {
@@ -106,17 +105,20 @@
         });
       });
 
+      // hide original sections
       document.querySelectorAll('.main-content > div').forEach(section => {
         if (section.id !== 'search-results-section') section.style.display = 'none';
       });
 
+      // populate search results container with clones
       const sr = document.getElementById('search-results'); while (sr && sr.firstChild) sr.removeChild(sr.firstChild);
       matches.forEach(card => {
         const clone = card.cloneNode(true);
         clone.style.display = 'block';
         const id = clone.getAttribute('data-event-id') || card.getAttribute('data-event-id');
         if (id) {
-          clone.addEventListener('click', () => { window.location.href = `eventPage.html?id=${id}`; });
+          const target = document.body?.dataset?.eventPage || 'eventPageAdmin.html';
+          clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; });
           clone.style.cursor = 'pointer';
         }
         sr.appendChild(clone);
@@ -127,12 +129,28 @@
     };
 
     document.getElementById('clear-search').addEventListener('click', clearSearchView);
+    
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = "../Registration/SignIn.html";
+    return;
+  }
+
+  const tokenResult = await getIdTokenResult(user);
+  if (!tokenResult.claims.admin) {
+    alert("Unauthorized access — only admins allowed.");
+    await signOut(auth);
+    window.location.href = "../Registration/SignIn.html";
+  } else {
+    console.log("✅ Admin verified — access granted.");
+  }
+  });
   </script>
 
-  <!-- Firebase + Auth + Events -->
+
   <script type="module" src="../../js/Registration/auth.js"></script>
   <script type="module" src="../../js/Events/LoadEvents.js"></script>
-  <script type="module" src="../../js/Shared/scroll-controls.js"></script>
+  <script type="module" src="../../shared/scroll-controls.js"></script>
 
 </body>
 

@@ -94,6 +94,39 @@ select:focus {
     margin-bottom: 1.5rem;
 }
 
+/* Chart card: filled panel with subtle border and shadow to group controls + chart */
+.chart-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 10px 30px rgba(2, 6, 23, 0.08);
+    border: 1px solid rgba(2, 6, 23, 0.04);
+    max-width: 900px;
+    box-sizing: border-box;
+}
+.chart-card .chart-card-toolbar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.chart-card .chart-card-body {
+    min-height: 220px;
+}
+.chart-card--tall .chart-card-body { height: 400px; }
+.chart-card--medium .chart-card-body { height: 320px; }
+.chart-card--small .chart-card-body { height: 260px; }
+.chart-card canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #ffffff, #fbfcff);
+    padding: 6px;
+    box-sizing: border-box;
+}
+
 .filter-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -176,7 +209,8 @@ button:hover {
 
 .events-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    /* single-column layout: one event per row */
+    grid-template-columns: 1fr;
     gap: 16px;
     margin-top: 12px;
 }
@@ -190,6 +224,11 @@ button:hover {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    /* keep stats anchored to the bottom and avoid overlap when content is long */
+    justify-content: space-between;
+    min-height: 200px; /* ensure reasonable card height */
+    /* ensure overflowing content is clipped inside the card boundary */
+    overflow: hidden;
 }
 
 .event-thumb {
@@ -206,6 +245,44 @@ button:hover {
     margin: 0;
 }
 
+.event-title {
+    /* prevent overflow and wrap long titles */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.event-meta {
+    color: #3b82f6;
+    font-size: 0.9rem;
+    /* allow wrapping so long meta lines don't push into other elements */
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.event-summary {
+    color: #475569;
+    font-size: 0.9rem;
+    line-height: 1.2;
+    max-height: 4.2em; /* ~3-4 lines depending on font-size */
+    overflow: hidden;
+    word-break: break-word; /* ensure long words/wide strings wrap */
+}
+
+.show-more-btn {
+    background: transparent;
+    border: none;
+    color: #2563eb;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 4px 6px;
+    border-radius: 6px;
+}
+.show-more-btn:hover { text-decoration: underline; }
+
 .event-meta {
     color: #3b82f6;
     font-size: 0.9rem;
@@ -220,6 +297,11 @@ button:hover {
     display: flex;
     gap: 8px;
     margin-top: auto;
+    align-items: center;
+    /* allow stat boxes to wrap to a new line on narrow cards instead of overflowing */
+    flex-wrap: wrap;
+    justify-content: center; /* center the stat boxes horizontally */
+    width: 100%;
 }
 
 .stat-box {
@@ -228,6 +310,12 @@ button:hover {
     border-radius: 8px;
     text-align: center;
     border: 1px solid #e6eefc;
+    /* keep stat content from overflowing the rounded box */
+    box-sizing: border-box;
+    min-width: 64px;
+    flex: 0 0 auto;
+    overflow: hidden;
+    word-break: break-word;
 }
 
 .stat-value {
@@ -240,6 +328,7 @@ button:hover {
     font-size: 0.75rem;
     color: #64748b;
     text-transform: uppercase;
+    white-space: normal;
 }
 
 h1 {
@@ -251,65 +340,6 @@ h1 {
 p {
     color: #234a77;
     margin: 0;
-}
-
-/* Toolbar */
-.toolbar {
-    width: 100%;
-    background: rgba(0, 51, 102, 0.95);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    padding: 0 2vw;
-    height: clamp(60px, 8vh, 72px);
-    box-sizing: border-box;
-    box-shadow: 0 0.3vh 1vh rgba(0, 0, 0, 0.12);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    font-weight: 600;
-}
-
-.toolbar-logo {
-    height: clamp(40px, 6vh, 48px);
-    margin-right: clamp(20px, 3vw, 36px);
-    cursor: pointer;
-    filter: drop-shadow(0 0.2vh 0.3vh rgba(0, 0, 0, 0.18));
-    transition: transform 0.2s;
-}
-
-.toolbar-logo:hover {
-    transform: scale(1.08) rotate(-2deg);
-}
-
-.toolbar-btn {
-    background: rgba(255, 255, 255, 0.08);
-    border: none;
-    color: #fff;
-    font-size: clamp(0.9rem, 2.5vw, 1.08rem);
-    margin-right: clamp(16px, 2.5vw, 24px);
-    cursor: pointer;
-    padding: clamp(8px, 1.5vh, 10px) clamp(16px, 3vw, 22px);
-    border-radius: 0.4vw;
-    font-family: 'Montserrat', Arial, sans-serif;
-    font-weight: 650;
-    letter-spacing: 0.5px;
-    transition: background 0.2s, box-shadow 0.2s;
-    box-shadow: 0 0.2vh 0.6vh rgba(0, 0, 0, 0.04);
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}
-
-.toolbar-btn:hover {
-    background: #367bfc;
-    box-shadow: 0 4px 12px rgba(54, 123, 252, 0.18);
-}
-
-.toolbar-spacer {
-    flex: 1;
 }
 
 .auth-btn {

@@ -1,6 +1,6 @@
 import { collection, doc, getDocs, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { auth, db, app } from "../../Shared/firebase-config.js";
+import { auth, db, app } from "../../js/Shared/firebase-config.js";
 
 let DEBUG = true;
 // For testing purposes, please dont remove it this time
