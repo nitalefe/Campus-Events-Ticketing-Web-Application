@@ -82,3 +82,5 @@ node_modules/
 # Private api keys
 firebaseConfig.js
 firebase-config.js
+setAdmin.js
+serviceAccountKey.json
