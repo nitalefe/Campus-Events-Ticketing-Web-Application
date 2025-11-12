@@ -5,29 +5,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
-  <title>Student Dashboard</title>
+  <title>Administrator Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../css/Shared/dashboard.css">
   <link rel="stylesheet" href="../../css/Shared/toolbar.css">
 </head>
 
-<body class="student-page" data-event-page="eventPageStu.html">
+<body class="admin-page" data-event-page="eventPageAdmin.html">
 
   <!-- Toolbar (reuse shared styles) -->
   <div class="toolbar">
-    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
-      onclick="location.href='../Student/student-dashboard.html'">
+  <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+       onclick="location.href='admin-dashboard.html'">
 
-    <button class="toolbar-btn" onclick="location.href='../Student/student-dashboard.html'">Home</button>
-    <button class="toolbar-btn" onclick="location.href='../Student/myTickets.html'">My Tickets</button>
-    <div class="toolbar-spacer"></div>
-    <!--to be added with 4th feature-->
-    <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
-    <div id="authBtnContainer">
-      <button id="logout-btn" class="auth-btn">Log Out</button>
-    </div>
+  <!-- LEFT buttons -->
+  <div class="toolbar-left">
+    <button class="toolbar-btn" onclick="location.href='admin-dashboard.html'">Home</button>
+
   </div>
 
+  <!-- SPACER pushes right buttons to end -->
+  <div class="toolbar-spacer"></div>
+
+  <!-- RIGHT buttons -->
+  <div class="toolbar-right">
+    <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
+    <button id="logout-btn" class="auth-btn">Log Out</button>
+  </div>
+</div>
   <header>
     <h1>Explore Events</h1>
     <p>Discover events on campus and RSVP quickly.</p>
@@ -43,22 +48,6 @@
 
   <!-- Dynamic event sections -->
   <div class="main-content">
-    <div>
-      <!--Events for which tickets are already bought-->
-      <div class="section-bar">My Events</div>
-      <div class="events-container">
-        <div class="events" id="myEventsSection"></div>
-      </div>
-    </div>
-
-    <div>
-      <!--events saved by user-->
-      <div class="section-bar">Saved Events</div>
-      <div class="events-container">
-        <div class="events" id="saved-events"></div>
-      </div>
-    </div>
-
     <div>
       <!--upcoming events for the user's school'scampus-->
       <div class="section-bar">Upcoming On Campus</div>
@@ -83,6 +72,9 @@
   </div>
 
   <script type="module">
+    import { auth } from "../../js/Shared/firebase-config.js";
+    import { getIdTokenResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+  
     function clearSearchView() {
       document.getElementById('search-results-section').style.display = 'none';
       document.getElementById('clear-search').style.display = 'none';
@@ -125,7 +117,7 @@
         clone.style.display = 'block';
         const id = clone.getAttribute('data-event-id') || card.getAttribute('data-event-id');
         if (id) {
-          const target = document.body?.dataset?.eventPage || 'eventPageStu.html';
+          const target = document.body?.dataset?.eventPage || 'eventPageAdmin.html';
           clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; });
           clone.style.cursor = 'pointer';
         }
@@ -137,11 +129,28 @@
     };
 
     document.getElementById('clear-search').addEventListener('click', clearSearchView);
+    
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = "../Registration/SignIn.html";
+    return;
+  }
+
+  const tokenResult = await getIdTokenResult(user);
+  if (!tokenResult.claims.admin) {
+    alert("Unauthorized access — only admins allowed.");
+    await signOut(auth);
+    window.location.href = "../Registration/SignIn.html";
+  } else {
+    console.log("✅ Admin verified — access granted.");
+  }
+  });
   </script>
+
 
   <script type="module" src="../../js/Registration/auth.js"></script>
   <script type="module" src="../../js/Events/LoadEvents.js"></script>
-  <script type="module" src="../../js/Shared/scroll-controls.js"></script>
+  <script type="module" src="../../shared/scroll-controls.js"></script>
 
 </body>
 

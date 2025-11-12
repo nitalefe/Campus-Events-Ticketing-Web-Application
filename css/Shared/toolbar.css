@@ -1,5 +1,13 @@
+/* ensure no browser default margins push the toolbar down */
+html, body {
+	margin: 0;
+	padding: 0;
+}
+
 .toolbar {
-	width: 100%;
+	width: 100vw; /* span full viewport width */
+	left: 0;
+	right: 0;
 	background: rgba(0, 51, 102, 0.95);
 	color: #fff;
 	display: flex;
@@ -46,10 +54,10 @@
 	text-align: center;
 }
 
-.toolbar-btn:hover {
+/* .toolbar-btn:hover {
 	background: #367bfc;
 	box-shadow: 0 0.3vh 0.9vh rgba(54, 123, 252, 0.18);
-}
+} */
 
 .toolbar-spacer {
 	flex: 1;
@@ -72,4 +80,37 @@
 .auth-btn:hover {
 	background: linear-gradient(90deg, #a3c8f7 60%, #367bfc 100%);
 	box-shadow: 0 0.3vh 0.9vh rgba(54, 123, 252, 0.22);
+}
+
+.toolbar-left {
+    display: flex;
+    align-items: center;
+}
+
+.toolbar-right {
+    display: flex;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .toolbar {
+        padding: 0 1vw;
+        height: clamp(50px, 6vh, 60px);
+    }
+
+    .toolbar-logo {
+        height: clamp(32px, 5vh, 40px);
+        margin-right: clamp(12px, 2vw, 20px);
+    }
+
+    .toolbar-btn {
+        font-size: clamp(0.8rem, 2vw, 0.9rem);
+        padding: clamp(6px, 1vh, 8px) clamp(12px, 2.5vw, 16px);
+        margin-right: clamp(8px, 1.5vw, 16px);
+    }
+
+    .auth-btn {
+        font-size: clamp(0.8rem, 2vw, 0.9rem);
+        padding: clamp(6px, 1vh, 8px) clamp(12px, 2.5vw, 16px);
+    }
 }

@@ -1,27 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <title>QR Ticket Scanner</title>
   <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../../css/Organizer/qrScanner.css" />
-  <!-- Camera scanner library -->
-  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-</head>
+  <style>
+    body{font-family:"Montserrat",Arial,sans-serif;background:linear-gradient(135deg,#4169E1,#0000CD);
+      background-image:radial-gradient(circle farthest-corner at 10% 20%,rgba(54,123,252,1) 16.3%,rgba(0,41,118,1) 100.2%);
+      margin:0;padding:2rem;min-height:100vh;padding-top:calc(2rem + 72px)}
+    .container{max-width:1200px;margin:0 auto;background:#fff;padding:2.5rem;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.15)}
+    select,button{padding:.75rem;border:1px solid #e2e8f0;border-radius:6px;font-family:"Montserrat",Arial,sans-serif;color:#2d3748;background:#fff;font-size:14px}
+    select:focus,button:focus{outline:none;border-color:#4169E1;box-shadow:0 0 0 3px rgba(66,153,225,.15)}
+    .scanner-section{margin-bottom:2rem;padding:1.5rem;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+    .scanner-section h3{margin-top:0;color:#2c3e50;font-size:1.25rem;margin-bottom:1.5rem}
+    .control-group{display:flex;gap:1rem;margin-bottom:1rem;align-items:center;flex-wrap:wrap}
+    .control-group label{min-width:120px;color:#4a5568;font-weight:500}
+    select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234a5568' viewBox='0 0 16 16'%3E%3Cpath d='M8 10.5l4-4H4l4 4z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;min-width:200px}
+    .status{padding:.75rem;border-radius:6px;margin:.75rem 0;font-weight:500}
+    .status.ok{background:#e6fffa;color:#047857;border:1px solid #99f6e4}
+    .status.err{background:#fee2e2;color:#b91c1c;border:1px solid #fecaca}
+    .status:not(.ok):not(.err){background:#e0f2fe;color:#0369a1;border:1px solid #bae6fd}
+    button{background:#4169E1;color:#fff;border:none;padding:.875rem 1.75rem;border-radius:6px;cursor:pointer;font-weight:600;transition:background-color .2s;box-shadow:0 2px 4px rgba(0,0,0,.1);margin-right:.5rem}
+    button:hover{background:#1E40AF}
+    #stopBtn{background:#dc2626}#stopBtn:hover{background:#b91c1c}
+    #reader{width:340px;max-width:100%;margin:1rem auto;border:2px solid #e2e8f0;border-radius:8px;overflow:hidden}
+    h1{color:#1a365d;margin-bottom:1.5rem;font-size:2rem;text-align:center}
+    p{color:#4a5568;margin-bottom:1rem}
+    .toolbar{width:100%;background:rgba(0,51,102,.95);color:#fff;display:flex;align-items:center;padding:0 32px;height:72px;box-sizing:border-box;box-shadow:0 4px 16px rgba(0,0,0,.12);position:fixed;top:0;left:0;right:0;z-index:100}
+    .toolbar-logo{height:48px;margin-right:36px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.18));transition:transform .2s}
+    .toolbar-logo:hover{transform:scale(1.08) rotate(-2deg)}
+    .toolbar-btn{background:rgba(255,255,255,.08);border:none;color:#fff;font-size:1.08em;margin-right:24px;cursor:pointer;padding:10px 22px;border-radius:6px;font-family:'Montserrat',Arial,sans-serif;font-weight:500;letter-spacing:.5px;transition:background .2s,box-shadow .2s;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+    .toolbar-btn:hover{background:#367bfc;box-shadow:0 4px 12px rgba(54,123,252,.18)}
+    .toolbar-spacer{flex:1}
+  </style>
 
+  <!-- Must load the QR library first -->
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script type="module" src="../../js/QRCode/scanner.js"></script>
+</head>
 <body>
   <div class="toolbar">
-    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
-      onclick="location.href='organizer-dashboard.html'">
-
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='organizer-dashboard.html'">
     <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
     <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
     <div class="toolbar-spacer"></div>
     <button class="toolbar-btn" onclick="location.href='settings.html'">Settings</button>
-    <div id="authBtnContainer"></div>
+    <div id="authBtnContainer">
+      <button id="logout-btn" class="auth-btn">Log Out</button>
+    </div>
   </div>
 
   <div class="container">
@@ -38,114 +66,8 @@
       </div>
 
       <div id="reader"></div>
-      <div id="scanStatus" class="status"></div>
-    </div>
-
-    <div class="scanner-section">
-      <h3>Manual Entry</h3>
-      <p>Paste <strong>encrypted</strong> QR text to simulate a scan:</p>
-      <textarea id="manualEncrypted" rows="3" placeholder="Paste encrypted QR code text here..."></textarea>
-      <button id="simulateBtn">Simulate Scan</button>
-      <div id="manualStatus" class="status"></div>
+      <div id="scanStatus" class="status">Camera stopped.</div>
     </div>
   </div>
-
-  <script type="module">
-    // ---- Fixed encryption increment (UI removed) ----
-    const FIXED_INCREMENT = 7;
-
-    function decryptString(encryptedText, increment = FIXED_INCREMENT) {
-      let out = "";
-      for (let i = 0; i < encryptedText.length; i++) {
-        out += String.fromCharCode(encryptedText.charCodeAt(i) - increment);
-      }
-      return out;
-    }
-    function parseEventAndAttendee(decryptedText) {
-      const parts = (decryptedText || "").split("/");
-      if (parts.length !== 2 || !parts[0] || !parts[1]) {
-        return { ok: false, message: "Invalid QR format. Expected eventID/attendeeID." };
-      }
-      return { ok: true, eventId: parts[0], attendeeId: parts[1] };
-    }
-
-    // -------- Mock validator (replace with Firestore later) ----------
-    const MOCK = { "myEvent123": new Set(["alice001", "bob002", "carol003"]) };
-    const USED_KEY = "ticket_used_set_v1";
-    const loadUsed = () => new Set(JSON.parse(localStorage.getItem(USED_KEY) || "[]"));
-    const saveUsed = s => localStorage.setItem(USED_KEY, JSON.stringify([...s]));
-    async function validateMock(eventId, attendeeId) {
-      if (!MOCK[eventId]) return { ok: false, message: "❌ Event not found (mock)." };
-      if (!MOCK[eventId].has(attendeeId)) return { ok: false, message: "❌ Not registered (mock)." };
-      const used = loadUsed(), key = `${eventId}/${attendeeId}`;
-      if (used.has(key)) return { ok: false, message: "❌ Ticket already used (mock)." };
-      used.add(key); saveUsed(used);
-      return { ok: true, message: "✅ Ticket validated (mock). Entry granted." };
-    }
-
-    // -------- Camera setup & scanning ----------
-    const statusEl = document.getElementById("scanStatus");
-    const setStatus = (msg, ok = null) => {
-      statusEl.textContent = msg;
-      statusEl.className = "status" + (ok === null ? "" : ok ? " ok" : " err");
-    };
-
-    const cameraSel = document.getElementById("cameraSel");
-    const startBtn = document.getElementById("startBtn");
-    const stopBtn = document.getElementById("stopBtn");
-    const scanner = new Html5Qrcode("reader");
-
-    // Populate cameras
-    Html5Qrcode.getCameras().then(devices => {
-      cameraSel.innerHTML = "";
-      devices.forEach((d, idx) => {
-        const opt = document.createElement("option");
-        opt.value = d.id; opt.textContent = d.label || `Camera ${idx + 1}`;
-        cameraSel.appendChild(opt);
-      });
-      if (devices.length === 0) setStatus("No cameras found.", false);
-    }).catch(() => setStatus("Could not list cameras. Check permissions.", false));
-
-    async function onDecoded(encryptedText) {
-      const decrypted = decryptString(encryptedText, FIXED_INCREMENT);
-      const parsed = parseEventAndAttendee(decrypted);
-      if (!parsed.ok) return setStatus(parsed.message, false);
-
-      const result = await validateMock(parsed.eventId, parsed.attendeeId); // swap for Firestore
-      setStatus(result.message, result.ok);
-    }
-
-    startBtn.addEventListener("click", async () => {
-      try {
-        await scanner.start(
-          cameraSel.value || { facingMode: "environment" },
-          { fps: 10, qrbox: { width: 260, height: 260 } },
-          onDecoded,
-          () => { }
-        );
-        setStatus("Camera started. Aim at QR code…");
-      } catch (e) {
-        setStatus("Failed to start camera. Allow permission & use https/localhost.", false);
-        console.error(e);
-      }
-    });
-
-    stopBtn.addEventListener("click", async () => {
-      try { await scanner.stop(); setStatus("Camera stopped."); }
-      catch (e) { console.error(e); }
-    });
-
-    // Manual simulate
-    document.getElementById("simulateBtn").addEventListener("click", async () => {
-      const encryptedText = (document.getElementById("manualEncrypted").value || "").trim();
-      const decrypted = decryptString(encryptedText, FIXED_INCREMENT);
-      const parsed = parseEventAndAttendee(decrypted);
-      const out = document.getElementById("manualStatus");
-      if (!parsed.ok) { out.textContent = parsed.message; out.className = "status err"; return; }
-      const result = await validateMock(parsed.eventId, parsed.attendeeId);
-      out.textContent = result.message; out.className = "status " + (result.ok ? "ok" : "err");
-    });
-  </script>
 </body>
-
 </html>
