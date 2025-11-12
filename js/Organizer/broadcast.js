@@ -1,6 +1,6 @@
 import { auth, db } from "../../js/Shared/firebase-config.js";
 import { onAuthStateChanged, signOut, getIdTokenResult } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { collection, addDoc, serverTimestamp, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { collection, addDoc, serverTimestamp, query, where, orderBy, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 const accessNote = document.getElementById("accessNote");
 const form = document.getElementById("broadcastForm");
@@ -14,6 +14,7 @@ let currentUser = null;
 
 const prevLoading = document.getElementById("prevLoading");
 const prevContainer = document.getElementById("prevBroadcasts");
+const eventSelect = document.getElementById("eventSelect");
 
 function renderPrevBroadcast(doc) {
   const data = doc.data();
@@ -37,6 +38,26 @@ function renderPrevBroadcast(doc) {
   msgEl.className = "message-text";
   msgEl.textContent = data.message || "";
   wrapper.appendChild(msgEl);
+
+  // If this broadcast is tied to an event, show a small badge with the event name
+  if (data.eventId) {
+    (async () => {
+      try {
+        const evRef = doc(db, "events", data.eventId);
+        const evSnap = await getDoc(evRef);
+        if (evSnap.exists()) {
+          const ev = evSnap.data();
+          const evBadge = document.createElement("div");
+          evBadge.className = "meta";
+          evBadge.style.marginTop = "6px";
+          evBadge.textContent = `Event: ${ev.eventName || data.eventId}`;
+          wrapper.insertBefore(evBadge, msgEl);
+        }
+      } catch (e) {
+        console.warn("Could not load event name for broadcast", e);
+      }
+    })();
+  }
 
   // prepend so newest on top when inserting sequentially
   prevContainer.appendChild(wrapper);
@@ -72,6 +93,27 @@ async function loadPreviousBroadcasts(uid) {
   } catch (e) {
     console.error("Failed to load previous broadcasts:", e);
     if (prevLoading) prevLoading.textContent = "Could not load broadcasts.";
+  }
+}
+
+// Load events created by this organizer and populate eventSelect
+async function loadOrganizerEvents(uid) {
+  if (!eventSelect) return;
+  eventSelect.innerHTML = "<option value=''>All events / No specific event</option>";
+  try {
+    const eventsRef = collection(db, "events");
+    const q = query(eventsRef, where("createdBy", "==", uid));
+    const snap = await getDocs(q);
+    snap.forEach(s => {
+      const data = s.data();
+      const opt = document.createElement("option");
+      opt.value = s.id;
+      const dt = data.eventDateTime?.toDate ? data.eventDateTime.toDate().toLocaleDateString() : "";
+      opt.textContent = `${data.eventName || "Untitled"}${dt ? ` — ${dt}` : ""}`;
+      eventSelect.appendChild(opt);
+    });
+  } catch (e) {
+    console.error("Error loading organizer events:", e);
   }
 }
 
@@ -144,7 +186,9 @@ onAuthStateChanged(auth, async (user) => {
       accessNote.textContent = `Signed in as ${userData.fullname || user.email} (${role}${isAdmin ? ", admin" : ""}). You can send broadcasts.`;
       form.style.display = "block";
       // load organizer's previous broadcasts
-      try { await loadPreviousBroadcasts(user.uid); } catch (e) { console.warn(e); }
+        try { await loadPreviousBroadcasts(user.uid); } catch (e) { console.warn(e); }
+        // load events created by this organizer into the event select
+        try { await loadOrganizerEvents(user.uid); } catch (e) { console.warn("Could not load organizer events", e); }
       return;
     }
 
@@ -200,14 +244,19 @@ sendBtn.addEventListener("click", async () => {
       }
     }
 
-    await addDoc(collection(db, "broadcasts"), {
+    // include eventId if organizer selected one
+    const eventId = (document.getElementById("eventSelect") || {}).value || null;
+    const payload = {
       title: title || null,
       message: text,
       targets: targets,
       senderUid: currentUser.uid,
       senderName: senderName,
       createdAt: serverTimestamp(),
-    });
+    };
+    if (eventId) payload.eventId = eventId;
+
+    await addDoc(collection(db, "broadcasts"), payload);
 
     messageInput.value = "";
     titleInput.value = "";
