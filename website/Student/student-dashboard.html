@@ -9,12 +9,157 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../css/Shared/dashboard.css" />
   <link rel="stylesheet" href="../../css/Shared/toolbar.css" />
-  <!-- moved filter styles to shared CSS (`css/Shared/dashboard.css`) -->
+  <style>
+    .search-container {
+      max-width: 800px;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+    }
+
+    .search-toggle {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      justify-content: center;
+    }
+
+    .toggle-btn {
+      padding: 0.75rem 1.5rem;
+      border: 2px solid #4a90e2;
+      background: white;
+      color: #4a90e2;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .toggle-btn.active {
+      background: #4a90e2;
+      color: white;
+    }
+
+    .toggle-btn:hover:not(.active) {
+      background: #e8f4ff;
+    }
+
+    .user-search-results-section {
+      max-width: 800px;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+      display: none;
+    }
+
+    .user-search-results-section.show {
+      display: block;
+    }
+
+    .user-result-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      transition: background 0.2s;
+      background: white;
+    }
+
+    .user-result-card:hover {
+      background: #f8f9fa;
+    }
+
+    .user-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .user-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.25rem;
+    }
+
+    .user-email {
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    .user-meta {
+      font-size: 0.85rem;
+      color: #888;
+      margin-top: 0.25rem;
+    }
+
+    .user-role-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      margin-right: 0.5rem;
+      color: white;
+    }
+
+    .role-student {
+      background: #28a745;
+    }
+
+    .role-organizer {
+      background: #667eea;
+    }
+
+    .role-admin {
+      background: #dc3545;
+    }
+
+    .user-results-header {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px 8px 0 0;
+      font-weight: 600;
+      color: #0b254a;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .user-results-container {
+      background: white;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .no-user-results {
+      text-align: center;
+      padding: 2rem;
+      color: #999;
+      background: white;
+      border-radius: 0 0 8px 8px;
+    }
+  </style>
 </head>
 
 <body class="student-page" data-event-page="eventPageStu.html">
 
-  <!-- Toolbar -->
   <!-- Toolbar -->
   <div class="toolbar">
     <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
@@ -22,12 +167,7 @@
     <button class="toolbar-btn" onclick="location.href='../Student/student-dashboard.html'">Home</button>
     <button class="toolbar-btn" onclick="location.href='../Student/myTickets.html'">My Tickets</button>
     <div class="toolbar-spacer"></div>
-<<<<<<< HEAD
-    <!--to be added with 4th feature-->
     <button class="toolbar-btn" onclick="location.href='../profile.html'">Profile</button>
-=======
-    <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
->>>>>>> origin/main
     <div id="authBtnContainer">
       <button id="logout-btn" class="auth-btn">Log Out</button>
     </div>
@@ -38,11 +178,32 @@
     <p>Discover events on campus and RSVP quickly.</p>
   </header>
 
-  <!-- Search -->
-  <div class="search-bar">
-    <input type="text" class="search-input" placeholder="Search events...">
-    <button class="search-btn" onclick="handleSearch()">Search</button>
-    <button id="clear-search" class="search-btn" style="display:none;margin-left:8px" onclick="clearSearchView()">Clear</button>
+  <!-- Unified Search Section -->
+  <div class="search-container">
+    <!-- Toggle Buttons -->
+    <div class="search-toggle">
+      <button class="toggle-btn active" id="toggle-events" onclick="switchSearchMode('events')">
+        🎫 Search Events
+      </button>
+      <button class="toggle-btn" id="toggle-users" onclick="switchSearchMode('users')">
+        👥 Search Users
+      </button>
+    </div>
+
+    <!-- Unified Search Bar -->
+    <div class="search-bar">
+      <input type="text" id="unified-search-input" class="search-input" placeholder="Search events...">
+      <button class="search-btn" onclick="executeUnifiedSearch()">Search</button>
+      <button id="clear-unified-search" class="search-btn" style="display:none;margin-left:8px" onclick="clearUnifiedSearch()">Clear</button>
+    </div>
+  </div>
+
+  <!-- User Search Results Section -->
+  <div id="user-search-results-section" class="user-search-results-section">
+    <div class="user-results-header">
+      User Search Results <span id="user-search-count"></span>
+    </div>
+    <div id="user-search-results" class="user-results-container"></div>
   </div>
 
   <!-- Date Filter -->
@@ -96,7 +257,6 @@
     </div>
   </div>
 
-  <!-- Dynamic sections -->
   <!-- Search results (sibling placed here so it occupies same visual area as main content) -->
   <div id="search-results-section" class="is-hidden search-results-section">
     <div class="search-header">Results <span id="search-count" class="search-count"></span> — <span id="search-query-text" class="search-query"></span></div>
@@ -132,25 +292,55 @@
       <div class="section-bar">Discover</div>
       <div class="events-container"><div class="events" id="discover-events"></div></div>
     </div>
+  </div>
 
-    </div>
-
-
-  <!-- Search + Date filter logic -->
+  <!-- Unified Search + User Search Logic -->
   <script type="module">
-    // ---- SEARCH (existing) ----
-    function clearSearchView() {
-      // clear the input and restore the dashboard view
-      const input = document.querySelector('.search-input'); if (input) input.value = '';
-      document.getElementById('clear-search').style.display = 'none';
-      // delegate to filterVisibleByDate to restore UI
-      filterVisibleByDate(null, null);
-    }
+    import { db } from '../../js/Shared/firebase-config.js';
+    import { collection, getDocs } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js';
 
-    window.handleSearch = function () {
-      const queryRaw = document.querySelector('.search-input')?.value || '';
-      const query = queryRaw.toLowerCase().trim();
-      if (!query) { clearSearchView(); return; }
+    // Track current search mode
+    let currentSearchMode = 'events'; // 'events' or 'users'
+
+    // Switch between Events and Users search mode
+    window.switchSearchMode = function(mode) {
+      currentSearchMode = mode;
+      
+      // Update toggle buttons
+      document.getElementById('toggle-events').classList.toggle('active', mode === 'events');
+      document.getElementById('toggle-users').classList.toggle('active', mode === 'users');
+      
+      // Update placeholder
+      const input = document.getElementById('unified-search-input');
+      input.placeholder = mode === 'events' 
+        ? 'Search events...' 
+        : 'Search users by name, email, or school...';
+      
+      // Clear previous results
+      clearUnifiedSearch();
+    };
+
+    // Execute search based on current mode
+    window.executeUnifiedSearch = function() {
+      const query = document.getElementById('unified-search-input').value.trim();
+      if (!query) {
+        clearUnifiedSearch();
+        return;
+      }
+
+      if (currentSearchMode === 'events') {
+        handleSearch(query);
+      } else {
+        handleUserSearch(query);
+      }
+
+      document.getElementById('clear-unified-search').style.display = 'inline-block';
+    };
+
+    // Event Search Logic (existing)
+    function handleSearch(queryRaw) {
+      const query = (queryRaw || '').toLowerCase().trim();
+      if (!query) { clearUnifiedSearch(); return; }
 
       const lists = document.querySelectorAll('.events');
       const matches = []; const seen = new Set();
@@ -164,6 +354,9 @@
         });
       });
 
+      // Hide user results
+      document.getElementById('user-search-results-section').classList.remove('show');
+
       // populate results container
       const sr = document.getElementById('search-results');
       const srSection = document.getElementById('search-results-section');
@@ -174,7 +367,11 @@
           const clone = card.cloneNode(true);
           clone.style.display = 'block';
           const id = clone.getAttribute('data-event-id') || card.getAttribute('data-event-id');
-          if (id) { const target = document.body?.dataset?.eventPage || 'eventPageStu.html'; clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; }); clone.style.cursor = 'pointer'; }
+          if (id) { 
+            const target = document.body?.dataset?.eventPage || 'eventPageStu.html'; 
+            clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; }); 
+            clone.style.cursor = 'pointer'; 
+          }
           sr.appendChild(clone);
         });
       }
@@ -188,12 +385,131 @@
       }
       if (noResults) noResults.style.display = matches.length === 0 ? '' : 'none';
       const countEl = document.getElementById('search-count'); if (countEl) countEl.textContent = `(${matches.length})`;
-      const qText = document.getElementById('search-query-text'); if (qText) qText.textContent = queryRaw;
-      const clearBtn = document.getElementById('clear-search'); if (clearBtn) clearBtn.style.display = '';
-    };
-    document.getElementById('clear-search').addEventListener('click', clearSearchView);
+      const qText = document.getElementById('search-query-text'); if (qText) qText.textContent = queryRaw || query;
+    }
+    window.handleSearch = handleSearch;
 
-    // ---- DATE FILTER (client-side, works with current cards) ----
+    // User Search Logic - Filter by public profile
+    async function handleUserSearch(query) {
+      const searchQuery = query.toLowerCase();
+
+      try {
+        const usersRef = collection(db, 'users');
+        const snapshot = await getDocs(usersRef);
+        
+        const results = [];
+        snapshot.forEach(doc => {
+          const userData = doc.data();
+          
+          // Skip users who haven't activated public profile
+          if (!userData.publicProfile) {
+            return;
+          }
+          
+          const fullname = (userData.fullname || '').toLowerCase();
+          const email = (userData.email || '').toLowerCase();
+          const school = (userData.school || userData.organization || '').toLowerCase();
+          
+          if (fullname.includes(searchQuery) || email.includes(searchQuery) || school.includes(searchQuery)) {
+            results.push({ id: doc.id, ...userData });
+          }
+        });
+
+        displayUserResults(results, query);
+        
+      } catch (error) {
+        console.error('Error searching users:', error);
+        const resultsDiv = document.getElementById('user-search-results');
+        resultsDiv.innerHTML = '<div class="no-user-results">Error searching users. Please try again.</div>';
+      }
+    }
+
+    function displayUserResults(users, query) {
+      // Hide event sections and results
+      const main = document.querySelector('.main-content'); if (main) main.classList.add('collapsed');
+      document.getElementById('search-results-section').classList.remove('show');
+      document.getElementById('search-results-section').classList.add('is-hidden');
+
+      const resultsDiv = document.getElementById('user-search-results');
+      const resultsSection = document.getElementById('user-search-results-section');
+      const countEl = document.getElementById('user-search-count');
+      
+      resultsSection.classList.add('show');
+      if (countEl) countEl.textContent = `(${users.length})`;
+
+      if (users.length === 0) {
+        resultsDiv.innerHTML = '<div class="no-user-results">No users found matching your search.</div>';
+        return;
+      }
+
+      const html = users.map(user => {
+        const initials = (user.fullname || 'User').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        const roleClass = user.role === 'organizer' ? 'role-organizer' : user.role === 'admin' ? 'role-admin' : 'role-student';
+        
+        return `
+          <div class="user-result-card" onclick="window.location.href='../../public-profile.html?id=${user.id}'">
+            <div class="user-avatar">
+              ${user.avatarUrl ? `<img src="${user.avatarUrl}" alt="${user.fullname}">` : initials}
+            </div>
+            <div class="user-info">
+              <div class="user-name">${user.fullname || 'Unknown User'}</div>
+              <div class="user-email">${user.email || ''}</div>
+              <div class="user-meta">
+                <span class="user-role-badge ${roleClass}">
+                  ${(user.role || 'student').toUpperCase()}
+                </span>
+                ${user.school || user.organization || ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      resultsDiv.innerHTML = html;
+
+      try { resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+    }
+
+    // Clear Unified Search
+    window.clearUnifiedSearch = function() {
+      // Reset input
+      document.getElementById('unified-search-input').value = '';
+      document.getElementById('clear-unified-search').style.display = 'none';
+
+      // Hide all search results
+      document.getElementById('search-results-section').classList.remove('show');
+      document.getElementById('search-results-section').classList.add('is-hidden');
+      document.getElementById('user-search-results-section').classList.remove('show');
+
+      // Show all event sections
+      const main = document.querySelector('.main-content'); 
+      if (main) main.classList.remove('collapsed');
+
+      // Clear results
+      const eventResults = document.getElementById('search-results');
+      while (eventResults && eventResults.firstChild) {
+        eventResults.removeChild(eventResults.firstChild);
+      }
+
+      const userResults = document.getElementById('user-search-results');
+      while (userResults && userResults.firstChild) {
+        userResults.removeChild(userResults.firstChild);
+      }
+
+      const noResults = document.getElementById('no-results');
+      if (noResults) noResults.style.display = 'none';
+    };
+
+    // Allow Enter key to trigger search
+    document.getElementById('unified-search-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        executeUnifiedSearch();
+      }
+    });
+  </script>
+
+  <!-- Date Filter Logic -->
+  <script type="module">
     const form = document.getElementById("date-filter");
     const inputFrom = document.getElementById("df-from");
     const inputTo   = document.getElementById("df-to");
@@ -242,7 +558,7 @@
       e.preventDefault();
       const from = inputFrom.value ? startOfDay(new Date(inputFrom.value)) : null;
       const to   = inputTo.value   ? endOfDay(new Date(inputTo.value))     : null;
-      if (from && to && from > to) { // swap if user reversed
+      if (from && to && from > to) {
         const tmp = from; (from = to), (to = tmp);
         inputFrom.valueAsDate = from; inputTo.valueAsDate = to;
       }
@@ -250,7 +566,6 @@
       filterVisibleByDate(from, to);
     });
 
-    // University filter select (choose a specific university or All)
     const filterUniversity = document.getElementById('filterUniversity');
     if (filterUniversity) {
       filterUniversity.addEventListener('change', () => {
@@ -260,7 +575,6 @@
       });
     }
 
-    // Category filter checkboxes (workshop, seminar, concert, sports, other)
     const categoryCheckboxes = Array.from(document.querySelectorAll('input[name="filterCategory"]'));
     if (categoryCheckboxes.length) {
       categoryCheckboxes.forEach(cb => cb.addEventListener('change', () => {
@@ -270,9 +584,7 @@
       }));
     }
 
-    // Annotate cards with timestamps and filter
     function parseEventStart(card) {
-      // prefer data-start (ms). If absent, try <time datetime>, else parse text
       const ds = card.getAttribute('data-start');
       if (ds) { const n = Number(ds); if (!Number.isNaN(n)) return n; }
 
@@ -281,14 +593,12 @@
         const n = Date.parse(t.getAttribute('datetime')); if (!Number.isNaN(n)) return n;
       }
 
-      // Heuristic: look for a child with class likely holding date text
       const maybe = card.querySelector('.event-date, .date, .text-sm, .meta');
       const text = (maybe?.textContent || card.textContent || '').trim();
       const n = Date.parse(text);
       return Number.isNaN(n) ? null : n;
     }
 
-    // Watches for new cards (rendered by your Firestore loaders)
     const mo = new MutationObserver(entries => {
       entries.forEach(e => {
         e.addedNodes.forEach(n => {
@@ -307,8 +617,6 @@
     });
 
     function filterVisibleByDate(from, to) {
-      // When any filter is active (from/to/university/category) collapse the main content
-      // and show a single results container. Otherwise restore full dashboard view.
       const lists = document.querySelectorAll('.events');
       const selectedUni = document.getElementById('filterUniversity')?.value || '';
       const selectedCategories = Array.from(document.querySelectorAll('input[name="filterCategory"]:checked')).map(n => n.value.toLowerCase());
@@ -352,7 +660,6 @@
       }
 
       if (!isFilteringActive) {
-        // restore normal view
         const main = document.querySelector('.main-content'); if (main) main.classList.remove('collapsed');
         lists.forEach(list => { list.querySelectorAll('.event-card').forEach(card => card.style.display = ''); list.dispatchEvent(new Event('scroll')); });
         if (sr) while (sr.firstChild) sr.removeChild(sr.firstChild);
@@ -363,7 +670,6 @@
         return;
       }
 
-      // collect matches
       const matches = []; const seen = new Set();
       lists.forEach(list => {
         list.querySelectorAll('.event-card').forEach(card => {
@@ -375,7 +681,6 @@
         });
       });
 
-      // populate results container (always visible when filtering)
       if (sr) {
         while (sr.firstChild) sr.removeChild(sr.firstChild);
         matches.forEach(card => {
@@ -387,11 +692,9 @@
         });
       }
 
-      // show the results panel and collapse the main content
       const main = document.querySelector('.main-content'); if (main) main.classList.add('collapsed');
-  if (srSection) { srSection.classList.remove('is-hidden'); srSection.classList.add('show'); try { srSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} }
+      if (srSection) { srSection.classList.remove('is-hidden'); srSection.classList.add('show'); try { srSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} }
 
-      // update header count and query text to describe filters
       const countEl = document.getElementById('search-count'); if (countEl) countEl.textContent = `(${matches.length})`;
       const parts = [];
       if (selectedUni) parts.push(selectedUni);
@@ -401,12 +704,11 @@
 
       if (noResults) noResults.style.display = matches.length === 0 ? '' : 'none';
 
-      // recompute chevrons
       lists.forEach(list => list.dispatchEvent(new Event('scroll')));
     }
-  </script>
 
-  <!-- Your existing scripts -->
+    window.filterVisibleByDate = filterVisibleByDate;
+  </script>
 
   <script type="module" src="../../js/Registration/auth.js"></script>
   <script type="module" src="../../js/Events/LoadEvents.js"></script>
