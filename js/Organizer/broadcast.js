@@ -214,8 +214,11 @@ sendBtn.addEventListener("click", async () => {
 
   if (!text) return showError("Please enter a message to send.");
 
+  // Determine recipient groups. New option: 'followers' -> students who follow this organizer only
   const targets = [];
+  let followersOnly = false;
   if (target === "students") targets.push("student");
+  else if (target === "followers") { targets.push("student"); followersOnly = true; }
   else if (target === "organizers") targets.push("organizer");
   else targets.push("student", "organizer");
 
@@ -254,6 +257,8 @@ sendBtn.addEventListener("click", async () => {
       senderName: senderName,
       createdAt: serverTimestamp(),
     };
+    // If this broadcast should be limited to followers only, include an explicit flag
+    if (followersOnly) payload.followersOnly = true;
     if (eventId) payload.eventId = eventId;
 
     await addDoc(collection(db, "broadcasts"), payload);

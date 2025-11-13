@@ -141,6 +141,49 @@ onAuthStateChanged(auth, async (user) => {
       });
     }
 
+    // At this point we have candidate broadcasts in docsMap. Apply additional filtering
+    // so that students do NOT see broadcasts from organizers they do not follow.
+    const following = userDoc.exists() ? (userDoc.data().following || []) : [];
+
+    // Build a set of unique sender UIDs that are not in the student's following list
+    const sendersToCheck = new Set();
+    docsMap.forEach(d => {
+      const s = d.data().senderUid;
+      if (s && !following.includes(s)) sendersToCheck.add(s);
+    });
+
+    // For all senders not followed, check if they are organizers. If so, remove their messages.
+    if (sendersToCheck.size > 0) {
+      const senderArray = Array.from(sendersToCheck);
+      try {
+        // load organizer docs for these senders in parallel
+        const organizerChecks = await Promise.all(senderArray.map(sid => getDoc(doc(db, "organizers", sid))));
+        organizerChecks.forEach((snap, idx) => {
+          const sid = senderArray[idx];
+          if (snap.exists()) {
+            // sender is an organizer and not followed by this student — remove their broadcasts
+            for (const [k, v] of docsMap.entries()) {
+              if (v.data().senderUid === sid) docsMap.delete(k);
+            }
+          }
+        });
+      } catch (e) {
+        console.warn("Could not verify organizer senders for follow filtering:", e);
+      }
+    }
+
+    // Additionally, enforce followersOnly broadcasts: if a broadcast has followersOnly=true,
+    // ensure the student actually follows the sender.
+    for (const [k, v] of docsMap.entries()) {
+      const data = v.data();
+      if (data.followersOnly === true) {
+        const s = data.senderUid;
+        if (!s || !following.includes(s)) {
+          docsMap.delete(k);
+        }
+      }
+    }
+
     loading.style.display = "none";
     messagesEl.innerHTML = "";
 
