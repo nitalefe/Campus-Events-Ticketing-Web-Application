@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="assets/images/evently_logo_DT.png">
+  <title>User Profile - Campus Events</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Complete Toolbar Styling - Exact Match */
+    .toolbar {
+      background-color: #003366;
+      color: white;
+      padding: 10px 30px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      height: 60px;
+    }
+
+    .toolbar-logo {
+      height: 45px;
+      cursor: pointer;
+      margin-right: 30px;
+    }
+
+    .toolbar-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 500;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 8px 20px;
+      margin: 0 5px;
+      transition: background-color 0.3s ease;
+      border-radius: 5px;
+    }
+
+    .toolbar-btn:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .toolbar-spacer {
+      flex-grow: 1;
+    }
+
+    #authBtnContainer {
+      display: flex;
+      align-items: center;
+    }
+
+    .auth-btn {
+      background-color: #5b9bd5;
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .auth-btn:hover {
+      background-color: #4a8bc2;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Body and Profile Styling */
+    body {
+      margin: 0;
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+
+    .profile-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    .profile-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      margin-bottom: 2rem;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .profile-avatar-large {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 48px;
+      font-weight: 600;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+      flex-shrink: 0;
+    }
+
+    .profile-avatar-large img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .profile-info-section {
+      flex: 1;
+    }
+
+    .profile-name {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #333;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .profile-meta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .meta-badge.role {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .meta-badge.school {
+      background: #f0f0f0;
+      color: #555;
+    }
+
+    .profile-bio {
+      margin-top: 1.5rem;
+      padding: 1.5rem;
+      background: #f8f9fa;
+      border-radius: 12px;
+      border-left: 4px solid #667eea;
+    }
+
+    .bio-label {
+      font-weight: 600;
+      color: #667eea;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .bio-text {
+      color: #555;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .events-section {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #333;
+      margin: 0 0 1.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .event-card {
+      background: white;
+      border: 2px solid #f0f0f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .event-card:hover {
+      border-color: #667eea;
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.15);
+      transform: translateY(-4px);
+    }
+
+    .event-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #333;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .event-date {
+      color: #667eea;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .event-description {
+      color: #666;
+      line-height: 1.5;
+      margin: 0.5rem 0 1rem 0;
+    }
+
+    .event-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1rem;
+      border-top: 1px solid #f0f0f0;
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    .loading, .no-data, .error {
+      text-align: center;
+      padding: 3rem;
+      color: #999;
+      font-size: 1.1rem;
+    }
+
+    .error {
+      color: #dc3545;
+    }
+
+    @media (max-width: 768px) {
+      .profile-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .events-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Toolbar - Exact Match -->
+  <div class="toolbar">
+    <img src="assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" id="logoBtn">
+    <button class="toolbar-btn" id="homeBtn">Home</button>
+    <div class="toolbar-spacer"></div>
+    <button class="toolbar-btn" onclick="location.href='website/profile.html'">Profile</button>
+    <div id="authBtnContainer">
+      <button id="logout-btn" class="auth-btn">Log Out</button>
+    </div>
+  </div>
+
+  <div class="profile-container">
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="profile-avatar-large" id="avatarContainer">
+          <span>?</span>
+        </div>
+        <div class="profile-info-section">
+          <h1 class="profile-name" id="userName">Loading...</h1>
+          <div class="profile-meta">
+            <span class="meta-badge role" id="userRole">
+              <span>👤</span>
+              <span>Loading...</span>
+            </span>
+            <span class="meta-badge school" id="userSchool">
+              <span>🏫</span>
+              <span>Loading...</span>
+            </span>
+          </div>
+          <div class="profile-bio" id="bioSection" style="display: none;">
+            <div class="bio-label">About</div>
+            <p class="bio-text" id="userBio"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="events-section">
+      <h2 class="section-title">
+        <span>📅</span>
+        <span id="eventsTitle">Event History</span>
+      </h2>
+      <div class="events-grid" id="eventsContainer">
+        <div class="loading">Loading events...</div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { auth, db } from './website/js/Shared/firebase-config.js';
+    import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js';
+    import { doc, getDoc, collection, query, where, getDocs, orderBy } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js';
+
+    // Store the profile owner's role (person whose profile is being viewed)
+    let profileOwnerRole = null;
+
+    // Navigate based on PROFILE OWNER's role (not logged-in user)
+    function goToHome() {
+      if (profileOwnerRole === 'organizer') {
+        window.location.href = 'website/Organizer/organizer-dashboard.html';
+      } else {
+        // Default to student dashboard for students or if role unknown
+        window.location.href = 'website/Student/student-dashboard.html';
+      }
+    }
+
+    // Attach event listeners after DOM is loaded
+    document.getElementById('logoBtn').addEventListener('click', goToHome);
+    document.getElementById('homeBtn').addEventListener('click', goToHome);
+
+    // Logout - redirect to SignIn page
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      try {
+        await signOut(auth);
+      } catch (error) {
+        console.error('Error signing out:', error);
+      } finally {
+        window.location.href = 'website/Registration/SignIn.html';
+      }
+    });
+
+    // Load profile
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('id');
+
+    if (!userId) {
+      document.querySelector('.profile-container').innerHTML = '<div class="error">❌ User ID not provided</div>';
+    } else {
+      loadUserProfile(userId);
+    }
+
+    async function loadUserProfile(userId) {
+      try {
+        const userDoc = await getDoc(doc(db, 'users', userId));
+        
+        if (!userDoc.exists()) {
+          document.querySelector('.profile-container').innerHTML = '<div class="error">❌ User not found</div>';
+          return;
+        }
+
+        const userData = userDoc.data();
+        profileOwnerRole = userData.role; // Store profile owner's role for navigation
+        displayUserInfo(userData);
+        await loadEventHistory(userId, userData.role);
+        
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        document.querySelector('.profile-container').innerHTML = '<div class="error">❌ Failed to load profile</div>';
+      }
+    }
+
+    function displayUserInfo(userData) {
+      const avatarContainer = document.getElementById('avatarContainer');
+      if (userData.avatarUrl) {
+        avatarContainer.innerHTML = `<img src="${userData.avatarUrl}" alt="${userData.fullname}">`;
+      } else {
+        const initials = (userData.fullname || 'User').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        avatarContainer.innerHTML = `<span>${initials}</span>`;
+      }
+
+      document.getElementById('userName').textContent = userData.fullname || 'Unknown User';
+      const roleSpan = document.getElementById('userRole');
+      roleSpan.innerHTML = `<span>👤</span><span>${(userData.role || 'user').toUpperCase()}</span>`;
+      
+      const schoolSpan = document.getElementById('userSchool');
+      const schoolText = userData.school || userData.organization || 'Not specified';
+      schoolSpan.innerHTML = `<span>🏫</span><span>${schoolText}</span>`;
+      
+      if (userData.bio) {
+        document.getElementById('bioSection').style.display = 'block';
+        document.getElementById('userBio').textContent = userData.bio;
+      }
+    }
+
+    async function loadEventHistory(userId, userRole) {
+      const eventsContainer = document.getElementById('eventsContainer');
+      const eventsTitle = document.getElementById('eventsTitle');
+      
+      try {
+        let events = [];
+        
+        if (userRole === 'organizer') {
+          eventsTitle.textContent = 'Organized Events';
+          const eventsQuery = query(
+            collection(db, 'events'),
+            where('organizerId', '==', userId),
+            orderBy('date', 'desc')
+          );
+          const snapshot = await getDocs(eventsQuery);
+          events = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), type: 'organized' }));
+        } else {
+          eventsTitle.textContent = 'Attended Events';
+          const attendeeQuery = query(
+            collection(db, 'attendee'),
+            where('userId', '==', userId)
+          );
+          const attendeeSnapshot = await getDocs(attendeeQuery);
+          
+          const eventIds = attendeeSnapshot.docs.map(doc => doc.data().eventId);
+          
+          if (eventIds.length > 0) {
+            for (const eventId of eventIds.slice(0, 12)) {
+              try {
+                const eventDoc = await getDoc(doc(db, 'events', eventId));
+                if (eventDoc.exists()) {
+                  events.push({ id: eventDoc.id, ...eventDoc.data(), type: 'attended' });
+                }
+              } catch (e) {
+                console.warn('Could not fetch event:', eventId, e);
+              }
+            }
+          }
+        }
+
+        displayEvents(events, userRole);
+        
+      } catch (error) {
+        console.error('Error loading events:', error);
+        eventsContainer.innerHTML = '<div class="error">❌ Failed to load event history</div>';
+      }
+    }
+
+    function displayEvents(events, userRole) {
+      const eventsContainer = document.getElementById('eventsContainer');
+      
+      if (events.length === 0) {
+        eventsContainer.innerHTML = `
+          <div class="no-data">
+            📅 ${userRole === 'organizer' ? 'No events organized yet' : 'No events attended yet'}
+          </div>
+        `;
+        return;
+      }
+
+      const html = events.map(event => `
+        <div class="event-card">
+          <h3 class="event-title">${event.title || 'Untitled Event'}</h3>
+          <div class="event-date">
+            <span>📅</span>
+            <span>${formatDate(event.date)}</span>
+          </div>
+          <p class="event-description">${(event.description || 'No description available').substring(0, 120)}${event.description?.length > 120 ? '...' : ''}</p>
+          <div class="event-footer">
+            <span>📍 ${event.location || 'Location TBA'}</span>
+            <span>${event.type === 'organized' ? '👤 Organizer' : '✅ Attended'}</span>
+          </div>
+        </div>
+      `).join('');
+
+      eventsContainer.innerHTML = html;
+    }
+
+    function formatDate(dateField) {
+      if (!dateField) return 'Date TBA';
+      
+      let date;
+      if (dateField.toDate) {
+        date = dateField.toDate();
+      } else if (typeof dateField === 'string') {
+        date = new Date(dateField);
+      } else {
+        date = dateField;
+      }
+      
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    }
+  </script>
+</body>
+</html>

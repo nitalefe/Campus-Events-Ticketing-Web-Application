@@ -378,6 +378,99 @@ body {
   color: #ffffff;
 }
 
+/* Profile Section */
+.profile-section {
+  margin-top: 2rem;
+}
+
+.profile-section h3 {
+  margin-bottom: 1rem;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.events-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.event-item {
+  background: white;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  padding: 1rem;
+  transition: box-shadow 0.2s;
+}
+
+.event-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.event-header h4 {
+  margin: 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.event-date {
+  color: #666;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.event-description {
+  color: #555;
+  margin: 0.5rem 0;
+  line-height: 1.4;
+}
+
+.event-details {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+.no-events, .loading, .error {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+  font-style: italic;
+}
+
+.error {
+  color: #dc3545;
+}
+
+.bio-text {
+  font-style: italic;
+  color: #555;
+  margin-top: 0.5rem;
+  line-height: 1.4;
+}
+
+.back-btn {
+  background: none;
+  border: 1px solid #ddd;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #555;
+}
+
+.back-btn:hover {
+  background: #f8f9fa;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .profile-container {
@@ -426,6 +519,22 @@ body {
     left: 1rem;
     right: 1rem;
     bottom: 1rem;
+  }
+
+  .modal-content {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .avatar-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.75rem;
+    padding: 1.5rem;
+  }
+
+  .avatar-option {
+    width: 80px;
+    height: 80px;
   }
 }
 
@@ -563,22 +672,4 @@ body {
   border-top: 2px solid #e2e8f0;
   display: flex;
   justify-content: flex-end;
-}
-
-@media (max-width: 768px) {
-  .modal-content {
-    width: 95%;
-    max-height: 90vh;
-  }
-
-  .avatar-grid {
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 0.75rem;
-    padding: 1.5rem;
-  }
-
-  .avatar-option {
-    width: 80px;
-    height: 80px;
-  }
 }
