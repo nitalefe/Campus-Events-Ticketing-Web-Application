@@ -22,7 +22,6 @@
     <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
     <button class="toolbar-btn" onclick="location.href='myEvents.html'">My Events</button>
     <div class="toolbar-spacer"></div>
-    <button class="toolbar-btn" onclick="location.href='settings.html'">Settings</button>
     <button class="toolbar-btn" onclick="location.href='profile.html'">Profile</button>
     <div id="authBtnContainer">
       <button id="logout-btn" class="auth-btn">Log Out</button>
@@ -31,7 +30,7 @@
 
   <header>
     <h1>Organizer Home Page</h1>
-    <p>Welcome! Here are your upcoming events.</p>
+    <p>Welcome, <span id="organizerName">Organizer</span>! Here are your upcoming events.</p>
   </header>
 
   <!-- Search -->
@@ -79,6 +78,28 @@
   </div>
 
   <script type="module">
+    // Load organizer name
+    import { auth, db } from "../../js/Shared/firebase-config.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            const organizerNameEl = document.getElementById('organizerName');
+            if (organizerNameEl && userData.fullname) {
+              organizerNameEl.textContent = userData.fullname;
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching organizer name:", error);
+        }
+      }
+    });
+
     function clearSearchView() {
       document.getElementById('search-results-section').style.display = 'none';
       document.getElementById('clear-search').style.display = 'none';
