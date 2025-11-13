@@ -16,6 +16,7 @@ const upcomingSection = document.getElementById("upcoming-events");
 const newSection = document.getElementById("new-events");
 const recommendedSection = document.getElementById("recommended-events");
 const discoverSection = document.getElementById("discover-events");
+const followingSection = document.getElementById("following-events");
 const savedSection = document.getElementById("saved-events"); // student only
 const myEventsSection = document.getElementById("myEventsSection"); // ✅ your updated ID
 
@@ -75,6 +76,11 @@ onAuthStateChanged(auth, async (user) => {
       const data = docSnap.data();
       const eventId = docSnap.id;
       const eventDate = data.eventDateTime?.toDate() || new Date();
+      const organizerID = data.createdBy;
+
+
+
+
 
       // --------------------------------------------------
       // Organizer Dashboard Logic
@@ -104,6 +110,9 @@ onAuthStateChanged(auth, async (user) => {
       if (role === "student") {
         const claimedEvents = userData.claimedEvents || [];
         const savedEvents = userData.savedEvents || [];
+        const followedOrganizers = userData.following || [];
+        const organizerID = data.createdBy;
+
 
         // 🟢 My Events (tickets the student claimed)
         if (claimedEvents.includes(eventId)) {
@@ -118,6 +127,11 @@ onAuthStateChanged(auth, async (user) => {
         // Upcoming On Campus
         if (eventDate > now) {
           upcomingSection?.appendChild(createEventCard(data, eventId));
+        }
+
+        //Following
+        if(followedOrganizers.includes(organizerID)){
+            followingSection?.appendChild(createEventCard(data, eventId));
         }
 
         // Recommended (optional: based on category)
