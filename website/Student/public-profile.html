@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="assets/images/evently_logo_DT.png">
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
   <title>User Profile - Campus Events</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
   <style>
@@ -284,10 +284,10 @@
 <body>
   <!-- Toolbar - Exact Match -->
   <div class="toolbar">
-    <img src="assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" id="logoBtn">
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" id="logoBtn">
     <button class="toolbar-btn" id="homeBtn">Home</button>
     <div class="toolbar-spacer"></div>
-    <button class="toolbar-btn" onclick="location.href='website/profile.html'">Profile</button>
+    <button class="toolbar-btn" onclick="location.href='../profile.html'">Profile</button>
     <div id="authBtnContainer">
       <button id="logout-btn" class="auth-btn">Log Out</button>
     </div>
@@ -331,7 +331,7 @@
   </div>
 
   <script type="module">
-    import { auth, db } from './website/js/Shared/firebase-config.js';
+    import { auth, db } from '../../js/Shared/firebase-config.js';
     import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js';
     import { doc, getDoc, collection, query, where, getDocs, orderBy } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js';
 
@@ -341,10 +341,10 @@
     // Navigate based on PROFILE OWNER's role (not logged-in user)
     function goToHome() {
       if (profileOwnerRole === 'organizer') {
-        window.location.href = 'website/Organizer/organizer-dashboard.html';
+        window.location.href = '../Organizer/organizer-dashboard.html';
       } else {
         // Default to student dashboard for students or if role unknown
-        window.location.href = 'website/Student/student-dashboard.html';
+        window.location.href = '../Student/student-dashboard.html';
       }
     }
 
@@ -359,7 +359,7 @@
       } catch (error) {
         console.error('Error signing out:', error);
       } finally {
-        window.location.href = 'website/Registration/SignIn.html';
+        window.location.href = '../Registration/SignIn.html';
       }
     });
 
@@ -395,9 +395,16 @@
 
     function displayUserInfo(userData) {
       const avatarContainer = document.getElementById('avatarContainer');
-      if (userData.avatarUrl) {
+      
+      // Check if user has selected an avatar from profile.html
+      if (userData.selectedAvatar) {
+        // Use the selected avatar path
+        avatarContainer.innerHTML = `<img src="${userData.selectedAvatar}" alt="${userData.fullname}">`;
+      } else if (userData.avatarUrl) {
+        // Fallback to uploaded avatar URL (if implemented)
         avatarContainer.innerHTML = `<img src="${userData.avatarUrl}" alt="${userData.fullname}">`;
       } else {
+        // Fallback to initials
         const initials = (userData.fullname || 'User').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
         avatarContainer.innerHTML = `<span>${initials}</span>`;
       }

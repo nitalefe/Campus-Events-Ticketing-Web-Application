@@ -447,7 +447,7 @@
         const roleClass = user.role === 'organizer' ? 'role-organizer' : user.role === 'admin' ? 'role-admin' : 'role-student';
         
         return `
-          <div class="user-result-card" onclick="window.location.href='../../public-profile.html?id=${user.id}'">
+          <div class="user-result-card" onclick="window.location.href='public-profile.html?id=${user.id}'">
             <div class="user-avatar">
               ${user.avatarUrl ? `<img src="${user.avatarUrl}" alt="${user.fullname}">` : initials}
             </div>
