@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="../assets/images/evently_logo_DT.png">
+  <title>My Profile - Evently</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/Shared/toolbar.css">
+  <link rel="stylesheet" href="../css/Shared/profile.css">
+</head>
+
+<body>
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <img src="../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+      onclick="location.href='#'" id="homeLogo">
+    
+    <button class="toolbar-btn" onclick="goToHome()">Home</button>
+    <div class="toolbar-spacer"></div>
+    <button class="toolbar-btn active" onclick="location.href='profile.html'">Profile</button>
+    <div id="authBtnContainer">
+      <button id="logout-btn" class="auth-btn">Log Out</button>
+    </div>
+  </div>
+
+  <!-- Profile Container -->
+  <div class="profile-container">
+    <div class="profile-header">
+      <div class="profile-avatar-section">
+        <div class="profile-avatar" id="profileAvatar">
+          <img id="avatarImage" src="" alt="Avatar" style="display: none; width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+          <span id="avatarInitials">U</span>
+        </div>
+        <button class="change-avatar-btn" onclick="openAvatarPicker()">Choose Avatar</button>
+      </div>
+      <div class="profile-header-info">
+        <h1 id="profileName">Loading...</h1>
+        <p class="profile-email" id="profileEmail">email@example.com</p>
+        <div class="profile-badges">
+          <span class="profile-role-badge" id="profileRole">User</span>
+          <span class="profile-role-badge admin-badge" id="adminBadge" style="display: none;">Admin</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Form -->
+    <div class="profile-form-container">
+      <div class="form-section">
+        <h2>Personal Information</h2>
+        <form id="profileForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fullname">Full Name</label>
+              <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" placeholder="your.email@example.com" disabled>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" name="phone" placeholder="+1 (555) 123-4567">
+            </div>
+            <div class="form-group">
+              <label for="role">Role</label>
+              <input type="text" id="roleDisplay" name="roleDisplay" disabled>
+            </div>
+          </div>
+
+          <!-- Conditional fields based on role -->
+          <div id="studentFields" style="display: none;">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="school">School/University</label>
+                <select id="school" name="school">
+                  <option value="">Select your school</option>
+                  <option value="concordia">Concordia University</option>
+                  <option value="mcgill">McGill University</option>
+                  <option value="udem">Université de Montréal</option>
+                  <option value="polytechnique">Polytechnique Montréal</option>
+                  <option value="hec">HEC Montréal</option>
+                  <option value="uqam">UQAM</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="studentId">Student ID</label>
+                <input type="text" id="studentId" name="studentId" placeholder="Enter your student ID">
+              </div>
+            </div>
+          </div>
+
+          <div id="organizerFields" style="display: none;">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="organization">Organization</label>
+                <input type="text" id="organization" name="organization" placeholder="Enter your organization">
+              </div>
+              <div class="form-group">
+                <label for="position">Position/Title</label>
+                <input type="text" id="position" name="position" placeholder="e.g., Event Coordinator">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="bio">Bio</label>
+            <textarea id="bio" name="bio" rows="4" placeholder="Tell us about yourself..."></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" onclick="cancelEdit()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Additional Settings -->
+      <div class="form-section">
+        <h2>Account Settings</h2>
+        
+        <div class="setting-item">
+          <div class="setting-info">
+            <h3>Email Notifications</h3>
+            <p>Receive notifications about events and updates</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="emailNotifications" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <h3>Public Profile</h3>
+            <p>Make your profile visible to other users</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="publicProfile">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="danger-zone">
+          <h3>Danger Zone</h3>
+          <button class="btn btn-danger" onclick="changePassword()">Change Password</button>
+          <button class="btn btn-danger-outline" onclick="deleteAccount()">Delete Account</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Messages -->
+    <div id="statusMessage" class="status-message" style="display: none;"></div>
+  </div>
+
+  <!-- Avatar Picker Modal -->
+  <div id="avatarPickerModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Choose Your Avatar</h2>
+        <button class="modal-close" onclick="closeAvatarPicker()">&times;</button>
+      </div>
+      <div class="avatar-grid" id="avatarGrid">
+        <!-- Avatars will be loaded here -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeAvatarPicker()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module">
+    import { auth, db } from "../js/Shared/firebase-config.js";
+    import { onAuthStateChanged, updateProfile, sendPasswordResetEmail, getIdTokenResult } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    let currentUser = null;
+    let userRole = null;
+    let isAdmin = false;
+
+    // Show status message
+    function showStatus(message, type = 'success') {
+      const statusEl = document.getElementById('statusMessage');
+      statusEl.textContent = message;
+      statusEl.className = `status-message ${type}`;
+      statusEl.style.display = 'block';
+      setTimeout(() => {
+        statusEl.style.display = 'none';
+      }, 5000);
+    }
+
+    // Load user profile
+    async function loadProfile(user) {
+      try {
+        // Check for admin claims
+        const tokenResult = await getIdTokenResult(user);
+        isAdmin = tokenResult.claims.admin === true;
+
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          userRole = userData.role;
+
+          // Set profile header
+          document.getElementById('profileName').textContent = userData.fullname || 'User';
+          document.getElementById('profileEmail').textContent = user.email || '';
+          document.getElementById('profileRole').textContent = (userData.role || 'user').toUpperCase();
+          
+          // Show admin badge if user has admin claims
+          if (isAdmin) {
+            document.getElementById('adminBadge').style.display = 'inline-block';
+          }
+          
+          // Set avatar (image or initials)
+          if (userData.avatarUrl) {
+            document.getElementById('avatarImage').src = userData.avatarUrl;
+            document.getElementById('avatarImage').style.display = 'block';
+            document.getElementById('avatarInitials').style.display = 'none';
+          } else {
+            const initials = (userData.fullname || 'U').split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            document.getElementById('avatarInitials').textContent = initials;
+            document.getElementById('avatarImage').style.display = 'none';
+            document.getElementById('avatarInitials').style.display = 'flex';
+          }
+
+          // Populate form
+          document.getElementById('fullname').value = userData.fullname || '';
+          document.getElementById('email').value = user.email || '';
+          document.getElementById('roleDisplay').value = (userData.role || 'user').charAt(0).toUpperCase() + (userData.role || 'user').slice(1);
+          document.getElementById('phone').value = userData.phone || '';
+          document.getElementById('bio').value = userData.bio || '';
+
+          // Show role-specific fields
+          if (userData.role === 'student') {
+            document.getElementById('studentFields').style.display = 'block';
+            document.getElementById('school').value = userData.school || '';
+            document.getElementById('studentId').value = userData.studentId || '';
+          } else if (userData.role === 'organizer') {
+            document.getElementById('organizerFields').style.display = 'block';
+            document.getElementById('organization').value = userData.organization || '';
+            document.getElementById('position').value = userData.position || '';
+          }
+
+          // Load settings
+          document.getElementById('emailNotifications').checked = userData.emailNotifications !== false;
+          document.getElementById('publicProfile').checked = userData.publicProfile === true;
+
+          // Set home button based on role
+          const homeBtn = document.querySelector('.toolbar-btn');
+          const homeLogo = document.getElementById('homeLogo');
+          if (userData.role === 'student') {
+            homeBtn.onclick = () => location.href = 'Student/student-dashboard.html';
+            homeLogo.onclick = () => location.href = 'Student/student-dashboard.html';
+          } else if (userData.role === 'organizer') {
+            homeBtn.onclick = () => location.href = 'Organizer/organizer-dashboard.html';
+            homeLogo.onclick = () => location.href = 'Organizer/organizer-dashboard.html';
+          } else if (userData.role === 'admin') {
+            homeBtn.onclick = () => location.href = 'Administrator/admin-dashboard.html';
+            homeLogo.onclick = () => location.href = 'Administrator/admin-dashboard.html';
+          }
+        }
+      } catch (error) {
+        console.error("Error loading profile:", error);
+        showStatus("Error loading profile data", "error");
+      }
+    }
+
+    // Save profile
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!currentUser) return;
+
+      try {
+        const updateData = {
+          fullname: document.getElementById('fullname').value,
+          phone: document.getElementById('phone').value,
+          bio: document.getElementById('bio').value,
+          emailNotifications: document.getElementById('emailNotifications').checked,
+          publicProfile: document.getElementById('publicProfile').checked,
+        };
+
+        // Add role-specific fields
+        if (userRole === 'student') {
+          updateData.school = document.getElementById('school').value;
+          updateData.studentId = document.getElementById('studentId').value;
+        } else if (userRole === 'organizer') {
+          updateData.organization = document.getElementById('organization').value;
+          updateData.position = document.getElementById('position').value;
+        }
+
+        await updateDoc(doc(db, "users", currentUser.uid), updateData);
+        
+        // Update Firebase Auth profile
+        await updateProfile(currentUser, {
+          displayName: updateData.fullname
+        });
+
+        showStatus("Profile updated successfully!", "success");
+        loadProfile(currentUser); // Reload to show updated data
+      } catch (error) {
+        console.error("Error updating profile:", error);
+        showStatus("Error updating profile: " + error.message, "error");
+      }
+    });
+
+    // Navigation functions
+    window.goToHome = function() {
+      if (userRole === 'student') {
+        location.href = 'Student/student-dashboard.html';
+      } else if (userRole === 'organizer') {
+        location.href = 'Organizer/organizer-dashboard.html';
+      } else if (userRole === 'admin') {
+        location.href = 'Administrator/admin-dashboard.html';
+      } else {
+        location.href = 'Registration/website.html';
+      }
+    };
+
+    window.cancelEdit = function() {
+      if (currentUser) {
+        loadProfile(currentUser);
+        showStatus("Changes cancelled", "info");
+      }
+    };
+
+    // Avatar picker functions
+    const availableAvatars = [];
+    for (let i = 1; i <= 50; i++) {
+      availableAvatars.push(`avatar_${String(i).padStart(2, '0')}.png`);
+    }
+
+    window.openAvatarPicker = function() {
+      const modal = document.getElementById('avatarPickerModal');
+      const grid = document.getElementById('avatarGrid');
+      grid.innerHTML = '';
+      
+      availableAvatars.forEach(avatar => {
+        const avatarOption = document.createElement('div');
+        avatarOption.className = 'avatar-option';
+        avatarOption.innerHTML = `<img src="../assets/avatars/${avatar}" alt="${avatar}" onerror="this.parentElement.style.display='none'">`;
+        avatarOption.onclick = () => selectAvatar(avatar);
+        grid.appendChild(avatarOption);
+      });
+      
+      modal.style.display = 'flex';
+    };
+
+    window.closeAvatarPicker = function() {
+      document.getElementById('avatarPickerModal').style.display = 'none';
+    };
+
+    window.selectAvatar = async function(avatarFilename) {
+      if (!currentUser) return;
+      
+      try {
+        const avatarPath = `../assets/avatars/${avatarFilename}`;
+        
+        // Update in Firestore
+        await updateDoc(doc(db, "users", currentUser.uid), {
+          avatarUrl: avatarPath
+        });
+        
+        // Update display
+        document.getElementById('avatarImage').src = avatarPath;
+        document.getElementById('avatarImage').style.display = 'block';
+        document.getElementById('avatarInitials').style.display = 'none';
+        
+        closeAvatarPicker();
+        showStatus("Avatar updated successfully!", "success");
+      } catch (error) {
+        console.error("Error updating avatar:", error);
+        showStatus("Error updating avatar: " + error.message, "error");
+      }
+    };
+
+    window.changePassword = async function() {
+      if (!currentUser || !currentUser.email) return;
+      
+      if (confirm("A password reset link will be sent to your email. Continue?")) {
+        try {
+          await sendPasswordResetEmail(auth, currentUser.email);
+          showStatus("Password reset email sent! Check your inbox.", "success");
+        } catch (error) {
+          console.error("Error sending reset email:", error);
+          showStatus("Error sending reset email: " + error.message, "error");
+        }
+      }
+    };
+
+    window.deleteAccount = function() {
+      if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+        showStatus("Account deletion feature coming soon. Please contact support.", "info");
+      }
+    };
+
+    // Auth state listener
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "Registration/SignIn.html";
+        return;
+      }
+      currentUser = user;
+      loadProfile(user);
+    });
+  </script>
+  <script type="module" src="../js/Registration/auth.js"></script>
+
+</body>
+
+</html>
