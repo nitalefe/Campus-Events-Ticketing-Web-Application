@@ -207,7 +207,7 @@
   </div>
 
   <!-- Date Filter -->
-  <div class="filter-panel">
+  <div class="filter-panel" id="filter-panel">
     <div class="filter-title">Filter</div>
     <div class="filters-wrap">
       <form id="date-filter" class="date-filter">
@@ -317,6 +317,12 @@
       input.placeholder = mode === 'events' 
         ? 'Search events...' 
         : 'Search users by name, email, or school...';
+      
+      // Show/hide filter panel based on mode
+      const filterPanel = document.getElementById('filter-panel');
+      if (filterPanel) {
+        filterPanel.style.display = mode === 'events' ? '' : 'none';
+      }
       
       // Clear previous results
       clearUnifiedSearch();

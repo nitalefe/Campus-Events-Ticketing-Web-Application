@@ -207,7 +207,7 @@
   </div>
 
   <!-- Date Filter -->
-  <div class="filter-panel">
+  <div class="filter-panel" id="filter-panel">
     <div class="filter-title">Filter</div>
     <div class="filters-wrap">
       <form id="date-filter" class="date-filter">
@@ -265,6 +265,8 @@
       <div id="no-results" class="no-results" style="display:none;padding:20px;color:#0b254a;font-weight:600">No events match your filters.</div>
     </div>
   </div>
+
+  <!-- Dynamic sections -->
   <div class="main-content">
     <div>
       <div class="section-bar">My Events</div>
@@ -315,6 +317,12 @@
       input.placeholder = mode === 'events' 
         ? 'Search events...' 
         : 'Search users by name, email, or school...';
+      
+      // Show/hide filter panel based on mode
+      const filterPanel = document.getElementById('filter-panel');
+      if (filterPanel) {
+        filterPanel.style.display = mode === 'events' ? '' : 'none';
+      }
       
       // Clear previous results
       clearUnifiedSearch();
@@ -449,7 +457,7 @@
         return `
           <div class="user-result-card" onclick="window.location.href='public-profile.html?id=${user.id}'">
             <div class="user-avatar">
-              ${user.avatarUrl ? `<img src="${user.avatarUrl}" alt="${user.fullname}">` : initials}
+              ${user.avatarUrl || user.selectedAvatar ? `<img src="${user.selectedAvatar || user.avatarUrl}" alt="${user.fullname}">` : initials}
             </div>
             <div class="user-info">
               <div class="user-name">${user.fullname || 'Unknown User'}</div>
