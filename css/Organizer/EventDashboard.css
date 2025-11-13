@@ -215,6 +215,12 @@ button:hover {
     margin-top: 12px;
 }
 
+/* If only one event, make it span full width */
+.events-grid .event-item:only-child,
+.events-grid .event-card:only-child {
+    grid-column: 1 / -1;
+}
+
 @media (max-width: 768px) {
     .events-grid {
         /* single-column on mobile */
