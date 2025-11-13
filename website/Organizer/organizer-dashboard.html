@@ -2,27 +2,171 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
-  <title>Organizer Home Page</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../css/Shared/dashboard.css">
-  <link rel="stylesheet" href="../../css/Shared/toolbar.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png" />
+  <title>Organizer Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/Shared/dashboard.css" />
+  <link rel="stylesheet" href="../../css/Shared/toolbar.css" />
+  <style>
+    .search-container {
+      max-width: 800px;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+    }
+
+    .search-toggle {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      justify-content: center;
+    }
+
+    .toggle-btn {
+      padding: 0.75rem 1.5rem;
+      border: 2px solid #4a90e2;
+      background: white;
+      color: #4a90e2;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .toggle-btn.active {
+      background: #4a90e2;
+      color: white;
+    }
+
+    .toggle-btn:hover:not(.active) {
+      background: #e8f4ff;
+    }
+
+    .user-search-results-section {
+      max-width: 800px;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+      display: none;
+    }
+
+    .user-search-results-section.show {
+      display: block;
+    }
+
+    .user-result-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      transition: background 0.2s;
+      background: white;
+    }
+
+    .user-result-card:hover {
+      background: #f8f9fa;
+    }
+
+    .user-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .user-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.25rem;
+    }
+
+    .user-email {
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    .user-meta {
+      font-size: 0.85rem;
+      color: #888;
+      margin-top: 0.25rem;
+    }
+
+    .user-role-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      margin-right: 0.5rem;
+      color: white;
+    }
+
+    .role-student {
+      background: #28a745;
+    }
+
+    .role-organizer {
+      background: #667eea;
+    }
+
+    .role-admin {
+      background: #dc3545;
+    }
+
+    .user-results-header {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px 8px 0 0;
+      font-weight: 600;
+      color: #0b254a;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-results-container {
+      background: white;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .no-user-results {
+      text-align: center;
+      padding: 2rem;
+      color: #999;
+      background: white;
+      border-radius: 0 0 8px 8px;
+    }
+  </style>
 </head>
 
-<body class="organizer-page">
+<body class="organizer-page" data-event-page="eventPageOrg.html">
 
   <!-- Toolbar -->
   <div class="toolbar">
     <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
-      onclick="location.href='organizer-dashboard.html'">
-
-    <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
-    <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
-    <button class="toolbar-btn" onclick="location.href='myEvents.html'">My Events</button>
+      onclick="location.href='../Organizer/organizer-dashboard.html'">
+    <button class="toolbar-btn" onclick="location.href='../Organizer/organizer-dashboard.html'">Home</button>
+    <button class="toolbar-btn" onclick="location.href='../Organizer/eventCreation.html'">Create Event</button>
     <div class="toolbar-spacer"></div>
-    <button class="toolbar-btn" onclick="location.href='settings.html'">Settings</button>
     <button class="toolbar-btn" onclick="location.href='../profile.html'">Profile</button>
     <div id="authBtnContainer">
       <button id="logout-btn" class="auth-btn">Log Out</button>
@@ -30,32 +174,114 @@
   </div>
 
   <header>
-    <h1>Organizer Home Page</h1>
-    <p>Welcome! Here are your upcoming events.</p>
+    <h1>Organizer Dashboard</h1>
+    <p>Manage your events and discover other organizers.</p>
   </header>
 
-  <!-- Search -->
-  <div class="search-bar">
-    <input type="text" class="search-input" placeholder="Search events...">
-    <button class="search-btn" onclick="handleSearch()">Search</button>
-    <button id="clear-search" class="search-btn" style="display:none;margin-left:8px"
-      onclick="clearSearchView()">Clear</button>
+  <!-- Unified Search Section -->
+  <div class="search-container">
+    <!-- Toggle Buttons -->
+    <div class="search-toggle">
+      <button class="toggle-btn active" id="toggle-events" onclick="switchSearchMode('events')">
+        🎫 Search Events
+      </button>
+      <button class="toggle-btn" id="toggle-users" onclick="switchSearchMode('users')">
+        👥 Search Users
+      </button>
+    </div>
+
+    <!-- Unified Search Bar -->
+    <div class="search-bar">
+      <input type="text" id="unified-search-input" class="search-input" placeholder="Search events...">
+      <button class="search-btn" onclick="executeUnifiedSearch()">Search</button>
+      <button id="clear-unified-search" class="search-btn" style="display:none;margin-left:8px" onclick="clearUnifiedSearch()">Clear</button>
+    </div>
   </div>
 
-  <!-- Dynamic event sections -->
+  <!-- User Search Results Section -->
+  <div id="user-search-results-section" class="user-search-results-section">
+    <div class="user-results-header">
+      User Search Results <span id="user-search-count"></span>
+    </div>
+    <div id="user-search-results" class="user-results-container"></div>
+  </div>
+
+  <!-- Date Filter -->
+  <div class="filter-panel">
+    <div class="filter-title">Filter</div>
+    <div class="filters-wrap">
+      <form id="date-filter" class="date-filter">
+        <label>
+          <span>From</span>
+          <input id="df-from" type="date" />
+        </label>
+        <label>
+          <span>To</span>
+          <input id="df-to" type="date" />
+        </label>
+
+        <div class="df-presets">
+          <button type="button" data-preset="today">Today</button>
+          <button type="button" data-preset="week">This week</button>
+          <button type="button" data-preset="weekend">This weekend</button>
+          <button type="button" id="df-clear">Clear</button>
+        </div>
+
+        <label style="display:flex;align-items:center;gap:8px;white-space:nowrap;">
+          <span style="color:inherit;font-weight:600">University:</span>
+          <select id="filterUniversity" name="filterUniversity">
+            <option value="">All universities</option>
+            <option value="Concordia">Concordia University</option>
+            <option value="McGill">McGill University</option>
+            <option value="UdeM">Université de Montréal</option>
+            <option value="Polytechnique">Polytechnique Montréal</option>
+            <option value="HEC">HEC Montréal</option>
+            <option value="UQAM">UQAM</option>
+          </select>
+        </label>
+
+        <!-- Category filter checkboxes -->
+        <div class="category-row">
+          <span class="category-title">Category:</span>
+          <div class="category-controls">
+            <label class="cat-option"><input type="checkbox" name="filterCategory" value="Workshop">Workshop</label>
+            <label class="cat-option"><input type="checkbox" name="filterCategory" value="Seminar">Seminar</label>
+            <label class="cat-option"><input type="checkbox" name="filterCategory" value="Concert">Concert</label>
+            <label class="cat-option"><input type="checkbox" name="filterCategory" value="Sports">Sports</label>
+            <label class="cat-option"><input type="checkbox" name="filterCategory" value="Other">Other</label>
+          </div>
+        </div>
+
+        <button type="submit" class="df-apply">Apply</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Search results -->
+  <div id="search-results-section" class="is-hidden search-results-section">
+    <div class="search-header">Results <span id="search-count" class="search-count"></span> — <span id="search-query-text" class="search-query"></span></div>
+    <div class="events-container">
+      <div class="events" id="search-results"></div>
+      <div id="no-results" class="no-results" style="display:none;padding:20px;color:#0b254a;font-weight:600">No events match your filters.</div>
+    </div>
+  </div>
+
+  <!-- Dynamic sections -->
   <div class="main-content">
     <div>
-      <div class="section-bar">Your Upcoming Events</div>
+      <div class="section-bar">My Created Events</div>
+      <div class="events-container">
+        <div class="events" id="myEventsSection"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-bar">Upcoming Events</div>
       <div class="events-container">
         <div class="events" id="upcoming-events"></div>
       </div>
     </div>
-    <div>
-      <div class="section-bar">New Events</div>
-      <div class="events-container">
-        <div class="events" id="new-events"></div>
-      </div>
-    </div>
+
     <div>
       <div class="section-bar">Recommended Events</div>
       <div class="events-container">
@@ -70,70 +296,425 @@
     </div>
   </div>
 
-  <div id="search-results-section" style="display:none">
-    <div class="section-bar">Search Results</div>
-    <div class="events-container">
-      <div class="events" id="search-results"></div>
-    </div>
-  </div>
-  </div>
-
+  <!-- Unified Search + User Search Logic -->
   <script type="module">
-    function clearSearchView() {
-      document.getElementById('search-results-section').style.display = 'none';
-      document.getElementById('clear-search').style.display = 'none';
-      document.querySelectorAll('.main-content > div').forEach(section => {
-        if (section.id !== 'search-results-section') section.style.display = '';
-      });
-      const sr = document.getElementById('search-results'); while (sr && sr.firstChild) sr.removeChild(sr.firstChild);
-    }
+    import { db } from '../../js/Shared/firebase-config.js';
+    import { collection, getDocs } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js';
 
-    window.handleSearch = function () {
-      const query = document.querySelector('.search-input').value.toLowerCase().trim();
-      if (!query) { clearSearchView(); return; }
+    // Track current search mode
+    let currentSearchMode = 'events'; // 'events' or 'users'
 
-      const matches = [];
-      const seen = new Set();
-      document.querySelectorAll('.events').forEach(list => {
+    // Switch between Events and Users search mode
+    window.switchSearchMode = function(mode) {
+      currentSearchMode = mode;
+      
+      // Update toggle buttons
+      document.getElementById('toggle-events').classList.toggle('active', mode === 'events');
+      document.getElementById('toggle-users').classList.toggle('active', mode === 'users');
+      
+      // Update placeholder
+      const input = document.getElementById('unified-search-input');
+      input.placeholder = mode === 'events' 
+        ? 'Search events...' 
+        : 'Search users by name, email, or school...';
+      
+      // Clear previous results
+      clearUnifiedSearch();
+    };
+
+    // Execute search based on current mode
+    window.executeUnifiedSearch = function() {
+      const query = document.getElementById('unified-search-input').value.trim();
+      if (!query) {
+        clearUnifiedSearch();
+        return;
+      }
+
+      if (currentSearchMode === 'events') {
+        handleSearch(query);
+      } else {
+        handleUserSearch(query);
+      }
+
+      document.getElementById('clear-unified-search').style.display = 'inline-block';
+    };
+
+    // Event Search Logic
+    function handleSearch(queryRaw) {
+      const query = (queryRaw || '').toLowerCase().trim();
+      if (!query) { clearUnifiedSearch(); return; }
+
+      const lists = document.querySelectorAll('.events');
+      const matches = []; const seen = new Set();
+      lists.forEach(list => {
         list.querySelectorAll('.event-card').forEach(card => {
           const id = card.getAttribute('data-event-id') || '';
           if (seen.has(id)) return;
           const title = (card.querySelector('.event-title') || { textContent: '' }).textContent.toLowerCase();
-          if (title.includes(query)) {
-            matches.push(card);
-            seen.add(id);
-          }
+          const desc = (card.querySelector('.event-desc') || { textContent: '' }).textContent.toLowerCase();
+          if (title.includes(query) || desc.includes(query)) { matches.push(card); seen.add(id); }
         });
       });
 
-      document.querySelectorAll('.main-content > div').forEach(section => {
-        if (section.id !== 'search-results-section') section.style.display = 'none';
-      });
+      // Hide user results
+      document.getElementById('user-search-results-section').classList.remove('show');
 
-      const sr = document.getElementById('search-results'); while (sr && sr.firstChild) sr.removeChild(sr.firstChild);
-      matches.forEach(card => {
-        const clone = card.cloneNode(true);
-        clone.style.display = 'block';
-        const id = clone.getAttribute('data-event-id') || card.getAttribute('data-event-id');
-        if (id) {
-          clone.addEventListener('click', () => { window.location.href = `eventPage.html?id=${id}`; });
-          clone.style.cursor = 'pointer';
-        }
-        sr.appendChild(clone);
-      });
+      // populate results container
+      const sr = document.getElementById('search-results');
+      const srSection = document.getElementById('search-results-section');
+      const noResults = document.getElementById('no-results');
+      if (sr) {
+        while (sr.firstChild) sr.removeChild(sr.firstChild);
+        matches.forEach(card => {
+          const clone = card.cloneNode(true);
+          clone.style.display = 'block';
+          const id = clone.getAttribute('data-event-id') || card.getAttribute('data-event-id');
+          if (id) { 
+            const target = document.body?.dataset?.eventPage || 'eventPageOrg.html'; 
+            clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; }); 
+            clone.style.cursor = 'pointer'; 
+          }
+          sr.appendChild(clone);
+        });
+      }
 
-      document.getElementById('search-results-section').style.display = '';
-      document.getElementById('clear-search').style.display = '';
+      // show results and collapse main
+      const main = document.querySelector('.main-content'); if (main) main.classList.add('collapsed');
+      if (srSection) {
+        srSection.classList.remove('is-hidden');
+        srSection.classList.add('show');
+        try { srSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+      }
+      if (noResults) noResults.style.display = matches.length === 0 ? '' : 'none';
+      const countEl = document.getElementById('search-count'); if (countEl) countEl.textContent = `(${matches.length})`;
+      const qText = document.getElementById('search-query-text'); if (qText) qText.textContent = queryRaw || query;
+    }
+    window.handleSearch = handleSearch;
+
+    // User Search Logic - Filter by public profile
+    async function handleUserSearch(query) {
+      const searchQuery = query.toLowerCase();
+
+      try {
+        const usersRef = collection(db, 'users');
+        const snapshot = await getDocs(usersRef);
+        
+        const results = [];
+        snapshot.forEach(doc => {
+          const userData = doc.data();
+          
+          // Skip users who haven't activated public profile
+          if (!userData.publicProfile) {
+            return;
+          }
+          
+          const fullname = (userData.fullname || '').toLowerCase();
+          const email = (userData.email || '').toLowerCase();
+          const school = (userData.school || userData.organization || '').toLowerCase();
+          
+          if (fullname.includes(searchQuery) || email.includes(searchQuery) || school.includes(searchQuery)) {
+            results.push({ id: doc.id, ...userData });
+          }
+        });
+
+        displayUserResults(results, query);
+        
+      } catch (error) {
+        console.error('Error searching users:', error);
+        const resultsDiv = document.getElementById('user-search-results');
+        resultsDiv.innerHTML = '<div class="no-user-results">Error searching users. Please try again.</div>';
+      }
+    }
+
+    function displayUserResults(users, query) {
+      // Hide event sections and results
+      const main = document.querySelector('.main-content'); if (main) main.classList.add('collapsed');
+      document.getElementById('search-results-section').classList.remove('show');
+      document.getElementById('search-results-section').classList.add('is-hidden');
+
+      const resultsDiv = document.getElementById('user-search-results');
+      const resultsSection = document.getElementById('user-search-results-section');
+      const countEl = document.getElementById('user-search-count');
+      
+      resultsSection.classList.add('show');
+      if (countEl) countEl.textContent = `(${users.length})`;
+
+      if (users.length === 0) {
+        resultsDiv.innerHTML = '<div class="no-user-results">No users found matching your search.</div>';
+        return;
+      }
+
+      const html = users.map(user => {
+        const initials = (user.fullname || 'User').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        const roleClass = user.role === 'organizer' ? 'role-organizer' : user.role === 'admin' ? 'role-admin' : 'role-student';
+        
+        return `
+          <div class="user-result-card" onclick="window.location.href='../Student/public-profile.html?id=${user.id}'">
+            <div class="user-avatar">
+              ${user.avatarUrl || user.selectedAvatar ? `<img src="${user.selectedAvatar || user.avatarUrl}" alt="${user.fullname}">` : initials}
+            </div>
+            <div class="user-info">
+              <div class="user-name">${user.fullname || 'Unknown User'}</div>
+              <div class="user-email">${user.email || ''}</div>
+              <div class="user-meta">
+                <span class="user-role-badge ${roleClass}">
+                  ${(user.role || 'student').toUpperCase()}
+                </span>
+                ${user.school || user.organization || ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      resultsDiv.innerHTML = html;
+
+      try { resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+    }
+
+    // Clear Unified Search
+    window.clearUnifiedSearch = function() {
+      // Reset input
+      document.getElementById('unified-search-input').value = '';
+      document.getElementById('clear-unified-search').style.display = 'none';
+
+      // Hide all search results
+      document.getElementById('search-results-section').classList.remove('show');
+      document.getElementById('search-results-section').classList.add('is-hidden');
+      document.getElementById('user-search-results-section').classList.remove('show');
+
+      // Show all event sections
+      const main = document.querySelector('.main-content'); 
+      if (main) main.classList.remove('collapsed');
+
+      // Clear results
+      const eventResults = document.getElementById('search-results');
+      while (eventResults && eventResults.firstChild) {
+        eventResults.removeChild(eventResults.firstChild);
+      }
+
+      const userResults = document.getElementById('user-search-results');
+      while (userResults && userResults.firstChild) {
+        userResults.removeChild(userResults.firstChild);
+      }
+
+      const noResults = document.getElementById('no-results');
+      if (noResults) noResults.style.display = 'none';
     };
 
-    document.getElementById('clear-search').addEventListener('click', clearSearchView);
+    // Allow Enter key to trigger search
+    document.getElementById('unified-search-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        executeUnifiedSearch();
+      }
+    });
   </script>
 
-  <!-- Firebase + Auth + Events -->
+  <!-- Date Filter Logic -->
+  <script type="module">
+    const form = document.getElementById("date-filter");
+    const inputFrom = document.getElementById("df-from");
+    const inputTo   = document.getElementById("df-to");
+    const btnClear  = document.getElementById("df-clear");
+    const presets   = form.querySelectorAll("[data-preset]");
+
+    const startOfDay = (d)=> new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0,0,0,0);
+    const endOfDay   = (d)=> new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23,59,59,999);
+
+    function setPresetActive(key) {
+      presets.forEach(b => b.classList.toggle('active', b.dataset.preset === key));
+    }
+
+    function applyPreset(key) {
+      const now = new Date();
+      if (key === "today") {
+        inputFrom.valueAsDate = now; inputTo.valueAsDate = now;
+      } else if (key === "week") {
+        const day = now.getDay();
+        const diffToMon = (day + 6) % 7;
+        const monday = new Date(now); monday.setDate(now.getDate() - diffToMon);
+        const sunday = new Date(monday); sunday.setDate(monday.getDate() + 6);
+        inputFrom.valueAsDate = monday; inputTo.valueAsDate = sunday;
+      } else if (key === "weekend") {
+        const day = now.getDay();
+        const sat = new Date(now); sat.setDate(sat.getDate() + ((6 - day + 7) % 7));
+        const sun = new Date(sat); sun.setDate(sat.getDate() + 1);
+        inputFrom.valueAsDate = sat; inputTo.valueAsDate = sun;
+      }
+      setPresetActive(key);
+    }
+
+    presets.forEach(btn => {
+      btn.addEventListener("click", () => {
+        applyPreset(btn.dataset.preset);
+        form.dispatchEvent(new Event("submit"));
+      });
+    });
+
+    btnClear.addEventListener("click", () => {
+      inputFrom.value = ""; inputTo.value = ""; setPresetActive(null);
+      filterVisibleByDate(null, null);
+    });
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const from = inputFrom.value ? startOfDay(new Date(inputFrom.value)) : null;
+      const to   = inputTo.value   ? endOfDay(new Date(inputTo.value))     : null;
+      if (from && to && from > to) {
+        const tmp = from; (from = to), (to = tmp);
+        inputFrom.valueAsDate = from; inputTo.valueAsDate = to;
+      }
+      setPresetActive(null);
+      filterVisibleByDate(from, to);
+    });
+
+    const filterUniversity = document.getElementById('filterUniversity');
+    if (filterUniversity) {
+      filterUniversity.addEventListener('change', () => {
+        const from = inputFrom.value ? startOfDay(new Date(inputFrom.value)) : null;
+        const to   = inputTo.value   ? endOfDay(new Date(inputTo.value))     : null;
+        filterVisibleByDate(from, to);
+      });
+    }
+
+    const categoryCheckboxes = Array.from(document.querySelectorAll('input[name="filterCategory"]'));
+    if (categoryCheckboxes.length) {
+      categoryCheckboxes.forEach(cb => cb.addEventListener('change', () => {
+        const from = inputFrom.value ? startOfDay(new Date(inputFrom.value)) : null;
+        const to   = inputTo.value   ? endOfDay(new Date(inputTo.value))     : null;
+        filterVisibleByDate(from, to);
+      }));
+    }
+
+    function parseEventStart(card) {
+      const ds = card.getAttribute('data-start');
+      if (ds) { const n = Number(ds); if (!Number.isNaN(n)) return n; }
+
+      const t = card.querySelector('time[datetime]');
+      if (t && t.getAttribute('datetime')) {
+        const n = Date.parse(t.getAttribute('datetime')); if (!Number.isNaN(n)) return n;
+      }
+
+      const maybe = card.querySelector('.event-date, .date, .text-sm, .meta');
+      const text = (maybe?.textContent || card.textContent || '').trim();
+      const n = Date.parse(text);
+      return Number.isNaN(n) ? null : n;
+    }
+
+    const mo = new MutationObserver(entries => {
+      entries.forEach(e => {
+        e.addedNodes.forEach(n => {
+          if (!(n instanceof HTMLElement)) return;
+          if (n.classList?.contains('event-card')) {
+            if (!n.hasAttribute('data-start')) {
+              const ts = parseEventStart(n);
+              if (ts) n.setAttribute('data-start', String(ts));
+            }
+          }
+        });
+      });
+    });
+    document.querySelectorAll('.events').forEach(list => {
+      mo.observe(list, { childList: true, subtree: true });
+    });
+
+    function filterVisibleByDate(from, to) {
+      const lists = document.querySelectorAll('.events');
+      const selectedUni = document.getElementById('filterUniversity')?.value || '';
+      const selectedCategories = Array.from(document.querySelectorAll('input[name="filterCategory"]:checked')).map(n => n.value.toLowerCase());
+
+      const isFilteringActive = Boolean(from || to || selectedUni || selectedCategories.length > 0);
+      const srSection = document.getElementById('search-results-section');
+      const sr = document.getElementById('search-results');
+      const noResults = document.getElementById('no-results');
+
+      function isUniversityEvent(card, selected) {
+        if (!selected) return true;
+        const selectedNorm = String(selected).toLowerCase().replace(/[^a-z0-9]+/g, '');
+        let openAttr = card.getAttribute('data-open-to') || card.dataset.openTo || '';
+        if (!openAttr) openAttr = (card.querySelector('.event-open-to')?.textContent || '').trim();
+        if (openAttr && openAttr.trim() !== '') {
+          const arr = String(openAttr).split(/[,;]+/).map(s => s.trim()).filter(Boolean);
+          const norm = arr.map(a => a.toLowerCase().replace(/[^a-z0-9]+/g, ''));
+          if (norm.includes(selectedNorm)) return true;
+          if (norm.some(n => n.includes(selectedNorm) || selectedNorm.includes(n))) return true;
+          return false;
+        }
+        return true;
+      }
+
+      function isCategoryMatch(card, selectedCats) {
+        if (!selectedCats || selectedCats.length === 0) return true;
+        const cat = (card.getAttribute('data-category') || card.dataset.category || '').toLowerCase().trim();
+        if (cat) return selectedCats.includes(cat);
+        const title = (card.querySelector('.event-title')?.textContent || '').toLowerCase();
+        const loc = (card.querySelector('.event-location')?.textContent || '').toLowerCase();
+        return selectedCats.some(sc => title.includes(sc) || loc.includes(sc));
+      }
+
+      function isDateMatch(card, fromDate, toDate) {
+        let ts = card.getAttribute('data-start');
+        if (!ts) { const parsed = parseEventStart(card); if (parsed) { ts = String(parsed); card.setAttribute('data-start', ts); } }
+        const n = ts ? Number(ts) : NaN;
+        if (fromDate && !(n >= +fromDate)) return false;
+        if (toDate && !(n <= +toDate)) return false;
+        return true;
+      }
+
+      if (!isFilteringActive) {
+        const main = document.querySelector('.main-content'); if (main) main.classList.remove('collapsed');
+        lists.forEach(list => { list.querySelectorAll('.event-card').forEach(card => card.style.display = ''); list.dispatchEvent(new Event('scroll')); });
+        if (sr) while (sr.firstChild) sr.removeChild(sr.firstChild);
+        if (srSection) { srSection.classList.remove('show'); setTimeout(() => srSection.classList.add('is-hidden'), 380); }
+        if (noResults) noResults.style.display = 'none';
+        const qText = document.getElementById('search-query-text'); if (qText) qText.textContent = '';
+        const countEl = document.getElementById('search-count'); if (countEl) countEl.textContent = '';
+        return;
+      }
+
+      const matches = []; const seen = new Set();
+      lists.forEach(list => {
+        list.querySelectorAll('.event-card').forEach(card => {
+          if (!isDateMatch(card, from, to)) return;
+          if (!isUniversityEvent(card, selectedUni)) return;
+          if (!isCategoryMatch(card, selectedCategories)) return;
+          const id = card.getAttribute('data-event-id') || '';
+          if (!seen.has(id)) { seen.add(id); matches.push(card); }
+        });
+      });
+
+      if (sr) {
+        while (sr.firstChild) sr.removeChild(sr.firstChild);
+        matches.forEach(card => {
+          const clone = card.cloneNode(true);
+          clone.style.display = 'block';
+          const id = clone.getAttribute('data-event-id') || card.getAttribute('data-event-id');
+          if (id) { const target = document.body?.dataset?.eventPage || 'eventPageOrg.html'; clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; }); clone.style.cursor = 'pointer'; }
+          sr.appendChild(clone);
+        });
+      }
+
+      const main = document.querySelector('.main-content'); if (main) main.classList.add('collapsed');
+      if (srSection) { srSection.classList.remove('is-hidden'); srSection.classList.add('show'); try { srSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} }
+
+      const countEl = document.getElementById('search-count'); if (countEl) countEl.textContent = `(${matches.length})`;
+      const parts = [];
+      if (selectedUni) parts.push(selectedUni);
+      if (selectedCategories.length) parts.push(selectedCategories.join(', '));
+      if (from || to) { const fromStr = from ? new Date(+from).toLocaleDateString() : ''; const toStr = to ? new Date(+to).toLocaleDateString() : ''; parts.push(`${fromStr}${from && to ? ' – ' : ''}${toStr}`.trim()); }
+      const qText = document.getElementById('search-query-text'); if (qText) qText.textContent = parts.join(' | ') || 'filters applied';
+
+      if (noResults) noResults.style.display = matches.length === 0 ? '' : 'none';
+
+      lists.forEach(list => list.dispatchEvent(new Event('scroll')));
+    }
+
+    window.filterVisibleByDate = filterVisibleByDate;
+  </script>
+
   <script type="module" src="../../js/Registration/auth.js"></script>
   <script type="module" src="../../js/Events/LoadEvents.js"></script>
   <script type="module" src="../../js/Shared/scroll-controls.js"></script>
 
 </body>
-
 </html>
