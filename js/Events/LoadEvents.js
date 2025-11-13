@@ -27,6 +27,11 @@ function createEventCard(eventData, eventId) {
   const card = document.createElement("div");
   card.className = "event-card";
   card.setAttribute("data-event-id", eventId);
+  // expose the event category on the card for client-side filters
+  card.setAttribute("data-category", eventData.eventCategory || "");
+  // expose openTo from the event (can be array or string) for university filtering
+  const openToAttr = Array.isArray(eventData.openTo) ? eventData.openTo.join(',') : (eventData.openTo || '');
+  if (openToAttr) card.setAttribute('data-open-to', openToAttr);
 
   const bannerSrc = eventData.banner || "https://via.placeholder.com/260x140";
 
@@ -36,6 +41,8 @@ function createEventCard(eventData, eventId) {
     <div class="event-title">${eventData.eventName}</div>
     <div class="event-date">${eventData.eventDateTime?.toDate().toDateString()}</div>
     <div class="event-location">${eventData.eventLocation}</div>
+    <div class="event-category" style="display:none">${eventData.eventCategory || ''}</div>
+    <div class="event-open-to" style="display:none">${Array.isArray(eventData.openTo) ? eventData.openTo.join(',') : (eventData.openTo || '')}</div>
   `;
 
   card.addEventListener("click", () => {
