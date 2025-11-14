@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+  <title>Administrator Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/Shared/dashboard.css">
+  <link rel="stylesheet" href="../../css/Shared/toolbar.css">
+  <link rel="stylesheet" href="../../css/Administrator/admin-dashboard.css">
+</head>
+
+<body class="admin-page" data-event-page="eventPageAdmin.html">
+
+  <!-- Toolbar (reuse shared styles) -->
+  <div class="toolbar">
+  <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+       onclick="location.href='admin-dashboard.html'">
+
+    <button class="toolbar-btn" onclick="location.href='admin-dashboard.html'">Home</button>
+      <button class="toolbar-btn" onclick="location.href='AdminAnalytics.html'">Analytics</button>
+    <button id="previewOrganizerBtn" class="toolbar-btn" onclick="location.href='Previewpage.html'">Preview</button>
+    <div class="toolbar-spacer"></div>
+    <!--to be added with 4th feature-->
+    <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
+    <div id="authBtnContainer">
+      <button id="logout-btn" class="auth-btn">Log Out</button>
+    </div>
+  </div>
+
+  <div class="top-row page-max">
+    <header class="admin-header">
+      <div>
+        <h1>Administrator Dashboard</h1>
+        <p class="muted">Overview of new events, organizer requests, and global site metrics.</p>
+      </div>
+      <div class="header-actions">
+        <!-- control buttons moved below the header for clearer placement -->
+      </div>
+    </header>
+
+    <aside class="shortcuts-top">
+      <div class="section-bar">Shortcuts</div>
+      <div class="panel">
+  <button id="shortcut-organizer-requests" class="toolbar-btn primary" onclick="location.href='AdminApproval.html'">Organizer Requests</button>
+  <button id="shortcut-send-message" class="toolbar-btn primary">Send Broadcast Message</button>
+  <button id="shortcut-site-settings" class="toolbar-btn primary">Site Settings</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Header-level controls moved here so they appear just under the header -->
+  <div class="header-controls page-max">
+    <div class="header-actions">
+      <button id="sendMessageBtn" class="toolbar-btn primary">Send Broadcast Message</button>
+    </div>
+  </div>
+
+  <!-- Admin quick stats and shortcuts -->
+  <div class="admin-quick">
+    <div class="card">
+      <div class="card-title">Website Users</div>
+      <div id="totalUsers" class="card-count">0</div>
+  <div class="card-actions"><button id="viewNewEvents" class="toolbar-btn primary" onclick="location.href='../Administrator/view-users.html','_blank'">View Users</button></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Organizer Requests</div>
+      <div id="orgRequestsCount" class="card-count">0</div>
+  <div class="card-actions"><button id="viewOrgRequests" class="toolbar-btn primary" onclick="location.href='AdminApproval.html'">Review Requests</button></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Global Website Stats</div>
+      <div class="global-stats">
+        <div class="stat">
+          <div id="totalEvents" class="stat-value">0</div>
+          <div class="stat-label">Events</div>
+        </div>
+        <div class="stat">
+          <div id="globalUsers" class="stat-value">0</div>
+          <div class="stat-label">Users</div>
+        </div>
+        <div class="stat">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Events (full-width) -->
+  <section class="full-width-section page-max">
+    <div class="section-bar">New Events</div>
+    <div class="events-container">
+      <div class="events" id="newEventsSection"></div>
+    </div>
+  </section>
+
+  <!-- Main admin panels -->
+  <div class="main-content page-max">
+    <!-- (shortcuts moved to top-right) -->
+  </div>
+
+<script type="module">
+import { auth, db } from "../../js/Shared/firebase-config.js";
+import {
+  getIdTokenResult,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+// ===============================
+// 🔹 Real-Time Website Stats
+// ===============================
+function setupLiveGlobalStats() {
+  const totalEventsEl = document.getElementById("totalEvents");
+  const totalUsersEl = document.getElementById("totalUsers");
+  const orgRequestsCountEl = document.getElementById("orgRequestsCount");
+
+  // 🔹 Live count of "events"
+  onSnapshot(collection(db, "events"), (snapshot) => {
+    totalEventsEl.textContent = snapshot.size.toLocaleString();
+    console.log(`📊 Live update — Events: ${snapshot.size}`);
+  }, (error) => console.error("❌ Error listening to events:", error));
+
+ onSnapshot(collection(db, "users"), (snapshot) => {
+  const count = snapshot.size.toLocaleString();
+  const totalUsersEl = document.getElementById("totalUsers");
+  const globalUsersEl = document.getElementById("globalUsers"); // new ID
+
+  if (totalUsersEl) totalUsersEl.textContent = count;
+  if (globalUsersEl) globalUsersEl.textContent = count; // sync global stats too
+
+  console.log(`👥 Live update — Users: ${count}`);
+});
+
+  // 🔹 Live count of *pending* organizer requests
+  const pendingQuery = query(
+    collection(db, "organizers"),
+    where("status", "in", ["pending", null])
+  );
+
+  onSnapshot(pendingQuery, (snapshot) => {
+    orgRequestsCountEl.textContent = snapshot.size.toLocaleString();
+    console.log(`🕓 Live update — Pending organizer requests: ${snapshot.size}`);
+  }, (error) => console.error("❌ Error listening to organizer requests:", error));
+}
+
+// ===============================
+// 🧩 Admin Access Check
+// ===============================
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = "../Registration/SignIn.html";
+    return;
+  }
+
+  try {
+    const tokenResult = await getIdTokenResult(user);
+    if (!tokenResult.claims.admin) {
+      alert("Unauthorized access — only admins allowed.");
+      await signOut(auth);
+      window.location.href = "../Registration/SignIn.html";
+    } else {
+      console.log("✅ Admin verified — live global stats enabled.");
+      setupLiveGlobalStats(); // Start real-time listeners
+    }
+  } catch (error) {
+    console.error("Admin check failed:", error);
+    await signOut(auth);
+    window.location.href = "../Registration/SignIn.html";
+  }
+});
+</script>
+
+  <script type="module" src="../../js/Registration/auth.js"></script>
+  <script type="module" src="../../js/Events/LoadEvents.js"></script>
+  <script type="module" src="../../js/Shared/scroll-controls.js"></script>
+
+</body>
+
+</html>

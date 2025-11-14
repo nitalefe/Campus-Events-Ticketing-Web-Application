@@ -24,83 +24,6 @@ body {
 	line-height: 1.45;
 }
 
-/* Toolbar */
-.toolbar {
-	width: 100%;
-	background: rgba(0, 51, 102, 0.95);
-	color: #fff;
-	display: flex;
-	align-items: center;
-	padding: 0 clamp(16px, 3vw, 32px);
-	height: clamp(60px, 8vh, 72px);
-	box-sizing: border-box;
-	box-shadow: 0 0.3vh 1vh rgba(0, 0, 0, 0.12);
-	position: sticky;
-	top: 0;
-	z-index: 100;
-}
-
-.toolbar-logo {
-	height: clamp(40px, 6vh, 48px);
-	margin-right: clamp(20px, 3vw, 36px);
-	filter: drop-shadow(0 0.2vh 0.3vh rgba(0, 0, 0, 0.18));
-	transition: transform 0.2s;
-	cursor: pointer;
-}
-
-.toolbar-logo:hover {
-	transform: scale(1.08) rotate(-2deg);
-}
-
-.toolbar-btn {
-	background: rgba(255, 255, 255, 0.08);
-	border: none;
-	color: #fff;
-	font-size: clamp(0.9rem, 2.5vw, 1.08rem);
-	margin-right: clamp(16px, 2.5vw, 24px);
-	cursor: pointer;
-	padding: clamp(8px, 1.5vh, 10px) clamp(16px, 3vw, 22px);
-	border-radius: 0.4vw;
-	font-family: 'Montserrat', Arial, sans-serif;
-	font-weight: 400;
-	letter-spacing: 0.5px;
-	transition: background 0.2s, box-shadow 0.2s;
-	box-shadow: 0 0.2vh 0.6vh rgba(0, 0, 0, 0.04);
-	white-space: nowrap;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
-}
-
-.toolbar-btn:hover {
-	background: #367bfc;
-	box-shadow: 0 0.3vh 0.9vh rgba(54, 123, 252, 0.18);
-}
-
-.toolbar-spacer {
-	flex: 1;
-}
-
-.auth-btn {
-	background: linear-gradient(90deg, #6fa3ef 60%, #367bfc 100%);
-	color: #fff;
-	border: none;
-	border-radius: 0.4vw;
-	font-size: clamp(0.9rem, 2.2vw, 1rem);
-	cursor: pointer;
-	padding: clamp(8px, 1.5vh, 10px) clamp(16px, 3vw, 22px);
-	margin-right: 0;
-	font-weight: 600;
-	box-shadow: 0 0.2vh 0.6vh rgba(54, 123, 252, 0.12);
-	transition: background 0.2s, box-shadow 0.2s;
-}
-
-.auth-btn:hover {
-	background: linear-gradient(90deg, #a3c8f7 60%, #367bfc 100%);
-	box-shadow: 0 0.3vh 0.9vh rgba(54, 123, 252, 0.22);
-}
-
 /* Header / Hero */
 header {
 	padding: clamp(28px, 6vh, 48px) 20px;
@@ -320,6 +243,180 @@ header p {
 	font-size: 1rem
 }
 
+/* -------------------------------
+	 Filter panel & controls
+	 ------------------------------- */
+.filter-panel {
+	max-width: 1100px;
+	margin: 12px auto;
+	padding: 12px;
+	/* Pale gray solid background for the filter container */
+	background: #f5f6f8;
+	border-radius: 12px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	align-items: stretch;
+	box-shadow: 0 6px 18px rgba(4, 18, 73, 0.04);
+	/* make text inside the pale container navy for better contrast */
+	color: #0b254a;
+}
+
+.filter-title {
+	color: #0b254a;
+	font-weight: 700;
+	font-size: 0.98rem;
+	letter-spacing: 0.2px;
+}
+
+.filters-wrap {
+	padding: 0 6px;
+}
+
+.date-filter {
+	display: grid;
+	grid-template-columns: repeat(2, 180px) 1fr auto;
+	gap: 10px;
+	align-items: end;
+}
+
+.date-filter label {
+	display: grid;
+	gap: 6px;
+	font-size: 12px;
+	color: #0b254a;
+}
+
+.date-filter input[type="date"] {
+	padding: 8px 10px;
+	border: 1px solid rgba(0,0,0,0.06);
+	border-radius: 10px;
+	background: #fff;
+}
+
+/* Category layout: make the label + checkboxes sit on one row and wrap as needed */
+.category-row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	/* place the whole category row on its own row in the date-filter grid */
+	grid-column: 1 / -1;
+	/* prefer a single horizontal line on larger viewports */
+	flex-wrap: nowrap;
+	overflow: hidden;
+}
+.category-title {
+  font-weight: 600;
+  color: #0b254a;
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+.category-controls {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	/* keep options on one line and allow horizontal scroll if needed */
+	flex-wrap: nowrap;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+.cat-option {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 8px;
+	border-radius: 8px;
+	cursor: pointer;
+	color: #0b254a;
+	font-weight: 600;
+	background: transparent;
+}
+.cat-option input { margin: 0; transform: translateY(1px); }
+
+/* Place the Apply button at the bottom-right on wide screens (keeps mobile stacking intact) */
+.date-filter .df-apply {
+	grid-column: 4;
+	justify-self: end;
+	align-self: end;
+}
+
+/* Stylish select / dropbox for university filter */
+#filterUniversity,
+.date-filter select {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	padding: 8px 40px 8px 12px;
+	border-radius: 10px;
+	border: 1px solid rgba(11,34,70,0.12);
+	background: #ffffff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path d='M5 7l5 5 5-5' stroke='%230b254a' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat right 10px center/18px;
+	color: #0b254a;
+	font-weight: 600;
+	box-shadow: 0 6px 18px rgba(11, 56, 122, 0.06);
+	transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+#filterUniversity:focus,
+.date-filter select:focus {
+	outline: none;
+	box-shadow: 0 0 0 4px rgba(54,123,252,0.12);
+	transform: translateY(-1px);
+}
+
+@media (max-width: 720px) {
+	#filterUniversity, .date-filter select {
+		width: 100%;
+		padding-right: 36px;
+	}
+
+	/* On small screens the apply button should span full width (existing behaviour) */
+	.date-filter .df-apply { grid-column: 1 / -1; justify-self: stretch; }
+
+	/* Allow category controls to wrap on small screens */
+	.category-row { flex-wrap: wrap; grid-column: 1 / -1; }
+	.category-controls { flex-wrap: wrap; overflow-x: visible; }
+}
+
+.df-presets { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.df-presets button,
+.df-apply,
+#df-clear {
+	padding: 8px 12px;
+	border-radius: 10px;
+	border: none;
+	cursor: pointer;
+	font-family: inherit;
+	font-weight: 600;
+	color: #fff;
+	background: linear-gradient(90deg, var(--primary), #2b62d9);
+	box-shadow: 0 6px 18px rgba(11, 56, 122, 0.12);
+	transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms;
+}
+
+.df-presets button.active {
+	background: rgba(255,255,255,0.12);
+	color: #fff;
+	border: 1px solid rgba(255,255,255,0.08);
+	box-shadow: none;
+}
+
+.df-presets button:hover,
+.df-apply:hover,
+#df-clear:hover { transform: translateY(-2px); opacity: 0.98; }
+
+.df-apply { background: linear-gradient(90deg, #6fa3ef 40%, #367bfc 100%); }
+
+#df-clear { background: rgba(255,255,255,0.08); color: #0b254a; font-weight: 700; }
+
+.is-hidden { display: none !important; }
+
+@media (max-width: 720px) {
+	.date-filter { grid-template-columns: 1fr 1fr; grid-auto-rows: auto; }
+	.df-presets { grid-column: 1 / -1; }
+	.df-apply { grid-column: 1 / -1; }
+}
+
 /* Small screens */
 @media (max-width:900px) {
 	.events {
@@ -421,4 +518,52 @@ header p {
 	position: relative;
 	z-index: 10;
 	text-shadow: 0 0.1vh 0.2vh rgba(0, 0, 0, 0.2);
+}
+
+/* Search / filter results panel: ensure it occupies the top slot when shown
+	 and hide the main content while results are active. This prevents the
+	 results block from being pushed to the bottom by collapsing layout gaps. */
+.search-results-section {
+	/* full-bleed background area but let inner container be centered */
+	width: 100%;
+	max-width: none;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+.search-results-section .events-container {
+	background: #fff;
+	/* make the results container full-bleed (edge-to-edge) */
+	width: 100vw;
+	max-width: none;
+	margin: 0;
+	padding: clamp(20px, 4vw, 48px) 8vw; /* generous vertical padding and responsive side padding */
+	box-shadow: 0 8px 20px rgba(13, 71, 161, 0.04);
+	border-radius: 0; /* full-bleed should not be rounded at edges */
+}
+
+/* Make the search header match the visual style of other section headers (.section-bar) */
+.search-header {
+	font-weight: 700;
+	color: var(--primary);
+	background: #e8eeff;
+	padding: 10px 16px;
+	border-radius: 6px;
+	margin: 12px auto 18px auto;
+	display: inline-block;
+}
+
+.search-header .search-count { margin-left: 8px; color: #233241; font-weight: 600 }
+
+.search-query { color: #233241; font-weight: 600 }
+
+/* Hidden/shown states (use classes from JS). Keep .is-hidden for backward compatibility. */
+.search-results-section.is-hidden { display: none !important; }
+.search-results-section.show { display: block !important; animation: fadeInUp 220ms ease both; }
+
+.main-content.collapsed { display: none !important; }
+
+@keyframes fadeInUp {
+	from { opacity: 0; transform: translateY(8px); }
+	to   { opacity: 1; transform: translateY(0); }
 }

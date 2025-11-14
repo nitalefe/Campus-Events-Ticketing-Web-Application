@@ -1,0 +1,116 @@
+/* ensure no browser default margins push the toolbar down */
+html, body {
+	margin: 0;
+	padding: 0;
+}
+
+.toolbar {
+	width: 100vw; /* span full viewport width */
+	left: 0;
+	right: 0;
+	background: rgba(0, 51, 102, 0.95);
+	color: #fff;
+	display: flex;
+	align-items: center;
+	padding: 0 clamp(16px, 3vw, 32px);
+	height: clamp(60px, 8vh, 72px);
+	box-sizing: border-box;
+	box-shadow: 0 0.3vh 1vh rgba(0, 0, 0, 0.12);
+	position: sticky;
+	top: 0;
+	z-index: 100;
+}
+
+.toolbar-logo {
+	height: clamp(40px, 6vh, 48px);
+	margin-right: clamp(20px, 3vw, 36px);
+	filter: drop-shadow(0 0.2vh 0.3vh rgba(0, 0, 0, 0.18));
+	transition: transform 0.2s;
+	cursor: pointer;
+}
+
+.toolbar-logo:hover {
+	transform: scale(1.08) rotate(-2deg);
+}
+
+.toolbar-btn {
+	background: rgba(255, 255, 255, 0.08);
+	border: none;
+	color: #fff;
+	font-size: clamp(0.9rem, 2.5vw, 1.08rem);
+	margin-right: clamp(16px, 2.5vw, 24px);
+	cursor: pointer;
+	padding: clamp(8px, 1.5vh, 10px) clamp(16px, 3vw, 22px);
+	border-radius: 0.4vw;
+	font-family: 'Montserrat', Arial, sans-serif;
+	font-weight: 400;
+	letter-spacing: 0.5px;
+	transition: background 0.2s, box-shadow 0.2s;
+	box-shadow: 0 0.2vh 0.6vh rgba(0, 0, 0, 0.04);
+	white-space: nowrap;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}
+
+/* .toolbar-btn:hover {
+	background: #367bfc;
+	box-shadow: 0 0.3vh 0.9vh rgba(54, 123, 252, 0.18);
+} */
+
+.toolbar-spacer {
+	flex: 1;
+}
+
+.auth-btn {
+	background: linear-gradient(90deg, #6fa3ef 60%, #367bfc 100%);
+	color: #fff;
+	border: none;
+	border-radius: 0.4vw;
+	font-size: clamp(0.9rem, 2.2vw, 1rem);
+	cursor: pointer;
+	padding: clamp(8px, 1.5vh, 10px) clamp(16px, 3vw, 22px);
+	margin-right: 0;
+	font-weight: 600;
+	box-shadow: 0 0.2vh 0.6vh rgba(54, 123, 252, 0.12);
+	transition: background 0.2s, box-shadow 0.2s;
+}
+
+.auth-btn:hover {
+	background: linear-gradient(90deg, #a3c8f7 60%, #367bfc 100%);
+	box-shadow: 0 0.3vh 0.9vh rgba(54, 123, 252, 0.22);
+}
+
+.toolbar-left {
+    display: flex;
+    align-items: center;
+}
+
+.toolbar-right {
+    display: flex;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .toolbar {
+        padding: 0 1vw;
+        height: clamp(50px, 6vh, 60px);
+    }
+
+    .toolbar-logo {
+        height: clamp(32px, 5vh, 40px);
+        margin-right: clamp(12px, 2vw, 20px);
+    }
+
+    .toolbar-btn {
+        font-size: clamp(0.8rem, 2vw, 0.9rem);
+        padding: clamp(6px, 1vh, 8px) clamp(12px, 2.5vw, 16px);
+        margin-right: clamp(8px, 1.5vw, 16px);
+    }
+
+    .auth-btn {
+        font-size: clamp(0.8rem, 2vw, 0.9rem);
+        padding: clamp(6px, 1vh, 8px) clamp(12px, 2.5vw, 16px);
+    }
+}
