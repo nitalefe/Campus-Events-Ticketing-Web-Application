@@ -177,45 +177,70 @@ header p {
 
 .event-card {
 	background: var(--card-bg);
-	padding: clamp(14px, 2.5vw, 20px);
+	padding: 20px;
 	border-radius: 10px;
 	cursor: pointer;
 	flex: 0 0 auto;
 	/* do not shrink/grow */
-	width: clamp(240px, 28vw, 320px);
-	min-width: 220px;
+	width: 280px;
+	min-width: 280px;
+	max-width: 280px;
+	height: 400px;
+	min-height: 400px;
+	max-height: 400px;
 	display: flex;
 	flex-direction: column;
 	scroll-snap-align: start;
 	/* snap each card into view when scrolling */
+	box-sizing: border-box;
 }
 
 .event-card .event-banner {
 	width: 100%;
-	height: clamp(140px, 20vh, 200px);
+	height: 160px;
+	min-height: 160px;
+	max-height: 160px;
 	object-fit: cover;
 	border-radius: 8px;
-	margin-bottom: 12px
+	margin-bottom: 12px;
+	flex-shrink: 0;
 }
 
 .event-title {
-	font-size: clamp(1.05rem, 2.4vw, 1.4rem);
+	font-size: 1.2rem;
+	font-weight: 700;
 	margin: 0 0 8px;
-	color: #233241
+	color: #233241;
+	line-height: 1.3;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	max-height: 3.2em;
 }
 
 .event-date,
 .event-location {
-	font-size: clamp(0.95rem, 2vw, 1.05rem);
+	font-size: 0.95rem;
 	color: var(--muted);
-	margin: 0 0 8px
+	margin: 0 0 6px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .event-desc {
-	font-size: clamp(0.95rem, 2vw, 1rem);
+	font-size: 0.95rem;
 	color: #444;
 	line-height: 1.45;
-	overflow-wrap: break-word
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	flex: 1;
+	overflow-wrap: break-word;
 }
 
 /* Search */
@@ -423,9 +448,14 @@ header p {
 		justify-content: flex-start
 	}
 
-	/* slightly larger cards on medium screens are fine; horizontal scroll keeps layout stable */
+	/* Keep consistent card size on medium screens */
 	.event-card {
-		width: clamp(260px, 40vw, 360px)
+		width: 280px;
+		min-width: 280px;
+		max-width: 280px;
+		height: 400px;
+		min-height: 400px;
+		max-height: 400px;
 	}
 }
 
@@ -443,8 +473,12 @@ header p {
 	}
 
 	.event-card {
-		width: clamp(220px, 62vw, 320px);
-		min-width: 200px
+		width: 280px;
+		min-width: 280px;
+		max-width: 280px;
+		height: 400px;
+		min-height: 400px;
+		max-height: 400px;
 	}
 
 	.search-input {

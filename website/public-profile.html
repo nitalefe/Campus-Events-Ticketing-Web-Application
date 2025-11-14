@@ -3,76 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+  <link rel="icon" type="image/png" href="../assets/images/evently_logo_DT.png">
   <title>User Profile - Campus Events</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/Shared/toolbar.css">
   <style>
-    /* Complete Toolbar Styling - Exact Match */
-    .toolbar {
-      background-color: #003366;
-      color: white;
-      padding: 10px 30px;
-      display: flex;
-      align-items: center;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      height: 60px;
-    }
-
-    .toolbar-logo {
-      height: 45px;
-      cursor: pointer;
-      margin-right: 30px;
-    }
-
-    .toolbar-btn {
-      background: none;
-      border: none;
-      color: white;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 500;
-      font-size: 16px;
-      cursor: pointer;
-      padding: 8px 20px;
-      margin: 0 5px;
-      transition: background-color 0.3s ease;
-      border-radius: 5px;
-    }
-
-    .toolbar-btn:hover {
-      background-color: rgba(255, 255, 255, 0.15);
-    }
-
-    .toolbar-spacer {
-      flex-grow: 1;
-    }
-
-    #authBtnContainer {
-      display: flex;
-      align-items: center;
-    }
-
-    .auth-btn {
-      background-color: #5b9bd5;
-      color: white;
-      border: none;
-      padding: 10px 24px;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 600;
-      font-size: 15px;
-      cursor: pointer;
-      border-radius: 6px;
-      transition: all 0.3s ease;
-    }
-
-    .auth-btn:hover {
-      background-color: #4a8bc2;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    }
-
     /* Body and Profile Styling */
     body {
       margin: 0;
@@ -284,10 +219,10 @@
 <body>
   <!-- Toolbar - Exact Match -->
   <div class="toolbar">
-    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" id="logoBtn">
+    <img src="../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" id="logoBtn">
     <button class="toolbar-btn" id="homeBtn">Home</button>
     <div class="toolbar-spacer"></div>
-    <button class="toolbar-btn" onclick="location.href='../profile.html'">Profile</button>
+    <button class="toolbar-btn" onclick="location.href='profile.html'">Profile</button>
     <div id="authBtnContainer">
       <button id="logout-btn" class="auth-btn">Log Out</button>
     </div>
@@ -341,10 +276,10 @@
     // Navigate based on PROFILE OWNER's role (not logged-in user)
     function goToHome() {
       if (profileOwnerRole === 'organizer') {
-        window.location.href = '../Organizer/organizer-dashboard.html';
+        window.location.href = 'Organizer/organizer-dashboard.html';
       } else {
         // Default to student dashboard for students or if role unknown
-        window.location.href = '../Student/student-dashboard.html';
+        window.location.href = 'Student/student-dashboard.html';
       }
     }
 
