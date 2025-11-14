@@ -40,6 +40,8 @@ firebase.json
 *.cache
 *.tmp
 *.bak
+firebase-config.js
+**/firebase-config.js
 
 # ----------------------------
 # Miscellaneous
