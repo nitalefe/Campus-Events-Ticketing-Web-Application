@@ -1,6 +1,6 @@
 // __tests__/events.test.js
 import 'whatwg-fetch';
-import { getDoc } from "../js/Shared/firebase_import.js";
+import { getDoc } from "./js/Shared/firebase_import.js";
 
 // ------------------------------
 // Mock firebase_import
@@ -61,7 +61,7 @@ beforeAll(() => {
 // ------------------------------
 // Import the script AFTER mocks
 // ------------------------------
-import { loadEventForEdit } from "../js/Events/events.js";
+import { loadEventForEdit } from "./js/Events/events.js";
 
 // ------------------------------
 // Test Suite
