@@ -42,64 +42,136 @@
       <button id="saveBtn" class="save-btn">Save Event</button>
       <button id="calendarBtn" class="save-btn">Add to Calendar</button>
       <button id="contactBtn" class="save-btn">Contact Organizer</button>
+      <button id="followBtn" class="save-btn">Follow Organizer</button>
+
+            <button id="viewTicketBtn" class="save-btn"
+    onclick="location.href='qrGenerator.html?id=' + new URLSearchParams(window.location.search).get('id')">
+    View Ticket
+  </button>
+
+
     </div>
   </div>
 
   <!-- Firebase scripts -->
+  <script type="module" src="../../js/Registration/auth.js"></script>
+
   <script type="module">
-    import { auth, db } from "../../js/Shared/firebase-config.js";
-    import { doc, getDoc, updateDoc, setDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+  import { auth, db } from "../../js/Shared/firebase-config.js";
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  setDoc,
+  arrayUnion,
+  arrayRemove
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
-    const params = new URLSearchParams(window.location.search);
-    const eventId = params.get("id");
+const params = new URLSearchParams(window.location.search);
+const eventId = params.get("id");
 
-    const titleEl = document.querySelector(".event-title");
-    const descEl = document.querySelector(".event-description");
-    const dateLocEl = document.querySelector(".event-date-location");
-    const bannerEl = document.getElementById("eventBanner");
-    const saveBtn = document.getElementById("saveBtn");
+// DOM
+const titleEl = document.querySelector(".event-title");
+const descEl = document.querySelector(".event-description");
+const dateLocEl = document.querySelector(".event-date-location");
+const bannerEl = document.getElementById("eventBanner");
+const saveBtn = document.getElementById("saveBtn");
+const contactBtn = document.getElementById("contactBtn");
+const followBtn = document.getElementById("followBtn");
+const viewTicketBtn = document.getElementById("viewTicketBtn");
 
-    // --------------------------------------------------
-    // 1️⃣ Load event details
-    // --------------------------------------------------
-    async function loadEventDetails(user) {
-      if (!eventId) {
-        titleEl.textContent = "Event not found.";
-        return;
-      }
+// Store event data for other functions
+let loadedEventData = null;
 
-      const docRef = doc(db, "events", eventId);
-      const snap = await getDoc(docRef);
+/* =======================================================
+   1️⃣ LOAD EVENT DETAILS FROM FIRESTORE
+======================================================= */
+async function loadEventDetails() {
+  const snap = await getDoc(doc(db, "events", eventId));
 
-      if (!snap.exists()) {
-        titleEl.textContent = "Event not found.";
-        descEl.textContent = "";
-        return;
-      }
+  if (!snap.exists()) {
+    titleEl.textContent = "Event not found.";
+    descEl.textContent = "";
+    return;
+  }
 
-      const data = snap.data();
-      titleEl.textContent = data.eventName || "Untitled Event";
-      descEl.innerHTML = data.eventDescription || "No description available.";
+  const data = snap.data();
+  loadedEventData = data;
 
-      const dateObj = data.eventDateTime?.toDate?.();
-      const dateStr = dateObj ? dateObj.toDateString() : "Unknown date";
-      dateLocEl.innerHTML = `<span>${dateStr}</span><br><span>${data.eventLocation || "Unknown location"}</span>`;
+  titleEl.textContent = data.eventName || "Untitled Event";
+  descEl.innerHTML = data.eventDescription || "No description provided.";
 
-      // Load event banner
-      if (data.banner) {
-        bannerEl.src = data.banner;
-        bannerEl.alt = `${data.eventName} Banner`;
-      } else {
-        bannerEl.src = "https://via.placeholder.com/900x340";
-        bannerEl.alt = "Event Banner";
-      }
+  const d = data.eventDateTime?.toDate?.();
+  dateLocEl.innerHTML = `
+    <span>${d ? d.toDateString() : "Unknown date"}</span><br>
+    <span>${data.eventLocation || "Unknown location"}</span>
+  `;
+
+  bannerEl.src = data.banner || "https://via.placeholder.com/900x340";
+}
+
+/* =======================================================
+   2️⃣ CONTACT ORGANIZER POPUP
+======================================================= */
+async function showOrganizerEmail() {
+  let email =
+    loadedEventData.organizerEmail ||
+    loadedEventData.organizer_email ||
+    "";
+
+  if (!email) {
+    try {
+      const userRef = doc(db, "users", loadedEventData.createdBy);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) email = userSnap.data().email || "";
+    } catch {}
+  }
+
+  const overlay = document.createElement("div");
+  overlay.style = `
+    position:fixed; inset:0; background:rgba(0,0,0,0.45);
+    display:flex; align-items:center; justify-content:center; z-index:9999;
+  `;
+
+  const modal = document.createElement("div");
+  modal.style = `
+    background:#fff; padding:16px 18px; border-radius:10px;
+    max-width:420px; width:92%; color:#0b254a;
+  `;
+
+  modal.innerHTML = `
+    <h3 style="margin:0 0 8px;">Contact Organizer</h3>
+    ${
+      email
+        ? `<p style="margin:0 0 6px;font-weight:600;">Organizer Email:</p>
+           <a style="color:#1a56db;font-weight:600;word-break:break-all;" href="mailto:${email}">
+             ${email}
+           </a>`
+        : `<p>Organizer contact not available.</p>`
     }
+    <div style="text-align:right; margin-top:14px;">
+      <button id="closeModal" style="
+        padding:8px 12px; border:none; border-radius:8px;
+        background:linear-gradient(90deg,#e0e6ff,#cfe0ff); cursor:pointer;">
+        Close
+      </button>
+    </div>
+  `;
 
-    // ----------------------------
-    // Save / Unsave Event (Students only)
-    // ----------------------------
-    async function toggleSaveEvent(user) {
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+
+  overlay.onclick = e => {
+    if (e.target === overlay) overlay.remove();
+  };
+  modal.querySelector("#closeModal").onclick = () => overlay.remove();
+}
+
+/* =======================================================
+   3️⃣ SAVE / UNSAVE EVENT
+======================================================= */
+ async function toggleSaveEvent(user) {
       const userRef = doc(db, "users", user.uid);
       const userSnap = await getDoc(userRef);
 
@@ -123,14 +195,153 @@
       }
     }
 
+/* =======================================================
+   4️⃣ FOLLOW / UNFOLLOW ORGANIZER
+======================================================= */
+async function setupFollow(user, userData) {
+  followBtn.style.display = "none";
 
-    // ----------------------------
-    // 🔹 Auth State Listener
-    // ----------------------------
-    onAuthStateChanged(auth, async (user) => {
-      console.log("[eventPage] Auth user:", user?.uid || "No user");
-      await loadEventDetails(user);
+  if (!loadedEventData?.createdBy) return;
 
+  const organizerID = loadedEventData.createdBy;
+  const userRef = doc(db, "users", user.uid);
+
+  let following = userData.following || [];
+  let already = following.includes(organizerID);
+
+  followBtn.textContent = already ? "Unfollow Organizer" : "Follow Organizer";
+  followBtn.style.display = "inline-block";
+
+  followBtn.onclick = async () => {
+    if (already) {
+      await updateDoc(userRef, { following: arrayRemove(organizerID) });
+      followBtn.textContent = "Follow Organizer";
+      alert("Unfollowed organizer.");
+    } else {
+      await updateDoc(userRef, { following: arrayUnion(organizerID) });
+      followBtn.textContent = "Unfollow Organizer";
+      alert("Following organizer!");
+    }
+    already = !already;
+  };
+}
+
+/* =======================================================
+   5️⃣ VIEW TICKET
+======================================================= */
+function setupViewTicket(userData) {
+  const claimed = Object.values(userData.claimedEvents || {});
+  if (claimed.includes(eventId)) {
+    viewTicketBtn.style.display = "inline-block";
+    viewTicketBtn.onclick = () =>
+      (location.href = `qrGenerator.html?id=${eventId}`);
+  } else {
+    viewTicketBtn.style.display = "none";
+  }
+}
+/* =======================================================
+   ADD TO CALENDAR (RESTORED ORIGINAL VERSION)
+======================================================= */
+const calendarBtn = document.getElementById("calendarBtn");
+
+function toICalDate(d) {
+  const iso = new Date(d).toISOString();
+  return iso.replace(/[-:]/g, "").split(".")[0] + "Z";
+}
+
+function escapeICal(text) {
+  if (!text) return "";
+  return String(text)
+    .replace(/\\r\\n|\\r|\\n/g, "\\n")
+    .replace(/,/g, "\\,");
+}
+
+if (calendarBtn) {
+  calendarBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (!loadedEventData) {
+      alert("Event data not loaded yet.");
+      return;
+    }
+
+    // Event start time
+    const start = loadedEventData.eventDateTime &&
+    typeof loadedEventData.eventDateTime.toDate === "function"
+      ? loadedEventData.eventDateTime.toDate()
+      : (loadedEventData.eventDateTime
+         ? new Date(loadedEventData.eventDateTime)
+         : new Date());
+
+    // Default end time = +2 hours
+    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+
+    const title = loadedEventData.eventName || "Event";
+    const description = (loadedEventData.eventDescription || "").replace(
+      /<[^>]*>/g,
+      ""
+    );
+    const location = loadedEventData.eventLocation || "";
+    const uid =
+      `${eventId || Math.random().toString(36).slice(2)}@evently.local`;
+
+    const now = new Date();
+
+    const ics = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//Evently//EN",
+      "BEGIN:VEVENT",
+      `UID:${uid}`,
+      `DTSTAMP:${toICalDate(now)}`,
+      `DTSTART:${toICalDate(start)}`,
+      `DTEND:${toICalDate(end)}`,
+      `SUMMARY:${escapeICal(title)}`,
+      `DESCRIPTION:${escapeICal(description)}`,
+      `LOCATION:${escapeICal(location)}`,
+      "END:VEVENT",
+      "END:VCALENDAR",
+    ].join("\r\n");
+
+    try {
+      const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${title.replace(/[^a-z0-9]+/gi, "_") || "event"}.ics`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Could not create ICS file", err);
+    }
+
+    // Open Google Calendar
+    const gDates = `${toICalDate(start)}/${toICalDate(end)}`;
+    const gUrl = `https://calendar.google.com/calendar/r/eventedit?text=${encodeURIComponent(
+      title
+    )}&dates=${gDates}&details=${encodeURIComponent(
+      description
+    )}&location=${encodeURIComponent(location)}`;
+    
+    window.open(gUrl, "_blank");
+  });
+}
+
+/* =======================================================
+   6️⃣ AUTH LISTENER
+======================================================= */
+onAuthStateChanged(auth, async user => {
+  await loadEventDetails();
+
+  if (!user) return;
+
+  const userRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
+  const userData = userSnap.data() || {};
+
+  // SAVE BTN SETUP
+  
       if (!saveBtn) return;
       saveBtn.style.display = "none";
 
@@ -164,7 +375,15 @@
         // 👇 toggleSaveEvent now works
         saveBtn.onclick = () => toggleSaveEvent(user);
       }
-    });
+  // FOLLOW
+  setupFollow(user, userData);
+
+  // VIEW TICKET
+  setupViewTicket(userData);
+});
+
+// CONTACT BUTTON
+contactBtn.onclick = showOrganizerEmail;
   </script>
 </body>
 
