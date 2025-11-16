@@ -18,13 +18,13 @@ pnpm-debug.log*
 .env.*.local
 dist/
 build/
+coverage/          # <-- Added for Jest
 
 # ----------------------------
-# React / Frontend
+# Web / Frontend
 # ----------------------------
-build/
-*.log
 .cache/
+*.log
 *.env
 .DS_Store
 *.local
@@ -33,19 +33,17 @@ build/
 # Firebase
 # ----------------------------
 firebase-debug.log
-.firebaserc
-firebase.json
 .firebaserc.local
-/storage/
+storage/
 *.cache
 *.tmp
 *.bak
 
+# (Do NOT ignore firebase.json or .firebaserc — they are required for deploy)
 
 # ----------------------------
 # Miscellaneous
 # ----------------------------
-.DS_Store
 Thumbs.db
 *.swp
 *.swo
@@ -57,7 +55,7 @@ Thumbs.db
 *.log
 
 # ----------------------------
-# Optional OS files
+# OS-specific
 # ----------------------------
 # Windows
 ehthumbs.db
@@ -67,21 +65,19 @@ Desktop.ini
 # macOS
 .AppleDouble
 .LSOverride
-.DS_Store
 
 # ----------------------------
-# Other files
+# Archives
 # ----------------------------
 *.zip
 *.tar
 *.tar.gz
 *.rar
 
-.idea/
-node_modules/
 # ----------------------------
-# Private api keys
-firebaseConfig.js
+# Private Keys (Security)
+# ----------------------------
+firebaseConfig.js      # if this contains secrets
 firebase-config.js
 setAdmin.js
 serviceAccountKey.json
