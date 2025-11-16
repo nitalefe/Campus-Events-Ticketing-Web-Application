@@ -2,9 +2,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "main", "Organizer", "Student", "Administrator" ]
+    branches: ["main", "Organizer", "Student", "Administrator", "github_action"]
   pull_request:
-    branches: [ "main", "Organizer", "Student", "Administrator" ]
+    branches: ["main", "Organizer", "Student", "Administrator"]
 
 jobs:
   build:
@@ -23,10 +23,23 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install dependencies
         run: npm install
+
+      - name: Check Node version
+        run: node -v
+
+      - name: Check NPM version
+        run: npm -v
 
       - name: Run tests
         run: npm test
