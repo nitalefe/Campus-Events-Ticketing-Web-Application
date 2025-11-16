@@ -1,4 +1,6 @@
 import {
+  auth, 
+  db,
   doc,
   query,
   where,
@@ -9,13 +11,9 @@ import {
   increment,
   collection,
   serverTimestamp,
-  arrayUnion
-} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { auth, db } from "../../js/Shared/firebase-config.js";
-
-// Get event ID from URL parameters
-// const eventID = "khBBjlAZtTMYtrqOtZ8J"; // Test event ID
+  arrayUnion,
+  onAuthStateChanged
+} from "../Shared/firebase_import.js";
 
 const params = new URLSearchParams(window.location.search);
 const eventID = params.get("id");
@@ -23,13 +21,6 @@ const eventID = params.get("id");
 // User data
 let currentUser = null;
 let currentUserData = null;
-// let currentUserData = {
-//   uid: "Y7fG7warOPhpSJhrQ5r9KNWoCZk2",
-//   email: "lpyxyxzccnuftyfrtq@nesopf.com",
-//   fullname: "Student",
-//   role: "student",
-//   school: "Concordia",
-// };
 
 // Event data
 const LOW_AVAILABILITY_PERCENT = 0.2; // 20%
@@ -254,13 +245,13 @@ document.getElementById("confirm").addEventListener("click", async (e) => {
       // capacity: increment(-qty)
     });
     try {
-    await updateDoc(doc(db, "users", currentUser.uid), {
-      claimedEvents: arrayUnion(eventID)
-    });
-    console.log(`Added ${eventID} to user's claimedEvents`);
-  } catch (err) {
-    console.error("Error updating claimedEvents:", err);
-  }
+      await updateDoc(doc(db, "users", currentUser.uid), {
+        claimedEvents: arrayUnion(eventID)
+      });
+      console.log(`Added ${eventID} to user's claimedEvents`);
+    } catch (err) {
+      console.error("Error updating claimedEvents:", err);
+    }
 
     // showToast(`Successfully claimed ${qty} ticket(s)!`, "success");
     showToast(`Successfully claimed ticket!`, "success");

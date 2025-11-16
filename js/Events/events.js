@@ -6,17 +6,18 @@
 // ------------------------------
 // Firebase Imports
 // ------------------------------
-import { auth, db } from "../../js/Shared/firebase-config.js";
 import {
+  auth, 
+  db,
   collection,
   addDoc,
   serverTimestamp,
   Timestamp,
   doc,
   getDoc,
-  updateDoc
-} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+  updateDoc,
+  onAuthStateChanged
+} from "../Shared/firebase_import.js";
 
 
 // ======================================================
@@ -226,4 +227,8 @@ if (eventId) loadEventForEdit();
 
 console.log("[eventD] ✅ Script ready");
 
+// ======================================================
+// Make loadEventForEdit testable
+// ======================================================
+export { loadEventForEdit };
 

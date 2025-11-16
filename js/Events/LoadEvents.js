@@ -78,10 +78,6 @@ onAuthStateChanged(auth, async (user) => {
       const eventDate = data.eventDateTime?.toDate() || new Date();
       const organizerID = data.createdBy;
 
-
-
-
-
       // --------------------------------------------------
       // Organizer Dashboard Logic
       // --------------------------------------------------

@@ -73,34 +73,6 @@ export async function getAttendees(eventID) {
     }
 }
 
-// const tableBody = document.querySelector("#attendeeTable tbody");
-// async function loadAttendees() {
-//     if (currentUserRole !== "organizer") {
-//         alert("🚫 Access denied! You do not have permission to perform this action.");
-//         return console.log("🚫 Access denied");
-//     }
-//     tableBody.innerHTML = ""; // clear table
-
-//     try {
-//         const attendees = await getAttendees();
-
-//         attendees.forEach(attendee => {
-//             const row = document.createElement('tr');
-//             row.innerHTML = `
-//                 <td>${attendee.id}</td>
-//                 <td>${attendee.firstName || ''}</td>
-//                 <td>${attendee.lastName || ''}</td>
-//                 <td>${attendee.email || ''}</td>
-//                 <td>${attendee.isScanned || ''}</td>
-//                 <td>${attendee.registeredAt ? new Date(attendee.registeredAt.seconds * 1000).toLocaleString() : ''}</td>
-//             `;
-//             tableBody.appendChild(row);
-//         });
-//     } catch (err) {
-//         console.error("Error loading attendees:", err);
-//     }
-// }
-
 /**
  * Add a new attendee to the top-level collection "attendeeList"
  * @param {Object} data - { ID, firstName, lastName, email, Scan Status, registeredAt}
@@ -172,26 +144,6 @@ document.getElementById('attendeeForm').addEventListener('submit', async functio
         isPaid: form.isPaid.checked ? "True" : "False"
     };
 
-    // const form = e.target;
-
-    // // Get form values
-    // const firstName = form.firstName.value.trim();
-    // const lastName = form.lastName.value.trim();
-    // const email = form.email.value.trim();
-    // const isScanned = form.isScanned.checked ? "True" : "False";
-
-    // let attendeeID = `${firstName}-${lastName}-${email}`
-    //     .toLowerCase()
-    //     .replace(/\s+/g, '-')    // replace spaces with dash
-    //     .replace(/[@.]/g, '_');  // replace @ and . with underscore
-
-    // const attendeeData = {
-    //     firstName,
-    //     lastName,
-    //     email,
-    //     isScanned
-    // };
-
     const id = await addAttendee(attendeeData, eventID);
 });
 
@@ -218,21 +170,3 @@ document.getElementById('exportCsvBtn').addEventListener('click', async () => {
         alert("Failed to export CSV.");
     }
 });
-
-// When the form is submitted, call addAttendee()
-
-// --------------------------------------------- Test Connection to DB ---------------------------------------------
-
-// async function test() {
-//     try {
-//         const docRef = await addDoc(collection(db, "attendee"), {
-//             message: "Ping test...",
-//             timestamp: serverTimestamp()
-//         });
-//         console.log("Success! Document ID:", docRef.id);
-//     } catch (err) {
-//         console.error("Error:", err);
-//     }
-// }
-
-// test();

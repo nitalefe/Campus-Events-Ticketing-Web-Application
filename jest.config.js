@@ -1,4 +1,6 @@
 export default {
   testEnvironment: "jest-environment-jsdom",
-  transform: {},
+  transformIgnorePatterns: [
+    "/node_modules/(?!@firebase).+\\.js$"
+  ],
 };
