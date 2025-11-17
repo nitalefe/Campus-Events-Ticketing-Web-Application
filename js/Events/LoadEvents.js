@@ -16,6 +16,7 @@ const upcomingSection = document.getElementById("upcoming-events");
 const newSection = document.getElementById("new-events");
 const recommendedSection = document.getElementById("recommended-events");
 const discoverSection = document.getElementById("discover-events");
+const followingSection = document.getElementById("following-events");
 const savedSection = document.getElementById("saved-events"); // student only
 const myEventsSection = document.getElementById("myEventsSection"); // ✅ your updated ID
 
@@ -26,6 +27,11 @@ function createEventCard(eventData, eventId) {
   const card = document.createElement("div");
   card.className = "event-card";
   card.setAttribute("data-event-id", eventId);
+  // expose the event category on the card for client-side filters
+  card.setAttribute("data-category", eventData.eventCategory || "");
+  // expose openTo from the event (can be array or string) for university filtering
+  const openToAttr = Array.isArray(eventData.openTo) ? eventData.openTo.join(',') : (eventData.openTo || '');
+  if (openToAttr) card.setAttribute('data-open-to', openToAttr);
 
   const bannerSrc = eventData.banner || "https://via.placeholder.com/260x140";
 
@@ -35,6 +41,8 @@ function createEventCard(eventData, eventId) {
     <div class="event-title">${eventData.eventName}</div>
     <div class="event-date">${eventData.eventDateTime?.toDate().toDateString()}</div>
     <div class="event-location">${eventData.eventLocation}</div>
+    <div class="event-category" style="display:none">${eventData.eventCategory || ''}</div>
+    <div class="event-open-to" style="display:none">${Array.isArray(eventData.openTo) ? eventData.openTo.join(',') : (eventData.openTo || '')}</div>
   `;
 
   card.addEventListener("click", () => {
@@ -68,6 +76,11 @@ onAuthStateChanged(auth, async (user) => {
       const data = docSnap.data();
       const eventId = docSnap.id;
       const eventDate = data.eventDateTime?.toDate() || new Date();
+      const organizerID = data.createdBy;
+
+
+
+
 
       // --------------------------------------------------
       // Organizer Dashboard Logic
@@ -97,6 +110,9 @@ onAuthStateChanged(auth, async (user) => {
       if (role === "student") {
         const claimedEvents = userData.claimedEvents || [];
         const savedEvents = userData.savedEvents || [];
+        const followedOrganizers = userData.following || [];
+        const organizerID = data.createdBy;
+
 
         // 🟢 My Events (tickets the student claimed)
         if (claimedEvents.includes(eventId)) {
@@ -111,6 +127,11 @@ onAuthStateChanged(auth, async (user) => {
         // Upcoming On Campus
         if (eventDate > now) {
           upcomingSection?.appendChild(createEventCard(data, eventId));
+        }
+
+        //Following
+        if(followedOrganizers.includes(organizerID)){
+            followingSection?.appendChild(createEventCard(data, eventId));
         }
 
         // Recommended (optional: based on category)
