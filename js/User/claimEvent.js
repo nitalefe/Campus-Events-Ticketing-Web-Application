@@ -1,6 +1,4 @@
 import {
-  auth, 
-  db,
   doc,
   query,
   where,
@@ -11,9 +9,11 @@ import {
   increment,
   collection,
   serverTimestamp,
-  arrayUnion,
-  onAuthStateChanged
-} from "../Shared/firebase_import.js";
+  arrayUnion
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { auth, db } from "../../js/Shared/firebase-config.js";
+import luhnCheck from "./luhnCheck.js";
 
 const params = new URLSearchParams(window.location.search);
 const eventID = params.get("id");
@@ -408,20 +408,4 @@ function validatePaymentForm() {
     return false;
   }
   return true;
-}
-
-function luhnCheck(num) {
-  if (!/^\d{13,19}$/.test(num)) return false;
-  let sum = 0;
-  let alt = false;
-  for (let i = num.length - 1; i >= 0; i--) {
-    let n = parseInt(num.charAt(i), 10);
-    if (alt) {
-      n *= 2;
-      if (n > 9) n -= 9;
-    }
-    sum += n;
-    alt = !alt;
-  }
-  return sum % 10 === 0;
 }

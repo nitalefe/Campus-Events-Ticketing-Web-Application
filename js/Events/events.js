@@ -6,18 +6,17 @@
 // ------------------------------
 // Firebase Imports
 // ------------------------------
+import { auth, db } from "../../js/Shared/firebase-config.js";
 import {
-  auth, 
-  db,
   collection,
   addDoc,
   serverTimestamp,
   Timestamp,
   doc,
   getDoc,
-  updateDoc,
-  onAuthStateChanged
-} from "../Shared/firebase_import.js";
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js"; 
 
 
 // ======================================================

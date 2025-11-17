@@ -50,7 +50,6 @@ describe("Claim Event Integration Test", () => {
             assign: jest.fn(),
         };
 
-
         jest.clearAllMocks();
     });
 
