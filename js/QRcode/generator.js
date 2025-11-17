@@ -1,6 +1,7 @@
 import { auth, db, /*app*/ } from "../../js/Shared/firebase-config.js";
 // import {signInWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 import { setDoc, doc, getDoc, getDocs, collection, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import encryption from "./encryption.js";
 
 var eventID = "6w3Q4k4LRLazZzJnHjil";
 var attendeeID = "ze-yu-huang-benoyo8489_reifide_com";
@@ -27,19 +28,6 @@ async function readEvent(eventID, attendeeID) { //I may be stupid but wouldnt we
   qrText = initializeQRCode(qrText, 7);
 
   return qrText;
-}
-
-//ok so easy way to bypass overflow is only read first 16 characters, could be changed later on
-function encryption(str, increment) {
-  let result = '';
-
-  for (let i = 0; i < str.length; i++) {
-    const charCode = str.charCodeAt(i);         // get ASCII code
-    const newChar = String.fromCharCode(charCode + increment); // add increment
-    result += newChar;
-  }
-
-  return result;
 }
 
 // 2. Main function to initialize the QR code
