@@ -1,4 +1,4 @@
-const luhnCheck = require("../js/User/luhnCheck.js"); 
+const luhnCheck = require("../../js/User/luhnCheck.js"); 
 // adjust path as needed
 
 describe("luhnCheck", () => {

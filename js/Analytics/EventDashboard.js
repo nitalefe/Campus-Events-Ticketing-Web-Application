@@ -14,24 +14,12 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 import { auth, db } from "../../js/Shared/firebase-config.js";
+import { formatDate } from "./formatDate.js";
 
 const params = new URLSearchParams(window.location.search);
 const eventId = params.get("id"); // ✅ Single-event mode if ?id=
 const windowTitle = document.getElementById("pageTitle");
 
-// ------------------------------
-// Utility: Format Date
-// ------------------------------
-function formatDate(date) {
-  if (!date) return "No date";
-  return date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
 
 // ------------------------------
 // Display events (multi or single)
