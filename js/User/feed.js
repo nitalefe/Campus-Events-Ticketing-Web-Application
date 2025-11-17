@@ -1,7 +1,6 @@
 // ===================================== 
 // Personalized Feed (Recommended) — Infinite Scroll
 // Location: js/User/feed.js
-// Depends on: js/Shared/firebase-config.js exporting { db, auth }
 // =====================================
 
 import { db, auth } from "../Shared/firebase-config.js";
@@ -41,7 +40,7 @@ function mapUser(u) {
   // Following organizers
   const organizers = Array.isArray(u?.following) ? u.following : [];
 
-  // Category preferences (from dropdown) saved under preferences.categories
+  // Category preferences saved under preferences.categories
   const categoryPrefsRaw = Array.isArray(u?.preferences?.categories)
     ? u.preferences.categories
     : [];
@@ -61,6 +60,7 @@ function mapUser(u) {
     school,
   };
 }
+
 
 function mapEvent(e) {
   const startAt =
