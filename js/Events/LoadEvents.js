@@ -133,14 +133,6 @@ onAuthStateChanged(auth, async (user) => {
         if(followedOrganizers.includes(organizerID)){
             followingSection?.appendChild(createEventCard(data, eventId));
         }
-
-        // Recommended (optional: based on category)
-        if (
-          ["Technology", "Education", "Business"].includes(data.eventCategory)
-        ) {
-          discoverSection?.appendChild(createEventCard(data, eventId));
-        }
-
         // Discover (everything else)
         discoverSection?.appendChild(createEventCard(data, eventId));
       }
