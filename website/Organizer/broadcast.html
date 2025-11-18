@@ -82,9 +82,11 @@
         <div class="row">
           <label style="margin:0">Send to:</label>
           <select id="targetSelect" class="pill">
+            <option value="event_only">Students for selected event</option>
             <option value="followers">Students who follow you</option>
-            <option value="organizers">Organizers</option>
+            <option value="event_and_followers">Event ticket-holders + Followers</option>
           </select>
+          <div style="font-size:12px;color:#6b7280;margin-left:6px;margin-top:6px"></div>
           <div style="font-size:12px;color:#6b7280;margin-left:6px;margin-top:6px"></div>
           <label style="margin:0">Event (optional)</label>
           <select id="eventSelect" class="pill">

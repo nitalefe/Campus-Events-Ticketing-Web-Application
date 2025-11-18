@@ -210,17 +210,28 @@ sendBtn.addEventListener("click", async () => {
   if (!currentUser) return showError("Not signed in.");
   const text = messageInput.value.trim();
   const title = titleInput.value.trim();
-  const target = targetSelect.value; // students | organizers | both
+  const target = targetSelect.value; // event_only | followers | event_and_followers
 
   if (!text) return showError("Please enter a message to send.");
 
-  // Determine recipient groups. New option: 'followers' -> students who follow this organizer only
-  const targets = [];
+  // Determine recipient groups for organizers: only student recipients are allowed.
+  const targets = ["student"];
   let followersOnly = false;
-  if (target === "students") targets.push("student");
-  else if (target === "followers") { targets.push("student"); followersOnly = true; }
-  else if (target === "organizers") targets.push("organizer");
-  else targets.push("student", "organizer");
+
+  // If target requires an event, ensure an event is selected
+  const eventId = (document.getElementById("eventSelect") || {}).value || null;
+  if (target === "event_only") {
+    if (!eventId) return showError("Please choose an event to message its ticket-holders.");
+    // eventId will be attached below
+  } else if (target === "followers") {
+    followersOnly = true;
+  } else if (target === "event_and_followers") {
+    if (!eventId) return showError("Please choose an event to message its ticket-holders and your followers.");
+    followersOnly = true;
+    // eventId will be attached below
+  } else {
+    return showError("Invalid target selected.");
+  }
 
   try {
     const senderName = (await (await import("https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js")).getDoc((await import("https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js")).doc(db, "users", currentUser.uid))).data()?.fullname || currentUser.email || "";
@@ -247,8 +258,6 @@ sendBtn.addEventListener("click", async () => {
       }
     }
 
-    // include eventId if organizer selected one
-    const eventId = (document.getElementById("eventSelect") || {}).value || null;
     const payload = {
       title: title || null,
       message: text,
@@ -257,7 +266,7 @@ sendBtn.addEventListener("click", async () => {
       senderName: senderName,
       createdAt: serverTimestamp(),
     };
-    // If this broadcast should be limited to followers only, include an explicit flag
+    // Attach followers flag and/or eventId based on selection
     if (followersOnly) payload.followersOnly = true;
     if (eventId) payload.eventId = eventId;
 

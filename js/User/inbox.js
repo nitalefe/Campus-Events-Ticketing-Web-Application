@@ -130,9 +130,11 @@ onAuthStateChanged(auth, async (user) => {
         const data = d.data();
         if (item.type === "role") {
           // Include role-targeted broadcasts that are not tied to a specific event.
-          // Additionally, include broadcasts sent by administrators even if they include an eventId,
-          // because admins should be able to reach all students/organizers regardless of ticket ownership.
-          if (!data.eventId || data.senderRole === 'admin') docsMap.set(d.id, d);
+          // Additionally:
+          // - include broadcasts sent by administrators even if they include an eventId,
+          // - include broadcasts that set `followersOnly === true` so organizers can target their followers
+          //   even when the broadcast also references an event (we'll separately ensure followers actually follow).
+          if (!data.eventId || data.senderRole === 'admin' || data.followersOnly === true) docsMap.set(d.id, d);
         } else if (item.type === "event") {
           // only include if the broadcast is intended for students as well
           const t = data.targets || [];
