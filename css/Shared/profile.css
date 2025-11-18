@@ -16,6 +16,12 @@ body {
   padding: 0 1.5rem;
 }
 
+/* Card wrapper for profile sections to provide consistent spacing */
+.profile-card {
+  max-width: 1000px;
+  margin: 0 auto 1.5rem auto;
+}
+
 /* Profile Header */
 .profile-header {
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
@@ -49,6 +55,22 @@ body {
   color: #ffffff;
   box-shadow: 0 6px 20px rgba(54, 123, 252, 0.3);
   border: 4px solid #ffffff;
+  overflow: hidden; /* ensure child images are clipped to circle */
+}
+
+/* Ensure any image placed inside the avatar is clipped to a perfect circle */
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 50%;
+}
+
+/* Slightly larger avatar variant for public profile emphasis */
+.profile-avatar-large {
+  width: 140px;
+  height: 140px;
 }
 
 .change-avatar-btn {
@@ -91,6 +113,21 @@ body {
   flex-wrap: wrap;
 }
 
+/* Meta row groups badges and actions */
+.profile-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 1rem;
+  margin-left: auto;
+  align-self: flex-start;
+}
+
 .profile-role-badge {
   display: inline-block;
   background: linear-gradient(135deg, #367bfc 0%, #0b63d6 100%);
@@ -107,6 +144,26 @@ body {
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
+
+/* New meta-badge utility used on public profile (role/school) to make them pop */
+.meta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #ffffff;
+  color: #072144;
+  padding: 0.45rem 0.9rem;
+  border-radius: 14px;
+  border: 1px solid rgba(11,37,74,0.06);
+  font-weight: 700;
+  box-shadow: 0 8px 22px rgba(11,37,74,0.06);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.meta-badge:hover { transform: translateY(-6px); box-shadow: 0 14px 36px rgba(11,37,74,0.12); }
+
+.meta-badge.role span:first-child { opacity: 0.95; }
+.meta-badge.school { background: linear-gradient(90deg, #fff, #fbfdff); }
 
 /* Form Sections */
 .profile-form-container {
@@ -673,3 +730,409 @@ body {
   display: flex;
   justify-content: flex-end;
 }
+
+/* --- Follow / Following UI (merged from profile-extras.css) --- */
+
+.profile-bio {
+  margin-top: 0;
+  margin-bottom: 2rem;
+  padding: 2rem 2.5rem;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 16px;
+  border-left: 4px solid #667eea;
+  min-height: 120px;
+  box-shadow: 0 8px 30px rgba(2, 6, 23, 0.15);
+}
+
+.bio-label {
+  font-weight: 600;
+  color: #667eea;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.bio-text { 
+  color: #555; 
+  line-height: 1.8; 
+  margin: 0; 
+  font-size: 1rem;
+}
+
+/* Follow button */
+.follow-btn {
+  cursor: pointer;
+  padding: 0.65rem 1.4rem;
+  font-weight: 800;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 8px 20px rgba(74,144,226,0.25);
+  font-size: 1rem;
+  transition: transform 150ms ease, box-shadow 150ms ease, background 200ms ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.follow-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(74,144,226,0.28); }
+.follow-btn:active { transform: translateY(-1px) scale(0.98); }
+.follow-btn.following { background: linear-gradient(135deg, #28a745 0%, #1e7a34 100%); box-shadow: 0 8px 20px rgba(40,167,69,0.2); }
+.follow-btn.pulse { animation: pulse 600ms ease; }
+
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.06); } 100% { transform: scale(1); } }
+
+/* Following list on public profile */
+.following-section { margin-top: 1.25rem; background: #fff; border-radius: 12px; padding: 1rem; box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
+.following-list { display: flex; gap: 0.75rem; overflow-x: auto; padding: 0.5rem 0.25rem; align-items: center; }
+.following-item { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; width: 88px; text-align: center; font-size: 0.85rem; color: #333; }
+.following-avatar { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-bottom: 0.45rem; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.following-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.following-item a { color: inherit; text-decoration: none; }
+
+/* Events section spacing */
+.events-section { background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15); }
+
+/* Following page compact row and list */
+.following-container { 
+  max-width: 1200px; 
+  margin: 3rem auto; 
+  padding: 2rem 1.5rem;
+  background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.98) 100%);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(11,37,74,0.08);
+}
+
+.following-list.grid { 
+  display: grid; 
+  gap: 1.5rem; 
+  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); 
+  align-items: start; 
+  margin-top: 2rem;
+}
+
+.following-item.row { 
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 16px; 
+  padding: 1.5rem 2.5rem; 
+  display: flex !important; 
+  align-items: center; 
+  justify-content: space-between;
+  gap: 2rem; 
+  box-shadow: 0 8px 30px rgba(11,37,74,0.08);
+  border: 2px solid rgba(102,126,234,0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: visible;
+  min-height: 110px;
+}
+
+.following-item.row::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.following-item.row:hover::before {
+  transform: scaleX(1);
+}
+
+.following-item.row:hover { 
+  transform: translateY(-4px) scale(1.02); 
+  box-shadow: 0 16px 48px rgba(11,37,74,0.12);
+  border-color: rgba(102,126,234,0.2);
+}
+
+.avatar { 
+  width: 70px; 
+  height: 70px; 
+  border-radius: 50%; 
+  object-fit: cover; 
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 3px solid #fff;
+  box-shadow: 0 8px 24px rgba(102,126,234,0.2);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.user-info { 
+  flex: 1;
+  min-width: 0;
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  text-align: center;
+}
+
+.user-name { 
+  margin: 0; 
+  font-size: 1.25rem; 
+  font-weight: 700; 
+  color: #0b254a;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  line-height: 1.2;
+  text-align: center;
+  width: 100%;
+}
+
+.user-type { 
+  margin: 0; 
+  font-size: 0.95rem; 
+  color: #64748b;
+  font-weight: 500;
+  text-transform: capitalize;
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: rgba(102,126,234,0.1);
+  border-radius: 12px;
+  line-height: 1.2;
+  width: fit-content;
+  text-align: center;
+}
+
+.unfollow-btn { 
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white; 
+  border: none; 
+  padding: 0.65rem 1.5rem; 
+  border-radius: 12px; 
+  font-family: 'Montserrat', sans-serif; 
+  font-weight: 700; 
+  font-size: 0.9rem; 
+  cursor: pointer; 
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(239,68,68,0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.unfollow-btn:hover { 
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(239,68,68,0.4);
+}
+
+.unfollow-btn:active {
+  transform: translateY(0);
+}
+
+.empty-state { 
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 20px; 
+  padding: 4rem 3rem; 
+  text-align: center; 
+  box-shadow: 0 12px 40px rgba(11,37,74,0.1);
+  border: 2px dashed rgba(102,126,234,0.2);
+}
+
+.empty-state p { 
+  font-size: 1.3rem; 
+  color: #475569; 
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+
+.btn-primary { 
+  display: inline-block; 
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+  color: white; 
+  padding: 1rem 2.5rem; 
+  border-radius: 12px; 
+  text-decoration: none; 
+  font-weight: 700; 
+  font-size: 1.05rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 24px rgba(102,126,234,0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-primary:hover { 
+  transform: translateY(-3px); 
+  box-shadow: 0 12px 32px rgba(102,126,234,0.4);
+}
+
+/* Page header and container polish for Following page */
+.page-header {
+  background: linear-gradient(135deg, rgba(102,126,234,0.15) 0%, rgba(118,75,162,0.1) 100%);
+  border-radius: 16px;
+  padding: 2rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  border: 2px solid rgba(102,126,234,0.15);
+  box-shadow: 0 8px 24px rgba(102,126,234,0.08);
+}
+
+.page-header h2 { 
+  margin: 0; 
+  color: #0b254a; 
+  font-size: 2rem; 
+  font-weight: 800;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.page-header .subtext { 
+  color: #64748b; 
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+/* Make compact row stand out slightly */
+.following-compact { 
+  background: linear-gradient(135deg, rgba(102,126,234,0.08) 0%, rgba(118,75,162,0.05) 100%);
+  padding: 1.5rem; 
+  border-radius: 16px;
+  margin-bottom: 2rem;
+  border: 2px solid rgba(102,126,234,0.1);
+  box-shadow: 0 4px 16px rgba(102,126,234,0.06);
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+}
+
+.following-compact-item { 
+  background: white;
+  padding: 1rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.following-compact-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(102,126,234,0.15);
+}
+
+.following-compact-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 0.5rem;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.following-compact-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.following-compact-avatar span {
+  color: white;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.following-compact-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0b254a;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Avatar and name refinements */
+.following-item .avatar { 
+  flex-shrink: 0; 
+  border-radius: 50%; 
+  box-shadow: 0 12px 28px rgba(102,126,234,0.18);
+}
+
+.following-item .user-info { 
+  padding-right: 1rem;
+}
+
+/* Small entrance animation */
+@keyframes slideUpFade { 
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  } 
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  } 
+}
+
+.following-list > * { 
+  animation: slideUpFade 400ms ease both;
+}
+
+.following-list > *:nth-child(1) { animation-delay: 0ms; }
+.following-list > *:nth-child(2) { animation-delay: 50ms; }
+.following-list > *:nth-child(3) { animation-delay: 100ms; }
+.following-list > *:nth-child(4) { animation-delay: 150ms; }
+.following-list > *:nth-child(5) { animation-delay: 200ms; }
+.following-list > *:nth-child(n+6) { animation-delay: 250ms; }
+
+/* Responsive tweaks */
+@media (max-width: 860px) {
+  .following-list.grid { 
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  
+  .page-header { 
+    flex-direction: column; 
+    align-items: flex-start;
+    padding: 1.5rem;
+  }
+  
+  .following-container {
+    padding: 1.5rem 1rem;
+    margin: 1.5rem auto;
+  }
+  
+  .following-item.row {
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+  
+  .avatar {
+    width: 64px;
+    height: 64px;
+  }
+  
+  .user-name {
+    font-size: 1.1rem;
+  }
+}
+

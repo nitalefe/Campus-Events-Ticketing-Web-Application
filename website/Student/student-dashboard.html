@@ -10,297 +10,13 @@
   <link rel="stylesheet" href="../../css/Shared/dashboard.css" />
   <link rel="stylesheet" href="../../css/Shared/toolbar.css" />
   <style>
-    .search-container {
-      max-width: 800px;
-      margin: 1.5rem auto;
-      padding: 0 1rem;
-    }
-
-    .search-toggle {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-      justify-content: center;
-    }
-
-    .toggle-btn {
-      padding: 0.75rem 1.5rem;
-      border: 2px solid #4a90e2;
-      background: white;
-      color: #4a90e2;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-    }
-
-    .toggle-btn.active {
-      background: #4a90e2;
-      color: white;
-    }
-
-    .toggle-btn:hover:not(.active) {
-      background: #e8f4ff;
-    }
-
-    .user-search-results-section {
+    html, body {
+      overflow-x: hidden;
       max-width: 100%;
-      width: 100%;
-      margin: 0;
-      padding: 2rem;
-      display: none;
-      background: linear-gradient(135deg, #f5f7fa 0%, #e8f0fe 100%);
     }
 
-    .user-search-results-section.show {
-      display: block;
-    }
-
-    #followed-users-container,
-    #discover-users-container {
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto 2rem auto;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-      border: 2px solid #e0e0e0;
-      border-radius: 12px;
-      overflow: hidden;
-      background: white;
+    body {
       position: relative;
-    }
-
-    #followed-users-container.hidden,
-    #discover-users-container.hidden {
-      display: none;
-    }
-
-    #followed-users-container {
-      border-left: 4px solid #667eea;
-    }
-
-    #discover-users-container {
-      border-left: 4px solid #4a90e2;
-      margin-bottom: 0;
-    }
-
-    #combined-search-results-container {
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-      border: 2px solid #e0e0e0;
-      border-radius: 12px;
-      overflow: hidden;
-      background: white;
-      position: relative;
-      border-left: 4px solid #4a90e2;
-      display: none;
-    }
-
-    #combined-search-results-container.show {
-      display: block;
-    }
-
-    .user-result-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.5rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      background: white;
-      border-right: 1px solid #f0f0f0;
-      flex: 0 0 auto;
-      width: calc(33.333% - 2px);
-      min-width: 280px;
-      text-align: center;
-      box-sizing: border-box;
-    }
-
-    .user-result-card:hover {
-      background: #f8f9fa;
-      transform: translateY(-8px);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-      z-index: 1;
-    }
-
-    .user-avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 700;
-      font-size: 1.5rem;
-      flex-shrink: 0;
-      overflow: hidden;
-      border: 3px solid #f0f0f0;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    .user-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .user-info {
-      flex: 1;
-      min-width: 0;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .user-name {
-      font-weight: 700;
-      font-size: 1.05rem;
-      color: #1a1a1a;
-      margin-bottom: 0.35rem;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      width: 100%;
-    }
-
-    .user-email {
-      font-size: 0.85rem;
-      color: #666;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      width: 100%;
-      margin-bottom: 0.5rem;
-    }
-
-    .user-meta {
-      font-size: 0.85rem;
-      color: #888;
-      margin-top: 0.35rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-      width: 100%;
-    }
-
-    .user-role-badge {
-      display: inline-block;
-      padding: 4px 12px;
-      border-radius: 16px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .role-student {
-      background: linear-gradient(135deg, #28a745 0%, #20873a 100%);
-    }
-
-    .role-organizer {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-
-    .role-admin {
-      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-    }
-
-    .user-results-header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 1.25rem 1.5rem;
-      border-radius: 0;
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: white;
-      box-shadow: none;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    #discover-users-container .user-results-header {
-      background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
-    }
-
-    .user-results-container {
-      background: white;
-      border-radius: 0;
-      box-shadow: none;
-      min-height: 300px;
-      display: flex;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      overflow-y: hidden;
-      padding: 1rem 0;
-      gap: 0;
-      align-items: stretch;
-      -webkit-overflow-scrolling: touch;
-      scroll-snap-type: x proximity;
-    }
-
-    .user-results-container::-webkit-scrollbar {
-      height: 10px;
-    }
-
-    .user-results-container::-webkit-scrollbar-track {
-      background: #f1f1f1;
-    }
-
-    .user-results-container::-webkit-scrollbar-thumb {
-      background: #888;
-      border-radius: 5px;
-    }
-
-    .user-results-container::-webkit-scrollbar-thumb:hover {
-      background: #555;
-    }
-
-    .no-user-results {
-      text-align: center;
-      padding: 3rem 2rem;
-      color: #999;
-      background: white;
-      border-radius: 0;
-      font-size: 1rem;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 250px;
-    }
-
-    /* Responsive adjustments for user cards */
-    @media (max-width: 900px) {
-      .user-result-card {
-        width: calc(50% - 2px);
-        min-width: 250px;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .user-result-card {
-        width: 100%;
-        min-width: 220px;
-      }
-
-      .user-search-results-section {
-        padding: 1rem;
-      }
-
-      #followed-users-container,
-      #discover-users-container {
-        max-width: 100%;
-      }
     }
   </style>
 </head>
@@ -473,6 +189,7 @@
 
     // Switch between Events and Users search mode
     window.switchSearchMode = function(mode) {
+      console.log('switchSearchMode called with mode:', mode);
       currentSearchMode = mode;
       
       // Update toggle buttons
@@ -496,7 +213,12 @@
       
       // If switching to users mode, automatically load all users
       if (mode === 'users') {
-        loadAllUsers();
+        console.log('Loading all users...');
+        try {
+          loadAllUsers();
+        } catch (error) {
+          console.error('Error in loadAllUsers:', error);
+        }
       }
     };
 
@@ -547,8 +269,13 @@
         snapshot.forEach(docSnap => {
           const userData = docSnap.data();
           
-          // Skip current user and users without public profile
-          if (docSnap.id === currentUser.uid || !userData.publicProfile) {
+          // Skip current user
+          if (docSnap.id === currentUser.uid) {
+            return;
+          }
+          
+          // Students can only see public profiles
+          if (!userData.publicProfile) {
             return;
           }
           
@@ -561,6 +288,9 @@
             discoverUsers.push(userObj);
           }
         });
+
+        console.log('Followed users:', followedUsers.length);
+        console.log('Discover users:', discoverUsers.length);
 
         displayUserResults(followedUsers, discoverUsers, '');
         
@@ -651,8 +381,13 @@
         snapshot.forEach(docSnap => {
           const userData = docSnap.data();
           
-          // Skip current user and users without public profile
-          if (docSnap.id === currentUser.uid || !userData.publicProfile) {
+          // Skip current user
+          if (docSnap.id === currentUser.uid) {
+            return;
+          }
+          
+          // Students can only see public profiles
+          if (!userData.publicProfile) {
             return;
           }
           
@@ -673,6 +408,8 @@
           }
         });
 
+        console.log('Search results - Followed:', followedUsers.length, 'Discover:', discoverUsers.length);
+
         displayUserResults(followedUsers, discoverUsers, query);
         
       } catch (error) {
@@ -685,10 +422,21 @@
     }
 
     function displayUserResults(followedUsers, discoverUsers, query) {
+      console.log('displayUserResults called with:', { 
+        followedCount: followedUsers.length, 
+        discoverCount: discoverUsers.length, 
+        query: query 
+      });
+
       // Hide event sections and results
-      const main = document.querySelector('.main-content'); if (main) main.classList.add('collapsed');
-      document.getElementById('search-results-section').classList.remove('show');
-      document.getElementById('search-results-section').classList.add('is-hidden');
+      const main = document.querySelector('.main-content'); 
+      if (main) main.classList.add('collapsed');
+      
+      const eventResultsSection = document.getElementById('search-results-section');
+      if (eventResultsSection) {
+        eventResultsSection.classList.remove('show');
+        eventResultsSection.classList.add('is-hidden');
+      }
 
       const followedContainer = document.getElementById('followed-users-container');
       const discoverContainer = document.getElementById('discover-users-container');
@@ -701,15 +449,28 @@
       const discoverCountEl = document.getElementById('discover-users-count');
       const combinedCountEl = document.getElementById('combined-users-count');
       
+      console.log('User search results section exists:', !!resultsSection);
+      console.log('Containers exist:', {
+        followed: !!followedContainer,
+        discover: !!discoverContainer,
+        combined: !!combinedContainer
+      });
+
+      if (!resultsSection) {
+        console.error('user-search-results-section not found!');
+        return;
+      }
+
       resultsSection.classList.add('show');
+      console.log('Added show class to results section');
       
       // If there's a search query, show combined results
       if (query && query.trim()) {
+        console.log('Showing combined search results');
         // Hide separate containers
-        followedContainer.classList.add('hidden');
-        discoverContainer.classList.add('hidden');
-        combinedContainer.classList.remove('show');
-        combinedContainer.classList.add('show');
+        if (followedContainer) followedContainer.classList.add('hidden');
+        if (discoverContainer) discoverContainer.classList.add('hidden');
+        if (combinedContainer) combinedContainer.classList.add('show');
         
         // Combine all users
         const allUsers = [...followedUsers, ...discoverUsers];
@@ -718,16 +479,17 @@
         if (combinedCountEl) combinedCountEl.textContent = `(${totalCount})`;
         
         if (allUsers.length === 0) {
-          combinedDiv.innerHTML = '<div class="no-user-results">No users found matching your search.</div>';
+          if (combinedDiv) combinedDiv.innerHTML = '<div class="no-user-results">No users found matching your search.</div>';
         } else {
           const combinedHtml = allUsers.map(user => createUserCard(user)).join('');
-          combinedDiv.innerHTML = combinedHtml;
+          if (combinedDiv) combinedDiv.innerHTML = combinedHtml;
         }
       } else {
+        console.log('Showing separate followed/discover containers');
         // Show separate containers (no search query)
-        followedContainer.classList.remove('hidden');
-        discoverContainer.classList.remove('hidden');
-        combinedContainer.classList.remove('show');
+        if (followedContainer) followedContainer.classList.remove('hidden');
+        if (discoverContainer) discoverContainer.classList.remove('hidden');
+        if (combinedContainer) combinedContainer.classList.remove('show');
         
         // Update counts
         if (followedCountEl) followedCountEl.textContent = `(${followedUsers.length})`;
@@ -735,18 +497,18 @@
 
         // Render followed users
         if (followedUsers.length === 0) {
-          followedDiv.innerHTML = '<div class="no-user-results">No followed users found.</div>';
+          if (followedDiv) followedDiv.innerHTML = '<div class="no-user-results">No followed users found.</div>';
         } else {
           const followedHtml = followedUsers.map(user => createUserCard(user)).join('');
-          followedDiv.innerHTML = followedHtml;
+          if (followedDiv) followedDiv.innerHTML = followedHtml;
         }
 
         // Render discover users
         if (discoverUsers.length === 0) {
-          discoverDiv.innerHTML = '<div class="no-user-results">No new users found.</div>';
+          if (discoverDiv) discoverDiv.innerHTML = '<div class="no-user-results">No new users found.</div>';
         } else {
           const discoverHtml = discoverUsers.map(user => createUserCard(user)).join('');
-          discoverDiv.innerHTML = discoverHtml;
+          if (discoverDiv) discoverDiv.innerHTML = discoverHtml;
         }
       }
 
@@ -757,10 +519,42 @@
       const initials = (user.fullname || 'User').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
       const roleClass = user.role === 'organizer' ? 'role-organizer' : user.role === 'admin' ? 'role-admin' : 'role-student';
       
+      // Debug: Log original avatar data
+      console.log('Original avatar data:', {
+        name: user.fullname,
+        selectedAvatar: user.selectedAvatar,
+        avatarUrl: user.avatarUrl
+      });
+      
+      // Fix avatar path - try multiple approaches
+      let avatarUrl = user.selectedAvatar || user.avatarUrl;
+      if (avatarUrl) {
+        const originalUrl = avatarUrl;
+        
+        // Extract just the filename if it's a full path
+        if (avatarUrl.includes('avatar_')) {
+          const match = avatarUrl.match(/avatar_\d+\.png/);
+          if (match) {
+            // Build correct path from student dashboard
+            avatarUrl = `../../assets/avatars/${match[0]}`;
+          }
+        }
+        
+        console.log('Avatar URL conversion:', {
+          original: originalUrl,
+          fixed: avatarUrl,
+          currentPage: window.location.pathname
+        });
+      }
+      
+      const avatarHtml = avatarUrl 
+        ? `<img src="${avatarUrl}" alt="${user.fullname || 'User'}" onerror="console.error('Image failed to load. Tried URL:', '${avatarUrl}'); this.style.display='none'; this.parentElement.innerHTML='<span>${initials}</span>';">` 
+        : `<span>${initials}</span>`;
+      
       return `
         <div class="user-result-card" onclick="window.location.href='../public-profile.html?id=${user.id}'">
           <div class="user-avatar">
-            ${user.avatarUrl || user.selectedAvatar ? `<img src="${user.selectedAvatar || user.avatarUrl}" alt="${user.fullname}">` : initials}
+            ${avatarHtml}
           </div>
           <div class="user-info">
             <div class="user-name">${user.fullname || 'Unknown User'}</div>

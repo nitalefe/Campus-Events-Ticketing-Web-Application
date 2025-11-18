@@ -176,6 +176,7 @@
   <!-- Scripts -->
   <script type="module">
     import { auth, db } from "../js/Shared/firebase-config.js";
+    import { goToHome } from '../js/Shared/nav.js';
     import { onAuthStateChanged, updateProfile, sendPasswordResetEmail, getIdTokenResult } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
     import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
@@ -310,17 +311,8 @@
     });
 
     // Navigation functions
-    window.goToHome = function() {
-      if (userRole === 'student') {
-        location.href = 'Student/student-dashboard.html';
-      } else if (userRole === 'organizer') {
-        location.href = 'Organizer/organizer-dashboard.html';
-      } else if (userRole === 'admin') {
-        location.href = 'Administrator/admin-dashboard.html';
-      } else {
-        location.href = 'Registration/website.html';
-      }
-    };
+    // use shared goToHome helper
+    try { window.goToHome = goToHome; } catch(e) { /* ignore */ }
 
     window.cancelEdit = function() {
       if (currentUser) {

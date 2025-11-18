@@ -7,214 +7,7 @@
   <title>User Profile - Campus Events</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/Shared/toolbar.css">
-  <style>
-    /* Body and Profile Styling */
-    body {
-      margin: 0;
-      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-    }
-
-    .profile-container {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 2rem 1rem;
-    }
-
-    .profile-card {
-      background: white;
-      border-radius: 16px;
-      padding: 2rem;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-      margin-bottom: 2rem;
-    }
-
-    .profile-header {
-      display: flex;
-      align-items: flex-start;
-      gap: 2rem;
-      margin-bottom: 2rem;
-      padding-bottom: 2rem;
-      border-bottom: 2px solid #f0f0f0;
-    }
-
-    .profile-avatar-large {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      overflow: hidden;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 48px;
-      font-weight: 600;
-      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
-      flex-shrink: 0;
-    }
-
-    .profile-avatar-large img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .profile-info-section {
-      flex: 1;
-    }
-
-    .profile-name {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #333;
-      margin: 0 0 0.5rem 0;
-    }
-
-    .profile-meta {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
-    }
-
-    .meta-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      font-weight: 500;
-    }
-
-    .meta-badge.role {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-    }
-
-    .meta-badge.school {
-      background: #f0f0f0;
-      color: #555;
-    }
-
-    .profile-bio {
-      margin-top: 1.5rem;
-      padding: 1.5rem;
-      background: #f8f9fa;
-      border-radius: 12px;
-      border-left: 4px solid #667eea;
-    }
-
-    .bio-label {
-      font-weight: 600;
-      color: #667eea;
-      margin-bottom: 0.5rem;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .bio-text {
-      color: #555;
-      line-height: 1.6;
-      margin: 0;
-    }
-
-    .events-section {
-      background: white;
-      border-radius: 16px;
-      padding: 2rem;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-    }
-
-    .section-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #333;
-      margin: 0 0 1.5rem 0;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .events-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .event-card {
-      background: white;
-      border: 2px solid #f0f0f0;
-      border-radius: 12px;
-      padding: 1.5rem;
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .event-card:hover {
-      border-color: #667eea;
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.15);
-      transform: translateY(-4px);
-    }
-
-    .event-title {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #333;
-      margin: 0 0 0.5rem 0;
-    }
-
-    .event-date {
-      color: #667eea;
-      font-weight: 500;
-      margin-bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .event-description {
-      color: #666;
-      line-height: 1.5;
-      margin: 0.5rem 0 1rem 0;
-    }
-
-    .event-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-top: 1rem;
-      border-top: 1px solid #f0f0f0;
-      font-size: 0.9rem;
-      color: #888;
-    }
-
-    .loading, .no-data, .error {
-      text-align: center;
-      padding: 3rem;
-      color: #999;
-      font-size: 1.1rem;
-    }
-
-    .error {
-      color: #dc3545;
-    }
-
-    @media (max-width: 768px) {
-      .profile-header {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-      }
-
-      .events-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="../css/Shared/profile.css">
 </head>
 <body>
   <!-- Toolbar - Exact Match -->
@@ -231,7 +24,7 @@
   <div class="profile-container">
     <div class="profile-card">
       <div class="profile-header">
-        <div class="profile-avatar-large" id="avatarContainer">
+        <div class="profile-avatar profile-avatar-large" id="avatarContainer">
           <span>?</span>
         </div>
         <div class="profile-info-section">
@@ -246,12 +39,17 @@
               <span>Loading...</span>
             </span>
           </div>
-          <div class="profile-bio" id="bioSection" style="display: none;">
-            <div class="bio-label">About</div>
-            <p class="bio-text" id="userBio"></p>
-          </div>
+        </div>
+        <div class="profile-actions">
+          <button id="followBtn" class="follow-btn">Follow</button>
         </div>
       </div>
+
+      <div class="profile-bio" id="bioSection" style="display: none;">
+        <div class="bio-label">About</div>
+        <p class="bio-text" id="userBio"></p>
+      </div>
+      
     </div>
 
     <div class="events-section">
@@ -268,20 +66,15 @@
   <script type="module">
     import { auth, db } from '../../js/Shared/firebase-config.js';
     import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js';
-    import { doc, getDoc, collection, query, where, getDocs, orderBy } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js';
+  import { doc, getDoc, collection, query, where, getDocs, orderBy, updateDoc, setDoc, arrayUnion, arrayRemove } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js';
+    import { goToHome } from '../../js/Shared/nav.js';
 
     // Store the profile owner's role (person whose profile is being viewed)
     let profileOwnerRole = null;
 
-    // Navigate based on PROFILE OWNER's role (not logged-in user)
-    function goToHome() {
-      if (profileOwnerRole === 'organizer') {
-        window.location.href = 'Organizer/organizer-dashboard.html';
-      } else {
-        // Default to student dashboard for students or if role unknown
-        window.location.href = 'Student/student-dashboard.html';
-      }
-    }
+    // Use centralized goToHome from shared module (imported above)
+    // Also expose on window so inline handlers continue to work
+    try { window.goToHome = goToHome; } catch (e) { /* ignore in non-browser */ }
 
     // Attach event listeners after DOM is loaded
     document.getElementById('logoBtn').addEventListener('click', goToHome);
@@ -319,6 +112,22 @@
 
         const userData = userDoc.data();
         profileOwnerRole = userData.role; // Store profile owner's role for navigation
+        
+        // Check if the current user has permission to view this profile
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+          const currentUserDoc = await getDoc(doc(db, 'users', currentUser.uid));
+          const currentUserData = currentUserDoc.data();
+          
+          // All users can only view public profiles (unless viewing their own profile)
+          if (currentUser.uid !== userId) {
+            if (!userData.publicProfile) {
+              document.querySelector('.profile-container').innerHTML = '<div class="error">🔒 This profile is private</div>';
+              return;
+            }
+          }
+        }
+        
         displayUserInfo(userData);
         await loadEventHistory(userId, userData.role);
         
@@ -356,6 +165,7 @@
         document.getElementById('bioSection').style.display = 'block';
         document.getElementById('userBio').textContent = userData.bio;
       }
+  // following list is loaded from loadUserProfile after displayUserInfo
     }
 
     async function loadEventHistory(userId, userRole) {
@@ -454,6 +264,88 @@
         day: 'numeric'
       });
     }
+
+    /* Follow/Unfollow button logic for public profile */
+    async function updateFollowButtonState() {
+      const btn = document.getElementById('followBtn');
+      if (!btn) return;
+
+      // If no logged-in user, prompt to sign in
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        btn.textContent = 'Log in to follow';
+        btn.onclick = () => { window.location.href = '../Registration/SignIn.html'; };
+        btn.classList.remove('following');
+        btn.setAttribute('aria-pressed', 'false');
+        return;
+      }
+
+      // Hide follow button when viewing your own profile
+      if (currentUser.uid === userId) {
+        btn.style.display = 'none';
+        return;
+      }
+
+      try {
+        const userSnap = await getDoc(doc(db, 'users', currentUser.uid));
+        const following = userSnap.exists() ? (userSnap.data().following || []) : [];
+        const isFollowing = following.includes(userId);
+        btn.textContent = isFollowing ? 'Following' : 'Follow';
+        btn.dataset.following = isFollowing ? 'true' : 'false';
+        btn.classList.toggle('following', isFollowing);
+        btn.setAttribute('aria-pressed', isFollowing ? 'true' : 'false');
+        btn.onclick = toggleFollow;
+      } catch (err) {
+        console.error('Error updating follow button state:', err);
+      }
+    }
+
+    async function toggleFollow() {
+      const btn = document.getElementById('followBtn');
+      const currentUser = auth.currentUser;
+      if (!currentUser) { window.location.href = '../Registration/SignIn.html'; return; }
+
+      const currentUserRef = doc(db, 'users', currentUser.uid);
+      const targetUserRef = doc(db, 'users', userId);
+
+      try {
+        // Ensure current user doc exists
+        const currentSnap = await getDoc(currentUserRef);
+        if (!currentSnap.exists()) {
+          await setDoc(currentUserRef, { following: [] }, { merge: true });
+        }
+
+        // Ensure target user doc exists (create minimal followers array if missing)
+        const targetSnap = await getDoc(targetUserRef);
+        if (!targetSnap.exists()) {
+          await setDoc(targetUserRef, { followers: [] }, { merge: true });
+        }
+
+        const isFollowing = btn.dataset.following === 'true';
+        if (isFollowing) {
+          await updateDoc(currentUserRef, { following: arrayRemove(userId) });
+          await updateDoc(targetUserRef, { followers: arrayRemove(currentUser.uid) });
+        } else {
+          await updateDoc(currentUserRef, { following: arrayUnion(userId) });
+          await updateDoc(targetUserRef, { followers: arrayUnion(currentUser.uid) });
+        }
+
+        // Small visual feedback
+        try { btn.classList.add('pulse'); } catch(e){}
+        setTimeout(() => { try { btn.classList.remove('pulse'); } catch(e){} }, 650);
+
+        // Refresh button state
+        await updateFollowButtonState();
+      } catch (err) {
+        console.error('Error toggling follow state:', err);
+      }
+    }
+
+    // Initialize follow button when profile loads and whenever auth state changes
+    onAuthStateChanged(auth, () => {
+      // Slight delay to ensure userId and DOM are ready
+      setTimeout(() => updateFollowButtonState(), 150);
+    });
   </script>
 </body>
 </html>

@@ -7,120 +7,7 @@
     <title>Following - Campus Events</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/Shared/toolbar.css">
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-
-        .following-container {
-            max-width: 1000px;
-            margin: 2rem auto;
-            padding: 2rem 1rem;
-        }
-
-        h2 {
-            color: white;
-            font-size: 2rem;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .following-list {
-            display: grid;
-            gap: 1rem;
-        }
-
-        .following-item {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .following-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .user-info {
-            flex: 1;
-        }
-
-        .user-name {
-            margin: 0 0 0.25rem 0;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .user-type {
-            margin: 0;
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .unfollow-btn {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 0.5rem 1.5rem;
-            border-radius: 6px;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .unfollow-btn:hover {
-            background: #c82333;
-        }
-
-        .empty-state {
-            background: white;
-            border-radius: 12px;
-            padding: 3rem 2rem;
-            text-align: center;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-        }
-
-        .empty-state p {
-            font-size: 1.1rem;
-            color: #666;
-            margin-bottom: 1.5rem;
-        }
-
-        .btn-primary {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-    </style>
+    <link rel="stylesheet" href="../css/Shared/profile.css">
 </head>
 <body>
     <!-- Toolbar -->
@@ -137,8 +24,14 @@
 
     <main>
         <section class="following-container">
-            <h2>People You Follow</h2>
+                        <div class="page-header">
+                            <h2>People You Follow</h2>
+                            <div class="subtext">A quick view of the accounts you keep up with</div>
+                        </div>
             
+            <!-- Compact avatar row -->
+            <div class="following-compact" id="followingCompact" style="display:none"></div>
+
             <div class="following-list" id="followingList">
                 <!-- Following items will be populated dynamically from database -->
             </div>
@@ -151,31 +44,15 @@
     </main>
 
     <script type="module">
-        import { auth } from '../js/Registration/auth.js';
-        import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js';
-        import { getFirestore, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js';
+    import { auth, db } from '../js/Shared/firebase-config.js';
+    import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js';
+    import { doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js';
+    import { goToHome } from '../js/Shared/nav.js';
 
-        const db = getFirestore();
+        // Use shared goToHome from nav module (imported above)
+        try { window.goToHome = goToHome; } catch(e) {}
 
-        // Handle navigation based on user role
-        function goToHome(role) {
-            console.log('goToHome called with role:', role);
-            if (role === 'organizer') {
-                console.log('Navigating to organizer dashboard');
-                window.location.href = 'Organizer/organizer-dashboard.html';
-            } else if (role === 'student') {
-                console.log('Navigating to student dashboard');
-                window.location.href = 'Student/student-dashboard.html';
-            } else if (role === 'admin') {
-                console.log('Navigating to admin dashboard');
-                window.location.href = 'Administrator/admin-dashboard.html';
-            } else {
-                console.log('Unknown role, defaulting to student dashboard');
-                window.location.href = 'Student/student-dashboard.html';
-            }
-        }
-
-        // Load following list from database
+        // Load following list from database (detailed list)
         async function loadFollowing(userId) {
             const followingList = document.getElementById('followingList');
             const emptyState = document.getElementById('emptyState');
@@ -192,13 +69,16 @@
                 if (following.length === 0) {
                     console.log('No following found, showing empty state');
                     followingList.style.display = 'none';
+                    followingList.classList.remove('grid');
                     emptyState.style.display = 'block';
                     return;
                 }
 
                 console.log('Loading', following.length, 'followed users');
                 followingList.innerHTML = '';
-                followingList.style.display = 'grid';
+                // use CSS grid for detailed list
+                followingList.classList.add('grid');
+                followingList.style.display = '';
                 emptyState.style.display = 'none';
                 
                 for (const followedUserId of following) {
@@ -210,23 +90,59 @@
                         followingList.appendChild(followingItem);
                     }
                 }
+                // Also populate compact row
+                try { populateFollowingCompact(following); } catch(e) { console.warn('compact populate failed', e); }
             } catch (error) {
                 console.error('Error loading following list:', error);
                 followingList.innerHTML = '<p style="color: white; text-align: center;">Error loading following list.</p>';
             }
         }
 
+        // Populate compact avatar row at top
+        async function populateFollowingCompact(followingIds) {
+            const compact = document.getElementById('followingCompact');
+            if (!compact) return;
+            compact.innerHTML = '';
+            if (!followingIds || followingIds.length === 0) { compact.style.display = 'none'; return; }
+            compact.style.display = 'flex';
+
+            // Limit to first 24 to avoid overload
+            const ids = followingIds.slice(0, 24);
+            const snaps = await Promise.all(ids.map(id => getDoc(doc(db, 'users', id))));
+            snaps.forEach(s => {
+                if (!s.exists()) return;
+                const u = s.data();
+                const id = s.id;
+                const initials = (u.fullname||'U').split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+                const avatarHtml = u.avatarUrl ? `<img src="${u.avatarUrl}" alt="${u.fullname}">` : `<span>${initials}</span>`;
+                const item = document.createElement('div');
+                item.className = 'following-compact-item';
+                item.innerHTML = `<a href="public-profile.html?id=${id}" title="${u.fullname||'User'}"><div class="following-compact-avatar">${avatarHtml}</div><div class="following-compact-name">${(u.fullname||'User').split(' ')[0]}</div></a>`;
+                compact.appendChild(item);
+            });
+        }
+
         // Create following item HTML element
         function createFollowingItem(user, followedUserId, currentUserId) {
             const item = document.createElement('div');
-            item.className = 'following-item';
+            // add both generic and row styles so it matches the detailed list layout
+            item.className = 'following-item row';
             
-            const avatarUrl = user.avatarUrl || '../assets/images/default-avatar.png';
-            const displayName = user.displayName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Anonymous';
+            // Get avatar with fallback to initials
+            let avatarHtml;
+            if (user.selectedAvatar || user.avatarUrl) {
+                const avatarUrl = user.selectedAvatar || user.avatarUrl;
+                avatarHtml = `<div class="avatar"><img src="${avatarUrl}" alt="User avatar" onerror="this.onerror=null; this.parentElement.innerHTML='<span>${(user.fullname || 'User').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}</span>';"></div>`;
+            } else {
+                const initials = (user.fullname || 'User').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                avatarHtml = `<div class="avatar"><span>${initials}</span></div>`;
+            }
+            
+            const displayName = user.fullname || 'Unknown User';
             const userType = user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'User';
             
             item.innerHTML = `
-                <img src="${avatarUrl}" alt="User avatar" class="avatar" onerror="this.src='../assets/images/default-avatar.png'">
+                ${avatarHtml}
                 <div class="user-info">
                     <h3 class="user-name">${displayName}</h3>
                     <p class="user-type">${userType}</p>
@@ -289,8 +205,17 @@
                     const followingList = document.getElementById('followingList');
                     if (followingList.children.length === 0) {
                         followingList.style.display = 'none';
+                        followingList.classList.remove('grid');
                         document.getElementById('emptyState').style.display = 'block';
                     }
+                    try {
+                        // refresh compact row
+                        const userDocRef = doc(db, 'users', currentUserId);
+                        getDoc(userDocRef).then(snap => {
+                            const newFollowing = snap.exists() ? (snap.data().following || []) : [];
+                            try { populateFollowingCompact(newFollowing); } catch(e){}
+                        }).catch(()=>{});
+                    } catch(e){}
                 }, 300);
             } catch (error) {
                 console.error('Error unfollowing user:', error);
@@ -314,12 +239,12 @@
                     
                     if (homeBtn && homeLogo) {
                         homeBtn.onclick = () => {
-                            console.log('Home button clicked, role:', role);
-                            goToHome(role);
+                            console.log('Home button clicked');
+                            goToHome();
                         };
                         homeLogo.onclick = () => {
-                            console.log('Home logo clicked, role:', role);
-                            goToHome(role);
+                            console.log('Home logo clicked');
+                            goToHome();
                         };
                         console.log('Home button and logo handlers attached');
                     } else {

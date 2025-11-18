@@ -10,6 +10,15 @@
   <link rel="stylesheet" href="../../css/Shared/dashboard.css" />
   <link rel="stylesheet" href="../../css/Shared/toolbar.css" />
   <style>
+    html, body {
+      overflow-x: hidden;
+      max-width: 100%;
+    }
+
+    body {
+      position: relative;
+    }
+
     .search-container {
       max-width: 800px;
       margin: 1.5rem auto;
@@ -52,6 +61,8 @@
       padding: 2rem;
       display: none;
       background: linear-gradient(135deg, #f5f7fa 0%, #e8f0fe 100%);
+      overflow-x: hidden;
+      box-sizing: border-box;
     }
 
     .user-search-results-section.show {
@@ -69,6 +80,7 @@
       overflow: hidden;
       background: white;
       position: relative;
+      box-sizing: border-box;
     }
 
     #followed-users-container.hidden,
@@ -541,8 +553,13 @@
         snapshot.forEach(docSnap => {
           const userData = docSnap.data();
           
-          // Skip current user and users without public profile
-          if (docSnap.id === currentUser.uid || !userData.publicProfile) {
+          // Skip current user
+          if (docSnap.id === currentUser.uid) {
+            return;
+          }
+          
+          // Organizers can only see public profiles
+          if (!userData.publicProfile) {
             return;
           }
           
@@ -645,8 +662,13 @@
         snapshot.forEach(docSnap => {
           const userData = docSnap.data();
           
-          // Skip current user and users without public profile
-          if (docSnap.id === currentUser.uid || !userData.publicProfile) {
+          // Skip current user
+          if (docSnap.id === currentUser.uid) {
+            return;
+          }
+          
+          // Organizers can only see public profiles
+          if (!userData.publicProfile) {
             return;
           }
           
@@ -751,10 +773,24 @@
       const initials = (user.fullname || 'User').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
       const roleClass = user.role === 'organizer' ? 'role-organizer' : user.role === 'admin' ? 'role-admin' : 'role-student';
       
+      // Fix avatar path - extract filename and build correct relative path
+      let avatarUrl = user.selectedAvatar || user.avatarUrl;
+      if (avatarUrl && avatarUrl.includes('avatar_')) {
+        const match = avatarUrl.match(/avatar_\d+\.png/);
+        if (match) {
+          // Build correct path from organizer dashboard
+          avatarUrl = `../../assets/avatars/${match[0]}`;
+        }
+      }
+      
+      const avatarHtml = avatarUrl 
+        ? `<img src="${avatarUrl}" alt="${user.fullname || 'User'}" onerror="this.style.display='none'; this.parentElement.innerHTML='<span>${initials}</span>';">` 
+        : `<span>${initials}</span>`;
+      
       return `
         <div class="user-result-card" onclick="window.location.href='../public-profile.html?id=${user.id}'">
           <div class="user-avatar">
-            ${user.avatarUrl || user.selectedAvatar ? `<img src="${user.selectedAvatar || user.avatarUrl}" alt="${user.fullname}">` : initials}
+            ${avatarHtml}
           </div>
           <div class="user-info">
             <div class="user-name">${user.fullname || 'Unknown User'}</div>
