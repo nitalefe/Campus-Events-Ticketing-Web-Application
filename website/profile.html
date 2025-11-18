@@ -119,7 +119,48 @@
         </form>
       </div>
 
-      <!-- Additional Settings -->
+      <!-- Interests Section (Students Only) -->
+      <div class="form-section" id="interestsSection" style="display: none;">
+        <h2>My Interests</h2>
+        <p style="color: #555; margin-bottom: 1rem;">
+          Pick the event types you like. We'll use this to personalize your Recommended section.
+        </p>
+        
+        <form id="interests-form">
+          <div class="interests-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px 24px;margin-bottom:24px;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" name="interestCategory" value="Workshop" style="cursor: pointer;">
+              Workshop
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" name="interestCategory" value="Seminar" style="cursor: pointer;">
+              Seminar
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" name="interestCategory" value="Concert" style="cursor: pointer;">
+              Concert
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" name="interestCategory" value="Sports" style="cursor: pointer;">
+              Sports
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" name="interestCategory" value="Other" style="cursor: pointer;">
+              Other
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="padding:10px 20px;">
+            Save Interests
+          </button>
+
+          <span id="interests-status" style="margin-left:12px;font-weight:600;color:#0b8b37;display:none;">
+            Saved!
+          </span>
+        </form>
+      </div>
+
+      <!-- Account Settings -->
       <div class="form-section">
         <h2>Account Settings</h2>
         
@@ -241,6 +282,9 @@
             document.getElementById('studentFields').style.display = 'block';
             document.getElementById('school').value = userData.school || '';
             document.getElementById('studentId').value = userData.studentId || '';
+            document.getElementById('interestsSection').style.display = 'block';
+            // Load interests
+            await loadInterests(user.uid);
           } else if (userData.role === 'organizer') {
             document.getElementById('organizerFields').style.display = 'block';
             document.getElementById('organization').value = userData.organization || '';
@@ -390,6 +434,78 @@
         showStatus("Account deletion feature coming soon. Please contact support.", "info");
       }
     };
+
+    // Interests management (students only)
+    async function loadInterests(uid) {
+      try {
+        const snap = await getDoc(doc(db, "users", uid));
+        const data = snap.exists() ? snap.data() : {};
+        const saved = Array.isArray(data?.preferences?.categories)
+          ? data.preferences.categories
+          : [];
+
+        const savedLower = saved.map((c) =>
+          (c || "").toString().toLowerCase()
+        );
+
+        const boxes = document.querySelectorAll(
+          'input[name="interestCategory"]'
+        );
+        boxes.forEach((box) => {
+          const val = box.value.toLowerCase();
+          box.checked = savedLower.includes(val);
+        });
+      } catch (err) {
+        console.error("Failed to load interests:", err);
+      }
+    }
+
+    async function saveInterests(uid, values) {
+      try {
+        const normalized = values
+          .map((v) => (v || "").toString().toLowerCase())
+          .filter(Boolean);
+
+        await updateDoc(doc(db, "users", uid), {
+          preferences: { categories: normalized }
+        });
+
+        const statusEl = document.getElementById("interests-status");
+        if (statusEl) {
+          statusEl.style.display = "inline";
+          statusEl.style.color = "#0b8b37";
+          statusEl.textContent = "Saved!";
+          setTimeout(() => {
+            statusEl.style.display = "none";
+          }, 2000);
+        }
+      } catch (err) {
+        console.error("Failed to save interests:", err);
+        const statusEl = document.getElementById("interests-status");
+        if (statusEl) {
+          statusEl.style.display = "inline";
+          statusEl.style.color = "#b31414";
+          statusEl.textContent = "Error saving. Please try again.";
+        }
+      }
+    }
+
+    // Interests form submission
+    const interestsForm = document.getElementById("interests-form");
+    if (interestsForm) {
+      interestsForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!currentUser) return;
+
+        const selected = Array.from(
+          document.querySelectorAll(
+            'input[name="interestCategory"]:checked'
+          )
+        ).map((box) => box.value);
+
+        await saveInterests(currentUser.uid, selected);
+      });
+    }
 
     // Auth state listener
     onAuthStateChanged(auth, (user) => {
