@@ -2,6 +2,7 @@
 
 // scanner.js
 import { validateTicket } from "./ticket-validation.js";
+import { setStatus, onDecoded } from "./scanner-util.js";
 
 // UI refs
 const statusEl = document.getElementById("scanStatus");
@@ -12,7 +13,9 @@ const stopBtn = document.getElementById("stopBtn");
 const simulateBtn = document.getElementById("simulateBtn");
 const manualEncrypted = document.getElementById("manualEncrypted");
 
-const setStatus = (msg, state = "") => {
+const         
+tus = (msg, state = "") => {
+
   statusEl.textContent = msg;
   statusEl.className = "status" + (state ? ` ${state}` : "");
 };
@@ -66,16 +69,6 @@ let starting = false;
     setStatus(`Could not list cameras: ${err?.message || err}`, "err");
   }
 })();
-
-async function onDecoded(encryptedText) {
-  try {
-    const result = await validateTicket(encryptedText);
-    setStatus(result.message, result.ok ? "ok" : "err");
-  } catch (e) {
-    console.error(e);
-    setStatus(`Unexpected error validating ticket: ${e?.message || e}`, "err");
-  }
-}
 
 startBtn.addEventListener("click", async () => {
   if (!scanner) {
