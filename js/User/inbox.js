@@ -102,7 +102,6 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   try {
-    const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js");
     const userDoc = await getDoc(doc(db, "users", user.uid));
     const role = userDoc.exists() ? (userDoc.data().role || "student") : "student";
     const claimedEvents = userDoc.exists() ? (userDoc.data().claimedEvents || []) : [];
@@ -214,3 +213,5 @@ document.addEventListener("DOMContentLoaded", () => {
   const logoutBtn = document.getElementById("logout-btn");
   if (logoutBtn) logoutBtn.addEventListener("click", async () => { try { await signOut(auth); window.location.href = "../Registration/SignIn.html"; } catch (e) { alert("Error logging out."); } });
 });
+
+

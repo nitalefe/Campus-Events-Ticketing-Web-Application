@@ -40,11 +40,9 @@
 
 <body>
   <div class="toolbar">
-    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='../Student/student-dashboard.html'">
-    <button class="toolbar-btn" onclick="location.href='../Student/student-dashboard.html'">Home</button>
+<img id="home-logo" src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo">
+    <button id="home-btn" class="toolbar-btn">Home</button>
     <!-- Student quick links added into the blue toolbar -->
-    <button class="toolbar-btn" onclick="location.href='inbox.html'">Inbox</button>
-  <button class="toolbar-btn" onclick="location.href='myTickets.html'">My Tickets</button>
     <div class="toolbar-spacer"></div>
     <div id="authBtnContainer">
       <button id="logout-btn" class="auth-btn">Log Out</button>
@@ -58,6 +56,47 @@
     <p id="loading">Loading messages...</p>
     <div id="messages" class="messages-list"></div>
   </div>
+<script type="module">
+import { auth, db } from "../../js/Shared/firebase-config.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+// -----------------------------------------------------
+// HOME BUTTON ROLE-BASED REDIRECT
+// -----------------------------------------------------
+const homeBtn = document.getElementById("home-btn");
+const homeLogo = document.getElementById("home-logo");
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return;
+
+  try {
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    const role = userDoc.exists() ? (userDoc.data().role || "student") : "student";
+
+    // Default destination
+    let target = "../Student/student-dashboard.html";
+
+    if (role === "organizer") {
+      target = "../Organizer/organizer-dashboard.html";
+    } else if (role === "admin") {
+      target = "../Administrator/admin-dashboard.html";
+    }
+
+    if (homeBtn) {
+      homeBtn.onclick = () => window.location.href = target;
+    }
+
+    if (homeLogo) {
+      homeLogo.onclick = () => window.location.href = target;
+    }
+
+  } catch (err) {
+    console.error("Failed to set home redirects:", err);
+  }
+});
+</script>
+
 
   <script type="module" src="../../js/User/inbox.js"></script>
 </body>
