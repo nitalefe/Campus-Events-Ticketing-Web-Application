@@ -129,10 +129,10 @@ onAuthStateChanged(auth, async (user) => {
       snap.forEach(d => {
         const data = d.data();
         if (item.type === "role") {
-          // Only include role-targeted broadcasts that are NOT tied to a specific event.
-          // Event-specific broadcasts (have eventId) should only be visible to students
-          // who hold tickets for that event (handled by 'event' queries below).
-          if (!data.eventId) docsMap.set(d.id, d);
+          // Include role-targeted broadcasts that are not tied to a specific event.
+          // Additionally, include broadcasts sent by administrators even if they include an eventId,
+          // because admins should be able to reach all students/organizers regardless of ticket ownership.
+          if (!data.eventId || data.senderRole === 'admin') docsMap.set(d.id, d);
         } else if (item.type === "event") {
           // only include if the broadcast is intended for students as well
           const t = data.targets || [];
