@@ -218,8 +218,8 @@
   <script type="module">
     import { auth, db } from "../js/Shared/firebase-config.js";
     import { goToHome } from '../js/Shared/nav.js';
-    import { onAuthStateChanged, updateProfile, sendPasswordResetEmail, getIdTokenResult, deleteUser } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import { doc, getDoc, updateDoc, deleteDoc, collectionGroup, arrayRemove } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+    import { onAuthStateChanged, updateProfile, sendPasswordResetEmail, getIdTokenResult, deleteUser, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { doc, getDoc, updateDoc, deleteDoc, collectionGroup, arrayRemove, query, collection, where, getDocs } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
     let currentUser = null;
     let userRole = null;
@@ -455,6 +455,8 @@
           return;
         }
 
+        const originalText = deleteAccountBtn.textContent;
+
         try {
           const currentUser = auth.currentUser;
           if (!currentUser) {
@@ -465,81 +467,77 @@
           const userId = currentUser.uid;
 
           // Show loading indicator
-          const originalText = deleteAccountBtn.textContent;
           deleteAccountBtn.textContent = 'Deleting...';
           deleteAccountBtn.disabled = true;
 
-          // 1. Delete user document from Firestore
-          await deleteDoc(doc(db, 'users', userId));
-          console.log('User document deleted');
+          console.log('Starting account deletion for:', userId);
 
-          // 2. Delete from all events' attendees subcollections
-          const attendeesQuery = query(
-            collectionGroup(db, 'attendees'),
-            where('userId', '==', userId)
-          );
-          const attendeesSnapshot = await getDocs(attendeesQuery);
-          
-          const deletePromises = [];
-          attendeesSnapshot.forEach(attendeeDoc => {
-            deletePromises.push(deleteDoc(attendeeDoc.ref));
-          });
-          await Promise.all(deletePromises);
-          console.log('Removed from all events attendees');
-
-          // 3. Delete all tickets
-          const ticketsQuery = query(
-            collection(db, 'tickets'),
-            where('userId', '==', userId)
-          );
-          const ticketsSnapshot = await getDocs(ticketsQuery);
-          
-          const ticketDeletePromises = [];
-          ticketsSnapshot.forEach(ticketDoc => {
-            ticketDeletePromises.push(deleteDoc(ticketDoc.ref));
-          });
-          await Promise.all(ticketDeletePromises);
-          console.log('All tickets deleted');
-
-          // 4. If organizer, delete their events
+          // 1. Fetch user data first
           const userDocSnap = await getDoc(doc(db, 'users', userId));
-          if (userDocSnap.exists() && userDocSnap.data().role === 'organizer') {
-            const organizerEventsQuery = query(
-              collection(db, 'events'),
-              where('createdBy', '==', userId)
-            );
-            const organizerEventsSnapshot = await getDocs(organizerEventsQuery);
-            
-            const eventDeletePromises = [];
-            organizerEventsSnapshot.forEach(eventDoc => {
-              eventDeletePromises.push(deleteDoc(eventDoc.ref));
-            });
-            await Promise.all(eventDeletePromises);
-            console.log('Organizer events deleted');
+          const userData = userDocSnap.exists() ? userDocSnap.data() : null;
+          const isOrganizerUser = userData?.role === 'organizer';
+          console.log('User role:', userData?.role);
+
+          // 2. If organizer, delete their events
+          if (isOrganizerUser) {
+            try {
+              const organizerEventsQuery = query(
+                collection(db, 'events'),
+                where('createdBy', '==', userId)
+              );
+              const organizerEventsSnapshot = await getDocs(organizerEventsQuery);
+              
+              for (const eventDoc of organizerEventsSnapshot.docs) {
+                await deleteDoc(eventDoc.ref);
+              }
+              console.log('Organizer events deleted');
+            } catch (err) {
+              console.warn('Error deleting organizer events:', err);
+            }
           }
 
-          // 5. Remove from following/followers lists
-          const allUsersQuery = query(collection(db, 'users'));
-          const allUsersSnapshot = await getDocs(allUsersQuery);
-          
-          const followUpdatePromises = [];
-          allUsersSnapshot.forEach(userDoc => {
-            const userData = userDoc.data();
+          // 3. Delete from all events' attendees subcollections
+          try {
+            console.log('Removing user from event attendees...');
+            const eventsSnapshot = await getDocs(collection(db, 'events'));
+            let deletedCount = 0;
             
-            if (userData.following && userData.following.includes(userId)) {
-              followUpdatePromises.push(
-                updateDoc(userDoc.ref, { following: arrayRemove(userId) })
-              );
+            for (const eventDoc of eventsSnapshot.docs) {
+              // The attendee document ID is the userId itself
+              const attendeeDocRef = doc(db, 'events', eventDoc.id, 'attendees', userId);
+              const attendeeDocSnap = await getDoc(attendeeDocRef);
+              
+              if (attendeeDocSnap.exists()) {
+                console.log('Found attendee in event:', eventDoc.id);
+                await deleteDoc(attendeeDocRef);
+                deletedCount++;
+              }
             }
             
-            if (userData.followers && userData.followers.includes(userId)) {
-              followUpdatePromises.push(
-                updateDoc(userDoc.ref, { followers: arrayRemove(userId) })
-              );
+            console.log(`Removed from ${deletedCount} event(s)`);
+          } catch (err) {
+            console.warn('Error removing from attendees:', err);
+          }
+
+          // 4. Delete all tickets
+          try {
+            const ticketsQuery = query(
+              collection(db, 'tickets'),
+              where('userId', '==', userId)
+            );
+            const ticketsSnapshot = await getDocs(ticketsQuery);
+            
+            for (const ticketDoc of ticketsSnapshot.docs) {
+              await deleteDoc(ticketDoc.ref);
             }
-          });
-          await Promise.all(followUpdatePromises);
-          console.log('Removed from all following/followers lists');
+            console.log('All tickets deleted');
+          } catch (err) {
+            console.warn('Error deleting tickets:', err);
+          }
+
+          // 5. Delete user document from Firestore
+          await deleteDoc(doc(db, 'users', userId));
+          console.log('User document deleted');
 
           // 6. Delete Firebase Authentication account (MUST BE LAST)
           await deleteUser(currentUser);
@@ -547,7 +545,9 @@
 
           // Redirect to sign-in page
           alert('Your account has been permanently deleted.');
-          window.location.href = '../Registration/SignIn.html';
+          setTimeout(() => {
+            window.location.href = '../Registration/SignIn.html';
+          }, 100);
 
         } catch (error) {
           console.error('Error deleting account:', error);
@@ -640,12 +640,24 @@
     // Auth state listener
     onAuthStateChanged(auth, (user) => {
       if (!user) {
-        window.location.href = "Registration/SignIn.html";
+        window.location.href = "../Registration/SignIn.html";
         return;
       }
       currentUser = user;
       loadProfile(user);
     });
+
+    // Logout - redirect to SignIn page
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      try {
+        await signOut(auth);
+      } catch (error) {
+        console.error('Error signing out:', error);
+      } finally {
+          window.location.href = '../Registration/SignIn.html';   
+      }
+    });
+
   </script>
   <script type="module" src="../js/Registration/auth.js"></script>
 
