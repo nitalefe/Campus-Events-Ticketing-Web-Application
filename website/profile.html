@@ -189,7 +189,7 @@
         <div class="danger-zone">
           <h3>Danger Zone</h3>
           <button class="btn btn-danger" onclick="changePassword()">Change Password</button>
-          <button class="btn btn-danger-outline" onclick="deleteAccount()">Delete Account</button>
+          <button class="btn btn-danger-outline delete-account-btn" id="deleteAccountBtn">Delete Account</button>
         </div>
       </div>
     </div>
@@ -218,8 +218,8 @@
   <script type="module">
     import { auth, db } from "../js/Shared/firebase-config.js";
     import { goToHome } from '../js/Shared/nav.js';
-    import { onAuthStateChanged, updateProfile, sendPasswordResetEmail, getIdTokenResult } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+    import { onAuthStateChanged, updateProfile, sendPasswordResetEmail, getIdTokenResult, deleteUser } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { doc, getDoc, updateDoc, deleteDoc, collectionGroup, arrayRemove } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
     let currentUser = null;
     let userRole = null;
@@ -429,11 +429,141 @@
       }
     };
 
-    window.deleteAccount = function() {
-      if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-        showStatus("Account deletion feature coming soon. Please contact support.", "info");
-      }
-    };
+    // Account deletion
+    const deleteAccountBtn = document.querySelector('.delete-account-btn') || document.getElementById('deleteAccountBtn');
+
+    if (deleteAccountBtn) {
+      deleteAccountBtn.addEventListener('click', async () => {
+        // Show confirmation dialog
+        const confirmed = confirm(
+          '⚠️ Are you sure you want to delete your account?\n\n' +
+          'This action is PERMANENT and will:\n' +
+          '• Delete all your personal data\n' +
+          '• Remove you from all events\n' +
+          '• Delete all your tickets\n' +
+          '• Cannot be undone\n\n' +
+          'Click OK to continue'
+        );
+
+        if (!confirmed) return;
+
+        // Second confirmation - ask user to type DELETE
+        const confirmation = prompt('Please type DELETE to confirm account deletion:');
+        
+        if (confirmation !== 'DELETE') {
+          alert('Account deletion cancelled.');
+          return;
+        }
+
+        try {
+          const currentUser = auth.currentUser;
+          if (!currentUser) {
+            alert('No user logged in');
+            return;
+          }
+
+          const userId = currentUser.uid;
+
+          // Show loading indicator
+          const originalText = deleteAccountBtn.textContent;
+          deleteAccountBtn.textContent = 'Deleting...';
+          deleteAccountBtn.disabled = true;
+
+          // 1. Delete user document from Firestore
+          await deleteDoc(doc(db, 'users', userId));
+          console.log('User document deleted');
+
+          // 2. Delete from all events' attendees subcollections
+          const attendeesQuery = query(
+            collectionGroup(db, 'attendees'),
+            where('userId', '==', userId)
+          );
+          const attendeesSnapshot = await getDocs(attendeesQuery);
+          
+          const deletePromises = [];
+          attendeesSnapshot.forEach(attendeeDoc => {
+            deletePromises.push(deleteDoc(attendeeDoc.ref));
+          });
+          await Promise.all(deletePromises);
+          console.log('Removed from all events attendees');
+
+          // 3. Delete all tickets
+          const ticketsQuery = query(
+            collection(db, 'tickets'),
+            where('userId', '==', userId)
+          );
+          const ticketsSnapshot = await getDocs(ticketsQuery);
+          
+          const ticketDeletePromises = [];
+          ticketsSnapshot.forEach(ticketDoc => {
+            ticketDeletePromises.push(deleteDoc(ticketDoc.ref));
+          });
+          await Promise.all(ticketDeletePromises);
+          console.log('All tickets deleted');
+
+          // 4. If organizer, delete their events
+          const userDocSnap = await getDoc(doc(db, 'users', userId));
+          if (userDocSnap.exists() && userDocSnap.data().role === 'organizer') {
+            const organizerEventsQuery = query(
+              collection(db, 'events'),
+              where('createdBy', '==', userId)
+            );
+            const organizerEventsSnapshot = await getDocs(organizerEventsQuery);
+            
+            const eventDeletePromises = [];
+            organizerEventsSnapshot.forEach(eventDoc => {
+              eventDeletePromises.push(deleteDoc(eventDoc.ref));
+            });
+            await Promise.all(eventDeletePromises);
+            console.log('Organizer events deleted');
+          }
+
+          // 5. Remove from following/followers lists
+          const allUsersQuery = query(collection(db, 'users'));
+          const allUsersSnapshot = await getDocs(allUsersQuery);
+          
+          const followUpdatePromises = [];
+          allUsersSnapshot.forEach(userDoc => {
+            const userData = userDoc.data();
+            
+            if (userData.following && userData.following.includes(userId)) {
+              followUpdatePromises.push(
+                updateDoc(userDoc.ref, { following: arrayRemove(userId) })
+              );
+            }
+            
+            if (userData.followers && userData.followers.includes(userId)) {
+              followUpdatePromises.push(
+                updateDoc(userDoc.ref, { followers: arrayRemove(userId) })
+              );
+            }
+          });
+          await Promise.all(followUpdatePromises);
+          console.log('Removed from all following/followers lists');
+
+          // 6. Delete Firebase Authentication account (MUST BE LAST)
+          await deleteUser(currentUser);
+          console.log('Firebase Auth account deleted');
+
+          // Redirect to sign-in page
+          alert('Your account has been permanently deleted.');
+          window.location.href = '../Registration/SignIn.html';
+
+        } catch (error) {
+          console.error('Error deleting account:', error);
+          
+          // Re-enable button
+          deleteAccountBtn.textContent = originalText;
+          deleteAccountBtn.disabled = false;
+          
+          if (error.code === 'auth/requires-recent-login') {
+            alert('For security reasons, please log out and log back in, then try deleting your account again.');
+          } else {
+            alert('Failed to delete account: ' + error.message);
+          }
+        }
+      });
+    }
 
     // Interests management (students only)
     async function loadInterests(uid) {
