@@ -11,8 +11,17 @@ import { getDoc, doc } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-
 export async function goToHome() {
   try {
     const current = auth.currentUser;
+    
+    // Detect if we're in a subfolder (like Profile/)
+    const currentPath = window.location.pathname;
+    const isInSubfolder = currentPath.includes('/Profile/') || 
+                          currentPath.includes('/Student/') || 
+                          currentPath.includes('/Organizer/') || 
+                          currentPath.includes('/Admin/');
+    const prefix = isInSubfolder ? '../' : '';
+    
     if (!current) {
-      window.location.href = 'Registration/SignIn.html';
+      window.location.href = prefix + 'Registration/SignIn.html';
       return;
     }
 
@@ -20,16 +29,22 @@ export async function goToHome() {
     const role = snap.exists() ? (snap.data().role || 'student') : 'student';
 
     if (role === 'organizer') {
-      window.location.href = 'Organizer/organizer-dashboard.html';
+      window.location.href = prefix + 'Organizer/organizer-dashboard.html';
     } else if (role === 'admin') {
-      window.location.href = 'Administrator/admin-dashboard.html';
+      window.location.href = prefix + 'Admin/admin-dashboard.html';
     } else {
-      window.location.href = 'Student/student-dashboard.html';
+      window.location.href = prefix + 'Student/student-dashboard.html';
     }
   } catch (err) {
     console.error('nav.goToHome error:', err);
     // fallback
-    window.location.href = 'Student/student-dashboard.html';
+    const currentPath = window.location.pathname;
+    const isInSubfolder = currentPath.includes('/Profile/') || 
+                          currentPath.includes('/Student/') || 
+                          currentPath.includes('/Organizer/') || 
+                          currentPath.includes('/Admin/');
+    const prefix = isInSubfolder ? '../' : '';
+    window.location.href = prefix + 'Student/student-dashboard.html';
   }
 }
 

@@ -6,14 +6,14 @@
   <link rel="icon" type="image/png" href="../assets/images/evently_logo_DT.png">
   <title>User Profile - Campus Events</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/Shared/toolbar.css">
-  <link rel="stylesheet" href="../css/Shared/profile.css">
+  <link rel="stylesheet" href="../../css/Shared/toolbar.css">
+  <link rel="stylesheet" href="../../css/Shared/profile.css">
   <link rel="stylesheet" href="../../css/Shared/dashboard.css">
 </head>
 <body>
   <!-- Toolbar - Exact Match -->
   <div class="toolbar">
-    <img src="../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" id="logoBtn">
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" id="logoBtn">
     <button class="toolbar-btn" id="homeBtn">Home</button>
     <div class="toolbar-spacer"></div>
     <button class="toolbar-btn" onclick="location.href='profile.html'">Profile</button>
@@ -60,10 +60,10 @@
   </div>
 
   <script type="module">
-    import { auth, db } from '../js/Shared/firebase-config.js';
+    import { auth, db } from '../../js/Shared/firebase-config.js';
     import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js';
     import { doc, getDoc, collection, query, where, getDocs, orderBy, updateDoc, setDoc, arrayUnion, arrayRemove, onSnapshot } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js';
-    import { goToHome } from '../js/Shared/nav.js';
+    import { goToHome } from '../../js/Shared/nav.js';
 
     // Store the profile owner's role (person whose profile is being viewed)
     let profileOwnerRole = null;
@@ -501,6 +501,8 @@
         followListenerUnsubscribe();
       }
     });
+    
   </script>
+  <script type="module" src="../../js/Registration/auth.js"></script>
 </body>
 </html>

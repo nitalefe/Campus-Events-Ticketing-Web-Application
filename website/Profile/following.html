@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="../assets/images/evently_logo_DT.png">
+    <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
     <title>Following - Campus Events</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/Shared/toolbar.css">
-    <link rel="stylesheet" href="../css/Shared/profile.css">
+    <link rel="stylesheet" href="../../css/Shared/toolbar.css">
+    <link rel="stylesheet" href="../../css/Shared/profile.css">
 </head>
 <body>
     <!-- Toolbar -->
     <div class="toolbar">
-        <img src="../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='#'" id="homeLogo">
+        <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='#'" id="homeLogo">
         <button class="toolbar-btn" id="homeBtn">Home</button>
         <button class="toolbar-btn active" onclick="location.href='following.html'">Following</button>
         <div class="toolbar-spacer"></div>
@@ -38,16 +38,16 @@
 
             <div class="empty-state" id="emptyState">
                 <p>No Following</p>
-                <a href="Student/student-dashboard.html" class="btn-primary">Discover People</a>
+                <a href="../Student/student-dashboard.html" class="btn-primary">Discover People</a>
             </div>
         </section>
     </main>
 
     <script type="module">
-    import { auth, db } from '../js/Shared/firebase-config.js';
+    import { auth, db } from '../../js/Shared/firebase-config.js';
     import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js';
     import { doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js';
-    import { goToHome } from '../js/Shared/nav.js';
+    import { goToHome } from '../../js/Shared/nav.js';
 
         // Use shared goToHome from nav module (imported above)
         try { window.goToHome = goToHome; } catch(e) {}
@@ -114,10 +114,21 @@
                 const u = s.data();
                 const id = s.id;
                 const initials = (u.fullname||'U').split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
-                const avatarHtml = u.avatarUrl ? `<img src="${u.avatarUrl}" alt="${u.fullname}">` : `<span>${initials}</span>`;
+                
+                // Use selectedAvatar instead of avatarUrl
+                const avatarUrl = u.selectedAvatar || u.avatarUrl;
+                const avatarHtml = avatarUrl 
+                    ? `<img src="../../${avatarUrl}" alt="${u.fullname}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                       <span style="display:none;">${initials}</span>` 
+                    : `<span>${initials}</span>`;
+                
                 const item = document.createElement('div');
                 item.className = 'following-compact-item';
-                item.innerHTML = `<a href="public-profile.html?id=${id}" title="${u.fullname||'User'}"><div class="following-compact-avatar">${avatarHtml}</div><div class="following-compact-name">${(u.fullname||'User').split(' ')[0]}</div></a>`;
+                item.innerHTML = `
+                    <a href="public-profile.html?id=${id}" title="${u.fullname||'User'}">
+                        <div class="following-compact-avatar">${avatarHtml}</div>
+                        <div class="following-compact-name">${(u.fullname||'User').split(' ')[0]}</div>
+                    </a>`;
                 compact.appendChild(item);
             });
         }
@@ -258,19 +269,11 @@
                 }
             } else {
                 console.log('No user authenticated, redirecting to sign in');
-                window.location.href = 'Registration/SignIn.html';
+                window.location.href = '../Registration/SignIn.html';
             }
         });
-
-        // Handle logout
-        document.getElementById('logout-btn').addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-                window.location.href = 'Registration/SignIn.html';
-            } catch (error) {
-                console.error('Logout error:', error);
-            }
-        });
+          
     </script>
+    <script type="module" src="../../js/Registration/auth.js"></script>
 </body>
 </html>

@@ -4,17 +4,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="../assets/images/evently_logo_DT.png">
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
   <title>My Profile - Evently</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/Shared/toolbar.css">
-  <link rel="stylesheet" href="../css/Shared/profile.css">
+  <link rel="stylesheet" href="../../css/Shared/toolbar.css">
+  <link rel="stylesheet" href="../../css/Shared/profile.css">
 </head>
 
 <body>
   <!-- Toolbar -->
   <div class="toolbar">
-    <img src="../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
       onclick="location.href='#'" id="homeLogo">
     <button class="toolbar-btn" onclick="goToHome()">Home</button>
     <button class="toolbar-btn" onclick="location.href='following.html'">Following</button>
@@ -216,8 +216,8 @@
 
   <!-- Scripts -->
   <script type="module">
-    import { auth, db } from "../js/Shared/firebase-config.js";
-    import { goToHome } from '../js/Shared/nav.js';
+    import { auth, db } from "../../js/Shared/firebase-config.js";
+    import { goToHome } from '../../js/Shared/nav.js';
     import { onAuthStateChanged, updateProfile, sendPasswordResetEmail, getIdTokenResult, deleteUser, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
     import { doc, getDoc, updateDoc, deleteDoc, collectionGroup, arrayRemove, query, collection, where, getDocs } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
@@ -299,14 +299,14 @@
           const homeBtn = document.querySelector('.toolbar-btn');
           const homeLogo = document.getElementById('homeLogo');
           if (userData.role === 'student') {
-            homeBtn.onclick = () => location.href = 'Student/student-dashboard.html';
-            homeLogo.onclick = () => location.href = 'Student/student-dashboard.html';
+            homeBtn.onclick = () => location.href = '../Student/student-dashboard.html';
+            homeLogo.onclick = () => location.href = '../Student/student-dashboard.html';
           } else if (userData.role === 'organizer') {
-            homeBtn.onclick = () => location.href = 'Organizer/organizer-dashboard.html';
-            homeLogo.onclick = () => location.href = 'Organizer/organizer-dashboard.html';
+            homeBtn.onclick = () => location.href = '../Organizer/organizer-dashboard.html';
+            homeLogo.onclick = () => location.href = '../Organizer/organizer-dashboard.html';
           } else if (userData.role === 'admin') {
-            homeBtn.onclick = () => location.href = 'Administrator/admin-dashboard.html';
-            homeLogo.onclick = () => location.href = 'Administrator/admin-dashboard.html';
+            homeBtn.onclick = () => location.href = '../Administrator/admin-dashboard.html';
+            homeLogo.onclick = () => location.href = '../Administrator/admin-dashboard.html';
           }
         }
       } catch (error) {
@@ -379,7 +379,7 @@
       availableAvatars.forEach(avatar => {
         const avatarOption = document.createElement('div');
         avatarOption.className = 'avatar-option';
-        avatarOption.innerHTML = `<img src="../assets/avatars/${avatar}" alt="${avatar}" onerror="this.parentElement.style.display='none'">`;
+        avatarOption.innerHTML = `<img src="../../assets/avatars/${avatar}" alt="${avatar}" onerror="this.parentElement.style.display='none'">`;
         avatarOption.onclick = () => selectAvatar(avatar);
         grid.appendChild(avatarOption);
       });
@@ -395,7 +395,7 @@
       if (!currentUser) return;
       
       try {
-        const avatarPath = `../assets/avatars/${avatarFilename}`;
+        const avatarPath = `../../assets/avatars/${avatarFilename}`;
         
         // Update in Firestore
         await updateDoc(doc(db, "users", currentUser.uid), {
@@ -646,20 +646,9 @@
       currentUser = user;
       loadProfile(user);
     });
-
-    // Logout - redirect to SignIn page
-    document.getElementById('logout-btn').addEventListener('click', async () => {
-      try {
-        await signOut(auth);
-      } catch (error) {
-        console.error('Error signing out:', error);
-      } finally {
-          window.location.href = '../Registration/SignIn.html';   
-      }
-    });
-
+    
   </script>
-  <script type="module" src="../js/Registration/auth.js"></script>
+  <script type="module" src="../../js/Registration/auth.js"></script>
 
 </body>
 
