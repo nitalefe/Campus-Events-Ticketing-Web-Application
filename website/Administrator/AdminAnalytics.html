@@ -9,6 +9,22 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../css/Organizer/EventDashboard.css" />
   <link rel="stylesheet" href="../../css/Shared/toolbar.css">
+  <style>
+    /* Page-specific override: make admin toolbar buttons thicker */
+    .toolbar .toolbar-btn {
+      padding: clamp(10px, 2vh, 14px) clamp(20px, 4vw, 28px) !important;
+      font-weight: 700 !important;
+      box-shadow: 0 0.35vh 0.9vh rgba(0,0,0,0.06) !important;
+      border: 1.5px solid rgba(255,255,255,0.07);
+      letter-spacing: 0.6px;
+    }
+
+    @media (max-width: 768px) {
+      .toolbar .toolbar-btn {
+        padding: clamp(8px, 1.5vh, 10px) clamp(14px, 3vw, 18px) !important;
+      }
+    }
+  </style>
 </head>
 
 <body>
