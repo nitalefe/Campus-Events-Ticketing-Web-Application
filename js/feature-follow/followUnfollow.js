@@ -102,3 +102,5 @@ async function unfollowUser(targetUserID) {
     console.error("Error updating following list:", err);
   }
 }
+
+export { followUser, unfollowUser };
