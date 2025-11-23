@@ -1,7 +1,3 @@
-//import { doc, getDoc, updateDoc, setDoc, arrayUnion } from "firebase/firestore";
-//import { getAuth } from "firebase/auth";
-//import { db } from "./firebase-config.js"; // adjust path to your config
-
 
 /**
  * Adds a user to the "following" array of the current user.
@@ -11,6 +7,8 @@
  * @param {string} targetUserID - The ID of the user being followed
  */
 async function followUser(targetUserID) {
+  // Import firebase helpers from the shared re-export so tests can mock them.
+  const { getAuth, doc, db, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } = await import('../Shared/firebase_import.js');
   const auth = getAuth();
   const currentUser = auth.currentUser;
 
@@ -63,6 +61,7 @@ async function followUser(targetUserID) {
  * @param {string} targetUserID - The ID of the user to unfollow
  */
 async function unfollowUser(targetUserID) {
+  const { getAuth, doc, db, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } = await import('../Shared/firebase_import.js');
   const auth = getAuth();
   const currentUser = auth.currentUser;
 
