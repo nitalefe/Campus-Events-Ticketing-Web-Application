@@ -195,6 +195,15 @@
     <text x="1580" y="468" font-family="Arial, sans-serif" font-size="10" fill="#ff8f00" text-anchor="middle" font-weight="600">attendeeList.js</text>
     <text x="1580" y="485" font-family="Arial, sans-serif" font-size="10" fill="#ff8f00" text-anchor="middle" font-weight="600">claimEvent.js</text>
   </g>
+
+  <!-- Profile Privacy Enforcement Service -->
+  <g filter="url(#shadow)">
+    <rect x="320" y="505" width="220" height="80" fill="#e8f5e9" stroke="#43a047" stroke-width="2.5" rx="6"/>
+    <text x="330" y="525" font-family="Arial, sans-serif" font-size="11" font-weight="600" fill="#2e7d32">&lt;&lt;service&gt;&gt;</text>
+    <text x="430" y="548" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#2e7d32" text-anchor="middle">Profile Privacy</text>
+    <text x="430" y="566" font-family="Arial, sans-serif" font-size="10" fill="#2e7d32" text-anchor="middle">Enforcement Service</text>
+    <text x="430" y="582" font-family="Arial, sans-serif" font-size="10" fill="#388e3c" text-anchor="middle">(publicProfile flag enforcement)</text>
+  </g>
   
   <!-- DATA LAYER -->
   
@@ -203,7 +212,8 @@
     <rect x="300" y="690" width="1100" height="90" fill="#c8e6c9" stroke="#689f38" stroke-width="3" rx="8"/>
     <text x="320" y="712" font-family="Arial, sans-serif" font-size="12" font-weight="600" fill="#1b5e20">&lt;&lt;database&gt;&gt;</text>
     <text x="850" y="740" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1b5e20" text-anchor="middle">Firebase Firestore Database</text>
-    <text x="850" y="765" font-family="Arial, sans-serif" font-size="11" fill="#2e7d32" text-anchor="middle" font-weight="600">Collections: users • events • organizers • broadcasting | Real-time sync • Cloud-hosted • NoSQL</text>
+    <text x="850" y="765" font-family="Arial, sans-serif" font-size="11" fill="#2e7d32" text-anchor="middle" font-weight="600">Collections: users • events • organizers • broadcasting • tickets | Real-time sync • Cloud-hosted • NoSQL</text>
+    <text x="850" y="783" font-family="Arial, sans-serif" font-size="11" fill="#2e7d32" text-anchor="middle" font-weight="600">Note: user documents include <tspan font-weight="700">publicProfile</tspan> (boolean) used for privacy enforcement</text>
   </g>
   
   <!-- EXTERNAL SERVICES -->
@@ -296,6 +306,12 @@
   
   <!-- Search Service to Database -->
   <line x1="1180" y1="495" x2="1050" y2="690" stroke="#333333" stroke-width="2.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Profile Privacy to Database Connection -->
+  <line x1="430" y1="585" x2="550" y2="690" stroke="#333333" stroke-width="2.5" marker-end="url(#arrowhead)"/>
+
+  <!-- Frontend Profile UI to Profile Privacy (discovery vs enforcement) -->
+  <line x1="850" y1="240" x2="430" y2="525" stroke="#1565c0" stroke-width="2" marker-end="url(#arrowhead-blue)" opacity="0.7" stroke-dasharray="6,3"/>
   
   <!-- Notification Service to Database -->
   <line x1="1380" y1="495" x2="1200" y2="690" stroke="#333333" stroke-width="2.5" marker-end="url(#arrowhead)"/>
