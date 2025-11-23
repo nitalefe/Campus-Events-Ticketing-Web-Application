@@ -66,9 +66,9 @@
   <text x="620" y="303" font-family="Arial, sans-serif" font-size="11" fill="#1e40af" text-anchor="middle">Search Events</text>
   <text x="620" y="314" font-family="Arial, sans-serif" font-size="11" fill="#1e40af" text-anchor="middle">with Filters</text>
 
-  <!-- Search Users (new) -->
-  <ellipse cx="760" cy="300" rx="100" ry="30" fill="#dbeafe" stroke="#1e40af" stroke-width="1.5" filter="url(#shadow)"/>
-  <text x="760" y="303" font-family="Arial, sans-serif" font-size="11" fill="#1e40af" text-anchor="middle">Search Users</text>
+  <!-- Search Users (new, aligned) -->
+  <ellipse cx="620" cy="300" rx="100" ry="30" fill="#dbeafe" stroke="#1e40af" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="620" y="303" font-family="Arial, sans-serif" font-size="11" fill="#1e40af" text-anchor="middle">Search Users</text>
   
   <ellipse cx="620" cy="380" rx="100" ry="30" fill="#dbeafe" stroke="#1e40af" stroke-width="1.5" filter="url(#shadow)"/>
   <text x="620" y="383" font-family="Arial, sans-serif" font-size="11" fill="#1e40af" text-anchor="middle">Save Events</text>
@@ -135,10 +135,10 @@
   <ellipse cx="620" cy="670" rx="100" ry="30" fill="#d1fae5" stroke="#065f46" stroke-width="1.5" filter="url(#shadow)"/>
   <text x="620" y="677" font-family="Arial, sans-serif" font-size="11" fill="#065f46" text-anchor="middle">View User Profiles</text>
 
-  <!-- View Private Profile (locked) -->
-  <ellipse cx="760" cy="670" rx="120" ry="30" fill="#d1fae5" stroke="#065f46" stroke-width="1.5" filter="url(#shadow)"/>
-  <text x="760" y="677" font-family="Arial, sans-serif" font-size="11" fill="#065f46" text-anchor="middle">View Private Profile</text>
-  <text x="760" y="688" font-family="Arial, sans-serif" font-size="11" fill="#065f46" text-anchor="middle">(shows locked message)</text>
+  <!-- View Private Profile (locked, aligned) -->
+  <ellipse cx="620" cy="670" rx="120" ry="30" fill="#d1fae5" stroke="#065f46" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="620" y="677" font-family="Arial, sans-serif" font-size="11" fill="#065f46" text-anchor="middle">View Private Profile</text>
+  <text x="620" y="688" font-family="Arial, sans-serif" font-size="11" fill="#065f46" text-anchor="middle">(shows locked message)</text>
   
   <ellipse cx="620" cy="750" rx="100" ry="30" fill="#d1fae5" stroke="#065f46" stroke-width="1.5" filter="url(#shadow)"/>
   <text x="620" y="757" font-family="Arial, sans-serif" font-size="11" fill="#065f46" text-anchor="middle">Edit Own Profile</text>
@@ -171,9 +171,9 @@
   <line x1="175" y1="320" x2="520" y2="670" stroke="#666666" stroke-width="1" opacity="0.6"/>
   <line x1="175" y1="330" x2="520" y2="750" stroke="#666666" stroke-width="1" opacity="0.6"/>
   <!-- Student -> Search Users -->
-  <line x1="175" y1="250" x2="700" y2="300" stroke="#666666" stroke-width="1" opacity="0.6"/>
+  <line x1="175" y1="250" x2="620" y2="300" stroke="#666666" stroke-width="1" opacity="0.6"/>
   <!-- Student -> View Private Profile -->
-  <line x1="175" y1="250" x2="700" y2="670" stroke="#666666" stroke-width="1" opacity="0.6"/>
+  <line x1="175" y1="250" x2="620" y2="670" stroke="#666666" stroke-width="1" opacity="0.6"/>
   <line x1="175" y1="340" x2="520" y2="830" stroke="#666666" stroke-width="1" opacity="0.6"/>
   <line x1="175" y1="350" x2="520" y2="910" stroke="#666666" stroke-width="1" opacity="0.6"/>
   <line x1="175" y1="360" x2="520" y2="990" stroke="#666666" stroke-width="1" opacity="0.6"/>
@@ -190,9 +190,9 @@
   <line x1="175" y1="610" x2="520" y2="670" stroke="#666666" stroke-width="1" opacity="0.6"/>
   <line x1="175" y1="620" x2="520" y2="750" stroke="#666666" stroke-width="1" opacity="0.6"/>
   <!-- Organizer -> Search Users -->
-  <line x1="180" y1="580" x2="700" y2="300" stroke="#666666" stroke-width="1" opacity="0.6"/>
+  <line x1="180" y1="580" x2="620" y2="300" stroke="#666666" stroke-width="1" opacity="0.6"/>
   <!-- Organizer -> View Private Profile -->
-  <line x1="180" y1="580" x2="700" y2="670" stroke="#666666" stroke-width="1" opacity="0.6"/>
+  <line x1="180" y1="580" x2="620" y2="670" stroke="#666666" stroke-width="1" opacity="0.6"/>
   <line x1="175" y1="630" x2="520" y2="830" stroke="#666666" stroke-width="1" opacity="0.6"/>
   <line x1="175" y1="640" x2="520" y2="910" stroke="#666666" stroke-width="1" opacity="0.6"/>
   <line x1="175" y1="650" x2="520" y2="990" stroke="#666666" stroke-width="1" opacity="0.6"/>
@@ -209,9 +209,9 @@
   <line x1="175" y1="1000" x2="520" y2="670" stroke="#666666" stroke-width="1" opacity="0.6"/>
   <line x1="180" y1="1005" x2="520" y2="1150" stroke="#666666" stroke-width="1" opacity="0.6"/>
   <!-- Administrator -> Search Users -->
-  <line x1="175" y1="950" x2="700" y2="300" stroke="#666666" stroke-width="1" opacity="0.6"/>
+  <line x1="175" y1="950" x2="620" y2="300" stroke="#666666" stroke-width="1" opacity="0.6"/>
   <!-- Administrator -> View Private Profile -->
-  <line x1="175" y1="950" x2="700" y2="670" stroke="#666666" stroke-width="1" opacity="0.6"/>
+  <line x1="175" y1="950" x2="620" y2="670" stroke="#666666" stroke-width="1" opacity="0.6"/>
   
   <!-- Include and Extend Relationships -->
   <defs>
