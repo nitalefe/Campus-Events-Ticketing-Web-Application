@@ -177,13 +177,15 @@ header p {
 
 .event-card {
 	background: var(--card-bg);
-	padding: clamp(14px, 2.5vw, 20px);
+	padding: 16px;
 	border-radius: 10px;
 	cursor: pointer;
-	flex: 0 0 auto;
+	flex: 0 0 280px;
 	/* do not shrink/grow */
-	width: clamp(240px, 28vw, 320px);
-	min-width: 220px;
+	width: 280px;
+	min-width: 280px;
+	height: auto;
+	min-height: 320px;
 	display: flex;
 	flex-direction: column;
 	scroll-snap-align: start;
@@ -192,27 +194,29 @@ header p {
 
 .event-card .event-banner {
 	width: 100%;
-	height: clamp(140px, 20vh, 200px);
+	height: 160px;
 	object-fit: cover;
 	border-radius: 8px;
 	margin-bottom: 12px
 }
 
 .event-title {
-	font-size: clamp(1.05rem, 2.4vw, 1.4rem);
+	font-size: 1.15rem;
+	font-weight: 600;
 	margin: 0 0 8px;
-	color: #233241
+	color: #233241;
+	line-height: 1.3;
 }
 
 .event-date,
 .event-location {
-	font-size: clamp(0.95rem, 2vw, 1.05rem);
+	font-size: 0.95rem;
 	color: var(--muted);
 	margin: 0 0 8px
 }
 
 .event-desc {
-	font-size: clamp(0.95rem, 2vw, 1rem);
+	font-size: 0.95rem;
 	color: #444;
 	line-height: 1.45;
 	overflow-wrap: break-word

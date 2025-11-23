@@ -104,8 +104,9 @@ body.admin-page{background:var(--bg);color:#0f172a;font-family:Inter, system-ui,
 .shortcuts-top .panel .toolbar-btn:hover{transform:translateY(-1px)}
 
 /* Event cards area (light guidance for future list styling) */
-.events .event-card{background:linear-gradient(180deg,#ffffff,#fbfdff);border-radius:10px;padding:12px;box-shadow:0 4px 10px rgba(16,24,40,0.04);display:flex;gap:12px;align-items:center}
+.events .event-card{background:linear-gradient(180deg,#ffffff,#fbfdff);border-radius:10px;padding:16px;box-shadow:0 4px 10px rgba(16,24,40,0.04);display:flex;flex-direction:column;width:280px;min-width:280px;height:auto;min-height:320px}
 .events .event-card .event-title{font-weight:700;color:#0f172a}
+.events .event-card .event-banner{width:100%;height:160px;object-fit:cover;border-radius:8px;margin-bottom:12px}
 
 /* Section bar subtle decoration */
 .section-bar{border-bottom:1px solid rgba(15,23,42,0.04);padding-bottom:10px}
@@ -170,8 +171,51 @@ body.admin-page{background:var(--bg);color:#0f172a;font-family:Inter, system-ui,
 
 /* Full width events section */
 .full-width-section{width:100%;margin-top:20px}
-.full-width-section .events-container{width:100%}
-.full-width-section .events{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.full-width-section .events-container{
+  width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+  scrollbar-color:#cbd5e1 #f1f5f9;
+}
+.full-width-section .events-container::-webkit-scrollbar{
+  height:8px;
+}
+.full-width-section .events-container::-webkit-scrollbar-track{
+  background:#f1f5f9;
+  border-radius:4px;
+}
+.full-width-section .events-container::-webkit-scrollbar-thumb{
+  background:#cbd5e1;
+  border-radius:4px;
+}
+.full-width-section .events-container::-webkit-scrollbar-thumb:hover{
+  background:#94a3b8;
+}
+.full-width-section .events{
+  display:flex;
+  gap:14px;
+  padding-bottom:10px;
+}
+.full-width-section .events .event-card{
+  flex:0 0 280px;
+  width:280px;
+  min-width:280px;
+  height:auto;
+  min-height:320px;
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+}
+.full-width-section .events .event-card .event-banner{
+  width:100%;
+  height:160px;
+  object-fit:cover;
+  border-radius:8px;
+  margin-bottom:12px;
+}
 
 /* Native button/input elements inside admin containers should match the gradient style
    (explicitly avoid selecting .toolbar so top toolbar stays unchanged) */

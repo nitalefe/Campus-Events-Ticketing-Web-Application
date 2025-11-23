@@ -3,12 +3,15 @@
 // Admin view: shows ALL events across all schools with filters and CSV export
 // ------------------------------
 
-import { collection, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { collection, getDocs, orderBy, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 import { auth, db } from "../../js/Shared/firebase-config.js";
 import { getIdTokenResult, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
 const windowTitle = document.getElementById("pageTitle");
+
+// Cache for organizer display names (avoid repeated reads)
+const organizerCache = new Map();
 
 // Register datalabels plugin if available (improves bar label rendering)
 if (typeof window !== 'undefined' && window.Chart && window.ChartDataLabels) {
@@ -49,6 +52,8 @@ function displayEvents(events) {
     const div = document.createElement("div");
     div.className = "event-card";
     div.style.marginBottom = "1.5rem";
+    const organizerName = organizerCache.get(event.createdBy) || event.createdBy || 'Unknown';
+
     div.innerHTML = `
       <div style="display:flex;flex-direction:column;gap:8px;">
         <h3 class="event-title">${event.eventName || "Unnamed Event"}</h3>
@@ -61,7 +66,7 @@ function displayEvents(events) {
           </div>
           <div style="text-align:right;">
             <p style="margin:0 0 6px 0"><strong>Location:</strong> ${event.eventLocation || "N/A"}</p>
-            <p style="margin:0 0 6px 0"><strong>Organizer:</strong> ${event.createdBy || "Unknown"}</p>
+            <p style="margin:0 0 6px 0"><strong>Organizer:</strong> ${organizerName}</p>
             <p style="margin:0"><strong>Price:</strong> $${(event.ticketPrice || 0).toFixed(2)}</p>
           </div>
         </div>
@@ -75,6 +80,27 @@ function displayEvents(events) {
     `;
 
     eventsList.appendChild(div);
+    // Make the whole card navigable to the admin event page
+    try {
+      const targetUrl = new URL('eventPageAdmin.html', window.location.href);
+      if (event.id) targetUrl.searchParams.set('id', event.id);
+      div.style.cursor = 'pointer';
+      div.setAttribute('role', 'button');
+      div.tabIndex = 0;
+      div.addEventListener('click', (evt) => {
+        // If user clicked a control inside the card (like "Show more"), don't navigate
+        if (evt.target.closest && evt.target.closest('.show-more-btn')) return;
+        window.location.href = targetUrl.href;
+      });
+      div.addEventListener('keydown', (e) => {
+        if ((e.key === 'Enter' || e.key === ' ') && e.target === div) {
+          e.preventDefault();
+          window.location.href = targetUrl.href;
+        }
+      });
+    } catch (e) {
+      console.warn('Could not attach navigation to event card', e);
+    }
     // Attach show-more toggle if present
     const showBtn = div.querySelector('.show-more-btn');
     if (showBtn) {
@@ -137,6 +163,31 @@ async function applyFilters(user) {
   console.log('[AdminEventDashboard] getDocs snapshot size:', qSnapshot.size, ' empty:', qSnapshot.empty);
   if (!qSnapshot.empty) console.log('[AdminEventDashboard] doc ids:', qSnapshot.docs.map(d => d.id));
   let events = qSnapshot.docs.map((d) => ({ id: d.id, ...d.data(), eventDateTime: d.data().eventDateTime?.toDate() }));
+
+    // Pre-fetch organizer display names for events and cache them
+    try {
+      const organizerIds = Array.from(new Set(events.map(e => e.createdBy).filter(Boolean)));
+      await Promise.all(organizerIds.map(async (uid) => {
+        if (!organizerCache.has(uid)) {
+          try {
+            const userSnap = await getDoc(doc(db, 'users', uid));
+            if (userSnap.exists()) {
+              const u = userSnap.data();
+              const composed = [u?.firstName, u?.lastName].filter(Boolean).join(' ');
+              const name = u?.fullname || u?.displayName || composed || u?.name || u?.organization || u?.email || 'Unknown';
+              organizerCache.set(uid, name);
+            } else {
+              organizerCache.set(uid, 'Unknown');
+            }
+          } catch (e) {
+            console.warn('Could not fetch organizer name for', uid, e);
+            organizerCache.set(uid, 'Unknown');
+          }
+        }
+      }));
+    } catch (e) {
+      console.warn('Organizer prefetch failed', e);
+    }
 
     // Store full set globally for export
     window.currentFilteredEventsAll = events;
@@ -549,7 +600,7 @@ function renderOrganizersChart(events, metric = null, topN = null) {
   topN = topN || (topNSel ? Number(topNSel.value) : 10);
 
   const top = computeOrganizers(events, metric, topN);
-  const labelsFull = top.map(t => t.organizer || '(unknown)');
+  const labelsFull = top.map(t => organizerCache.get(t.organizer) || t.organizer || '(unknown)');
   const MAX_LABEL_LEN = 60;
   const labels = labelsFull.map(l => (l.length > MAX_LABEL_LEN ? l.slice(0, MAX_LABEL_LEN - 1) + '…' : l));
   const data = top.map(t => t[metric]);
@@ -609,7 +660,11 @@ function applyOrganizerFilter(organizer) {
   try { renderTopEventsChart(filtered); } catch (e) { console.warn('renderTopEventsChart after organizer filter failed', e); }
   try { renderFillRateChart(filtered); } catch (e) { /* ignore */ }
   const status = document.getElementById('eventsStatus');
-  if (status) { status.textContent = `Showing ${filtered.length} events (organizer: ${organizer})`; status.className = 'status success'; }
+  if (status) {
+    const name = organizerCache.get(organizer) || organizer;
+    status.textContent = `Showing ${filtered.length} events (organizer: ${name})`;
+    status.className = 'status success';
+  }
 }
 
 function clearOrganizerFilter() {
