@@ -196,13 +196,13 @@
     <text x="1580" y="485" font-family="Arial, sans-serif" font-size="10" fill="#ff8f00" text-anchor="middle" font-weight="600">claimEvent.js</text>
   </g>
 
-  <!-- Profile Privacy Enforcement Service -->
+  <!-- Profile Privacy Enforcement Service (aligned with other services) -->
   <g filter="url(#shadow)">
-    <rect x="320" y="505" width="220" height="80" fill="#e8f5e9" stroke="#43a047" stroke-width="2.5" rx="6"/>
-    <text x="330" y="525" font-family="Arial, sans-serif" font-size="11" font-weight="600" fill="#2e7d32">&lt;&lt;service&gt;&gt;</text>
-    <text x="430" y="548" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#2e7d32" text-anchor="middle">Profile Privacy</text>
-    <text x="430" y="566" font-family="Arial, sans-serif" font-size="10" fill="#2e7d32" text-anchor="middle">Enforcement Service</text>
-    <text x="430" y="582" font-family="Arial, sans-serif" font-size="10" fill="#388e3c" text-anchor="middle">(publicProfile flag enforcement)</text>
+    <rect x="290" y="385" width="180" height="110" fill="#e8f5e9" stroke="#43a047" stroke-width="2.5" rx="6"/>
+    <text x="300" y="405" font-family="Arial, sans-serif" font-size="11" font-weight="600" fill="#2e7d32">&lt;&lt;service&gt;&gt;</text>
+    <text x="380" y="433" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#2e7d32" text-anchor="middle">Profile Privacy</text>
+    <text x="380" y="451" font-family="Arial, sans-serif" font-size="10" fill="#2e7d32" text-anchor="middle">Enforcement Service</text>
+    <text x="380" y="467" font-family="Arial, sans-serif" font-size="10" fill="#388e3c" text-anchor="middle">(publicProfile flag)</text>
   </g>
   
   <!-- DATA LAYER -->
@@ -307,11 +307,11 @@
   <!-- Search Service to Database -->
   <line x1="1180" y1="495" x2="1050" y2="690" stroke="#333333" stroke-width="2.5" marker-end="url(#arrowhead)"/>
   
-  <!-- Profile Privacy to Database Connection -->
-  <line x1="430" y1="585" x2="550" y2="690" stroke="#333333" stroke-width="2.5" marker-end="url(#arrowhead)"/>
+  <!-- Profile Privacy to Database Connection (aligned) -->
+  <line x1="380" y1="495" x2="550" y2="690" stroke="#333333" stroke-width="2.5" marker-end="url(#arrowhead)"/>
 
   <!-- Frontend Profile UI to Profile Privacy (discovery vs enforcement) -->
-  <line x1="850" y1="240" x2="430" y2="525" stroke="#1565c0" stroke-width="2" marker-end="url(#arrowhead-blue)" opacity="0.7" stroke-dasharray="6,3"/>
+  <line x1="850" y1="240" x2="380" y2="433" stroke="#1565c0" stroke-width="2" marker-end="url(#arrowhead-blue)" opacity="0.7" stroke-dasharray="6,3"/>
   
   <!-- Notification Service to Database -->
   <line x1="1380" y1="495" x2="1200" y2="690" stroke="#333333" stroke-width="2.5" marker-end="url(#arrowhead)"/>
