@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="../assets/images/evently_logo_DT.png">
+  <title>User Profile - Campus Events</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/Shared/toolbar.css">
+  <link rel="stylesheet" href="../../css/Shared/profile.css">
+  <link rel="stylesheet" href="../../css/Shared/dashboard.css">
+  <style>
+    /* Private profile message style: white, larger and bolder */
+    .private-message {
+      color: #ffffff !important;
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-align: center;
+      padding: 1.5rem 1rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Toolbar - Exact Match -->
+  <div class="toolbar">
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" id="logoBtn">
+    <button class="toolbar-btn" id="homeBtn">Home</button>
+    <div class="toolbar-spacer"></div>
+    <button class="toolbar-btn" onclick="location.href='profile.html'">Profile</button>
+    <div id="authBtnContainer">
+      <button id="logout-btn" class="auth-btn">Log Out</button>
+    </div>
+  </div>
+
+  <div class="profile-container">
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="profile-avatar profile-avatar-large" id="avatarContainer">
+          <span>?</span>
+        </div>
+        <div class="profile-info-section">
+          <h1 class="profile-name" id="userName">Loading...</h1>
+          <div class="profile-meta">
+            <span class="meta-badge role" id="userRole">
+              <span>👤</span>
+              <span>Loading...</span>
+            </span>
+            <span class="meta-badge school" id="userSchool">
+              <span>🏫</span>
+              <span>Loading...</span>
+            </span>
+          </div>
+        </div>
+        <div class="profile-actions">
+          <button id="followBtn" class="follow-btn">Follow</button>
+        </div>
+      </div>
+
+      <div class="profile-bio" id="bioSection" style="display: none;">
+        <div class="bio-label">About</div>
+        <p class="bio-text" id="userBio"></p>
+      </div>
+      
+    </div>
+
+    <div class="events-section">
+      <h2 id="eventsTitle">Events</h2>
+      <div id="eventsContainer"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { auth, db } from '../../js/Shared/firebase-config.js';
+    import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js';
+    import { doc, getDoc, collection, query, where, getDocs, orderBy, updateDoc, setDoc, arrayUnion, arrayRemove, onSnapshot } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js';
+    import { goToHome } from '../../js/Shared/nav.js';
+
+    // Store the profile owner's role (person whose profile is being viewed)
+    let profileOwnerRole = null;
+    let followListenerUnsubscribe = null; // Store the listener to clean up later
+
+    // Use centralized goToHome from shared module (imported above)
+    // Also expose on window so inline handlers continue to work
+    try { window.goToHome = goToHome; } catch (e) { /* ignore in non-browser */ }
+
+    // Attach event listeners after DOM is loaded
+    document.getElementById('logoBtn').addEventListener('click', goToHome);
+    document.getElementById('homeBtn').addEventListener('click', goToHome);
+
+    // Logout - redirect to SignIn page
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      try {
+        await signOut(auth);
+      } catch (error) {
+        console.error('Error signing out:', error);
+      } finally {
+        window.location.href = '../Registration/SignIn.html';
+      }
+    });
+
+    // Load profile
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('id');
+
+    if (!userId) {
+      document.querySelector('.profile-container').innerHTML = '<div class="error">❌ User ID not provided</div>';
+    } else {
+      loadUserProfile(userId);
+    }
+
+    // Determine which event page to link to based on the current viewer's role
+    async function getViewerEventPage() {
+      try {
+        let viewer = auth.currentUser;
+        if (!viewer) {
+          // wait briefly for auth state (if page just loaded)
+          viewer = await new Promise((resolve) => {
+            const unsub = onAuthStateChanged(auth, (u) => {
+              unsub();
+              resolve(u);
+            });
+            // timeout fallback
+            setTimeout(() => resolve(null), 600);
+          });
+        }
+
+        if (!viewer) return '../Student/eventPageStu.html';
+
+        const snap = await getDoc(doc(db, 'users', viewer.uid));
+        const role = snap.exists() ? (snap.data().role || 'student') : 'student';
+        if (role === 'organizer') return '../Organizer/eventPage.html';
+        return '../Student/eventPageStu.html';
+      } catch (err) {
+        console.warn('Could not resolve viewer role for event links, defaulting to student page', err);
+        return '../Student/eventPageStu.html';
+      }
+    }
+
+    async function loadUserProfile(userId) {
+      try {
+        const userDoc = await getDoc(doc(db, 'users', userId));
+        
+        if (!userDoc.exists()) {
+          document.querySelector('.profile-container').innerHTML = '<div class="error">❌ User not found</div>';
+          return;
+        }
+
+        const userData = userDoc.data();
+        profileOwnerRole = userData.role; // Store profile owner's role for navigation
+        
+        // Check if the current user has permission to view this profile
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+          const currentUserDoc = await getDoc(doc(db, 'users', currentUser.uid));
+          const currentUserData = currentUserDoc.data();
+          
+          // All users can only view public profiles (unless viewing their own profile)
+          if (currentUser.uid !== userId) {
+            if (!userData.publicProfile) {
+              document.querySelector('.profile-container').innerHTML = '<div class="private-message">🔒 This profile is private</div>';
+              return;
+            }
+          }
+        }
+        
+        displayUserInfo(userData);
+        
+        // Load events - THIS IS THE KEY LINE
+        await loadUserEvents(userId, userData.role);
+        
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        document.querySelector('.profile-container').innerHTML = '<div class="error">❌ Failed to load profile</div>';
+      }
+    }
+
+    function displayUserInfo(userData) {
+      const avatarContainer = document.getElementById('avatarContainer');
+      
+      // Check if user has selected an avatar from profile.html
+      if (userData.selectedAvatar) {
+        // Use the selected avatar path
+        avatarContainer.innerHTML = `<img src="${userData.selectedAvatar}" alt="${userData.fullname}">`;
+      } else if (userData.avatarUrl) {
+        // Fallback to uploaded avatar URL (if implemented)
+        avatarContainer.innerHTML = `<img src="${userData.avatarUrl}" alt="${userData.fullname}">`;
+      } else {
+        // Fallback to initials
+        const initials = (userData.fullname || 'User').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        avatarContainer.innerHTML = `<span>${initials}</span>`;
+      }
+
+      document.getElementById('userName').textContent = userData.fullname || 'Unknown User';
+      const roleSpan = document.getElementById('userRole');
+      roleSpan.innerHTML = `<span>👤</span><span>${(userData.role || 'user').toUpperCase()}</span>`;
+      
+      const schoolSpan = document.getElementById('userSchool');
+      const schoolText = userData.school || userData.organization || 'Not specified';
+      schoolSpan.innerHTML = `<span>🏫</span><span>${schoolText}</span>`;
+      
+      if (userData.bio) {
+        document.getElementById('bioSection').style.display = 'block';
+        document.getElementById('userBio').textContent = userData.bio;
+      }
+  // following list is loaded from loadUserProfile after displayUserInfo
+    }
+
+    // Replace the event loading section with this simpler approach
+
+    async function loadUserEvents(userId, userRole) {
+      const eventsContainer = document.getElementById('eventsContainer');
+      const eventsTitle = document.getElementById('eventsTitle');
+      
+      if (!eventsContainer || !eventsTitle) {
+        console.error('Events container not found');
+        return;
+      }
+      
+      console.log('Loading events for user:', userId, 'role:', userRole);
+      
+      try {
+        if (userRole === 'organizer') {
+          eventsTitle.textContent = 'Organized Events';
+          await loadOrganizerEvents(userId, eventsContainer);
+        } else {
+          eventsTitle.textContent = 'Attending Events';
+          await loadStudentEvents(userId, eventsContainer);
+        }
+      } catch (error) {
+        console.error('Error loading events:', error);
+        eventsContainer.innerHTML = '<div class="no-data">❌ Failed to load events</div>';
+      }
+    }
+
+    async function loadStudentEvents(userId, container) {
+      console.log('Loading student events for:', userId);
+      
+      try {
+        // Since attendees are stored as subcollections under each event,
+        // we need to query all events and check their attendees subcollection
+        
+        const eventsQuery = query(collection(db, 'events'));
+        const eventsSnapshot = await getDocs(eventsQuery);
+        
+        console.log('Total events in database:', eventsSnapshot.size);
+        
+        const attendingEvents = [];
+        
+        // Check each event's attendees subcollection
+        for (const eventDoc of eventsSnapshot.docs) {
+          try {
+            const attendeesRef = collection(db, 'events', eventDoc.id, 'attendees');
+            const attendeeDoc = await getDoc(doc(attendeesRef, userId));
+            
+            if (attendeeDoc.exists()) {
+              console.log('User is attending event:', eventDoc.id, eventDoc.data().title);
+              attendingEvents.push({
+                id: eventDoc.id,
+                ...eventDoc.data()
+              });
+            }
+          } catch (err) {
+            console.warn('Error checking attendees for event:', eventDoc.id, err);
+          }
+        }
+        
+        console.log('Total events user is attending:', attendingEvents.length);
+        
+        if (attendingEvents.length === 0) {
+          container.innerHTML = '<div class="no-data">📅 No events attending yet</div>';
+          return;
+        }
+
+        // Create events wrapper
+        container.innerHTML = '<div class="events" id="publicProfileEvents"></div>';
+        const eventsDiv = document.getElementById('publicProfileEvents');
+
+        // Display each event
+        const eventPageUrl = await getViewerEventPage();
+        attendingEvents.forEach(event => {
+          const eventCard = createEventCard(event.id, event, eventPageUrl);
+          eventsDiv.appendChild(eventCard);
+        });
+        
+      } catch (error) {
+        console.error('Error in loadStudentEvents:', error);
+        container.innerHTML = '<div class="no-data">❌ Failed to load events</div>';
+      }
+    }
+
+    async function loadOrganizerEvents(userId, container) {
+      console.log('Loading organizer events for:', userId);
+      
+      try {
+        // Query events where createdBy matches the organizer's userId
+        const eventsQuery = query(
+          collection(db, 'events'),
+          where('createdBy', '==', userId)
+        );
+        
+        const eventsSnapshot = await getDocs(eventsQuery);
+        console.log('Organized events found:', eventsSnapshot.size);
+        
+        if (eventsSnapshot.empty) {
+          container.innerHTML = '<div class="no-data">📅 No events organized yet</div>';
+          return;
+        }
+
+        // Create events wrapper - EXACTLY like students
+        container.innerHTML = '<div class="events" id="publicProfileEvents"></div>';
+        const eventsDiv = document.getElementById('publicProfileEvents');
+
+        // Display each event using the SAME createEventCard function
+        const eventPageUrl = await getViewerEventPage();
+        eventsSnapshot.forEach(eventDoc => {
+          const eventData = eventDoc.data();
+          const eventCard = createEventCard(eventDoc.id, eventData, eventPageUrl);
+          eventsDiv.appendChild(eventCard);
+        });
+        
+      } catch (error) {
+        console.error('Error in loadOrganizerEvents:', error);
+        container.innerHTML = '<div class="no-data">❌ Failed to load events</div>';
+      }
+    }
+
+    // Update createEventCard to remove click handler
+
+    function createEventCard(eventId, eventData, eventPageUrl) {
+      console.log('Event data for', eventId, ':', eventData);
+      
+      const card = document.createElement('div');
+      card.className = 'event-card';
+      card.setAttribute('data-event-id', eventId);
+  // Make card clickable and accessible
+  card.style.cursor = 'pointer';
+  card.setAttribute('tabindex', '0');
+  card.setAttribute('role', 'link');
+
+      // Event image - use the banner selected during event creation
+      const img = document.createElement('img');
+      img.className = 'event-image';
+      
+      // Check if event has a banner field (e.g., eventData.banner or eventData.imageUrl)
+      // The banner should be something like 'event1.jpg', 'event2.jpg', etc.
+      if (eventData.banner) {
+        // Use the selected banner from assets folder
+        img.src = `../../assets/images/${eventData.banner}`;
+        img.alt = eventData.eventName || 'Event';
+      } else if (eventData.imageUrl) {
+        // Fallback to imageUrl if banner field doesn't exist
+        img.src = eventData.imageUrl;
+        img.alt = eventData.eventName || 'Event';
+      } else {
+        // No banner selected - use placeholder
+        img.src = '../../assets/images/event1.jpg'; // Default to event1.jpg
+        img.alt = eventData.eventName || 'Event';
+      }
+      
+      img.onerror = function() {
+        // If image fails to load, show gradient placeholder
+        this.style.display = 'none';
+        const placeholder = document.createElement('div');
+        placeholder.className = 'event-image-placeholder';
+        placeholder.style.cssText = `
+          width: 100%;
+          height: 180px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 3rem;
+        `;
+        placeholder.textContent = '📅';
+        this.parentElement.insertBefore(placeholder, this);
+      };
+      
+      card.appendChild(img);
+
+      // Event title - using eventName
+      const title = document.createElement('h3');
+      title.className = 'event-title';
+      title.textContent = eventData.eventName || 'Untitled Event';
+      card.appendChild(title);
+
+      // Event date - using eventDateTime
+      const dateDiv = document.createElement('div');
+      dateDiv.className = 'event-date';
+      let dateStr = 'Date TBA';
+      
+      if (eventData.eventDateTime) {
+        try {
+          const eventDate = eventData.eventDateTime.toDate ? eventData.eventDateTime.toDate() : new Date(eventData.eventDateTime);
+          dateStr = eventDate.toLocaleDateString('en-US', {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+        } catch (e) {
+          console.error('Error parsing date:', e);
+        }
+      }
+      dateDiv.textContent = dateStr;
+      card.appendChild(dateDiv);
+
+      // Event location - using eventLocation
+      const location = document.createElement('div');
+      location.className = 'event-location';
+      location.textContent = eventData.eventLocation || 'Location TBA';
+      card.appendChild(location);
+
+      // Click handler - navigate to resolved event page URL
+      card.addEventListener('click', () => {
+        try {
+          const target = new URL(eventPageUrl, window.location.href);
+          target.searchParams.set('id', eventId);
+          window.location.href = target.href;
+        } catch (e) {
+          console.error('Failed to navigate to event page:', e);
+          window.location.href = `${eventPageUrl}?id=${encodeURIComponent(eventId)}`;
+        }
+      });
+      card.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter' || ev.key === ' ') {
+          ev.preventDefault();
+          card.click();
+        }
+      });
+
+      return card;
+    }
+
+    /* Follow/Unfollow button logic for public profile with REAL-TIME updates */
+
+    // REAL-TIME LISTENER - Updates button when following list changes
+    function setupRealtimeFollowListener() {
+      const currentUser = auth.currentUser;
+      if (!currentUser || currentUser.uid === userId) return;
+
+      // Clean up previous listener if exists
+      if (followListenerUnsubscribe) {
+        followListenerUnsubscribe();
+      }
+
+      // Listen to current user's document for changes in following array
+      const currentUserRef = doc(db, 'users', currentUser.uid);
+      followListenerUnsubscribe = onSnapshot(currentUserRef, (snapshot) => {
+        if (!snapshot.exists()) return;
+        
+        const userData = snapshot.data();
+        const following = userData.following || [];
+        const isFollowing = following.includes(userId);
+        
+        const btn = document.getElementById('followBtn');
+        if (btn) {
+          btn.textContent = isFollowing ? 'Following' : 'Follow';
+          btn.dataset.following = isFollowing ? 'true' : 'false';
+          btn.classList.toggle('following', isFollowing);
+          btn.setAttribute('aria-pressed', isFollowing ? 'true' : 'false');
+        }
+      }, (error) => {
+        console.error('Error in follow listener:', error);
+      });
+    }
+
+    async function initializeFollowButton() {
+      const btn = document.getElementById('followBtn');
+      if (!btn) return;
+
+      // If no logged-in user, prompt to sign in
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        btn.textContent = 'Log in to follow';
+        btn.onclick = () => { window.location.href = '../Registration/SignIn.html'; };
+        btn.classList.remove('following');
+        btn.setAttribute('aria-pressed', 'false');
+        return;
+      }
+
+      // Hide follow button when viewing your own profile
+      if (currentUser.uid === userId) {
+        btn.style.display = 'none';
+        return;
+      }
+
+      // Set up the real-time listener
+      setupRealtimeFollowListener();
+
+      // Set up click handler
+      btn.onclick = toggleFollow;
+    }
+
+    async function toggleFollow() {
+      const btn = document.getElementById('followBtn');
+      const currentUser = auth.currentUser;
+      if (!currentUser) { window.location.href = '../Registration/SignIn.html'; return; }
+
+      const currentUserRef = doc(db, 'users', currentUser.uid);
+      const targetUserRef = doc(db, 'users', userId);
+
+      try {
+        // Ensure current user doc exists
+        const currentSnap = await getDoc(currentUserRef);
+        if (!currentSnap.exists()) {
+          await setDoc(currentUserRef, { following: [] }, { merge: true });
+        }
+
+        // Ensure target user doc exists (create minimal followers array if missing)
+        const targetSnap = await getDoc(targetUserRef);
+        if (!targetSnap.exists()) {
+          await setDoc(targetUserRef, { followers: [] }, { merge: true });
+        }
+
+        const isFollowing = btn.dataset.following === 'true';
+        
+        // Disable button temporarily to prevent double-clicks
+        btn.disabled = true;
+        
+        if (isFollowing) {
+          await updateDoc(currentUserRef, { following: arrayRemove(userId) });
+          await updateDoc(targetUserRef, { followers: arrayRemove(currentUser.uid) });
+        } else {
+          await updateDoc(currentUserRef, { following: arrayUnion(userId) });
+          await updateDoc(targetUserRef, { followers: arrayUnion(currentUser.uid) });
+        }
+
+        // Re-enable button
+        btn.disabled = false;
+
+        // Small visual feedback
+        try { btn.classList.add('pulse'); } catch(e){}
+        setTimeout(() => { try { btn.classList.remove('pulse'); } catch(e){} }, 650);
+
+        // No need to manually update - onSnapshot listener will handle it automatically
+      } catch (err) {
+        console.error('Error toggling follow state:', err);
+        btn.disabled = false;
+      }
+    }
+
+    // Initialize follow button when profile loads and whenever auth state changes
+    onAuthStateChanged(auth, (user) => {
+      // Slight delay to ensure userId and DOM are ready
+      setTimeout(() => {
+        initializeFollowButton();
+      }, 150);
+    });
+
+    // Clean up listener when page unloads
+    window.addEventListener('beforeunload', () => {
+      if (followListenerUnsubscribe) {
+        followListenerUnsubscribe();
+      }
+    });
+    
+  </script>
+  <script type="module" src="../../js/Registration/auth.js"></script>
+</body>
+</html>
