@@ -18,6 +18,8 @@
     body {
       position: relative;
     }
+    /* Private badge styling for user cards */
+    .private-badge { margin-left:6px; color: #ffd166; font-size:0.95rem; vertical-align:middle }
   </style>
 </head>
 
@@ -296,10 +298,7 @@
             return;
           }
           
-          // Students can only see public profiles
-          if (!userData.publicProfile) {
-            return;
-          }
+          // Include private profiles in results; public-profile page controls access when opened
           
           const userObj = { id: docSnap.id, ...userData };
           
@@ -407,10 +406,7 @@
             return;
           }
           
-          // Students can only see public profiles
-          if (!userData.publicProfile) {
-            return;
-          }
+          // Include private profiles in search results; actual profile display enforces privacy
           
           const fullname = (userData.fullname || '').toLowerCase();
           const email = (userData.email || '').toLowerCase();
@@ -571,24 +567,25 @@
       const avatarHtml = avatarUrl 
         ? `<img src="${avatarUrl}" alt="${user.fullname || 'User'}" onerror="console.error('Image failed to load. Tried URL:', '${avatarUrl}'); this.style.display='none'; this.parentElement.innerHTML='<span>${initials}</span>';">` 
         : `<span>${initials}</span>`;
+        const privateBadgeHtml = (user.publicProfile === false) ? '<span class="private-badge" title="Private account">🔒 Private</span>' : '';
       
-      return `
-        <div class="user-result-card" onclick="window.location.href='../Profile/public-profile.html?id=${user.id}'">
-          <div class="user-avatar">
-            ${avatarHtml}
-          </div>
-          <div class="user-info">
-            <div class="user-name">${user.fullname || 'Unknown User'}</div>
-            <div class="user-email">${user.email || ''}</div>
-            <div class="user-meta">
-              <span class="user-role-badge ${roleClass}">
-                ${(user.role || 'student').toUpperCase()}
-              </span>
-              ${user.school || user.organization || ''}
+        return `
+          <div class="user-result-card" onclick="window.location.href='../Profile/public-profile.html?id=${user.id}'">
+            <div class="user-avatar">
+              ${avatarHtml}
+            </div>
+            <div class="user-info">
+              <div class="user-name">${user.fullname || 'Unknown User'} ${privateBadgeHtml}</div>
+              <div class="user-email">${user.email || ''}</div>
+              <div class="user-meta">
+                <span class="user-role-badge ${roleClass}">
+                  ${(user.role || 'student').toUpperCase()}
+                </span>
+                ${user.school || user.organization || ''}
+              </div>
             </div>
           </div>
-        </div>
-      `;
+        `;
     }
 
     // Clear Unified Search
