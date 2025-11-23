@@ -9,6 +9,16 @@
   <link rel="stylesheet" href="../../css/Shared/toolbar.css">
   <link rel="stylesheet" href="../../css/Shared/profile.css">
   <link rel="stylesheet" href="../../css/Shared/dashboard.css">
+  <style>
+    /* Private profile message style: white, larger and bolder */
+    .private-message {
+      color: #ffffff !important;
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-align: center;
+      padding: 1.5rem 1rem;
+    }
+  </style>
 </head>
 <body>
   <!-- Toolbar - Exact Match -->
@@ -119,7 +129,7 @@
           // All users can only view public profiles (unless viewing their own profile)
           if (currentUser.uid !== userId) {
             if (!userData.publicProfile) {
-              document.querySelector('.profile-container').innerHTML = '<div class="error">🔒 This profile is private</div>';
+              document.querySelector('.profile-container').innerHTML = '<div class="private-message">🔒 This profile is private</div>';
               return;
             }
           }
