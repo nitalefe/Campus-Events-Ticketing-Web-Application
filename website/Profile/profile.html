@@ -164,16 +164,7 @@
       <div class="form-section">
         <h2>Account Settings</h2>
         
-        <div class="setting-item">
-          <div class="setting-info">
-            <h3>Email Notifications</h3>
-            <p>Receive notifications about events and updates</p>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="emailNotifications" checked>
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
+        <!-- Email notifications removed per request -->
 
         <div class="setting-item">
           <div class="setting-info">
@@ -292,7 +283,6 @@
           }
 
           // Load settings
-          document.getElementById('emailNotifications').checked = userData.emailNotifications !== false;
           document.getElementById('publicProfile').checked = userData.publicProfile === true;
 
           // Set home button based on role
@@ -326,7 +316,6 @@
           fullname: document.getElementById('fullname').value,
           phone: document.getElementById('phone').value,
           bio: document.getElementById('bio').value,
-          emailNotifications: document.getElementById('emailNotifications').checked,
           publicProfile: document.getElementById('publicProfile').checked,
         };
 
