@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Broadcasts</title>
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/Shared/toolbar.css">
+  <link rel="stylesheet" href="../../css/Organizer/EventDashboard.css">
+  <style>
+    .container { max-width:1000px; margin:36px auto; padding:20px }
+    .broadcast-card { background:#fff; border:1px solid #e6e6e6; border-radius:8px; padding:18px; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
+    textarea { width:100%; min-height:140px; padding:10px; font-size:15px; border-radius:6px; border:1px solid #ddd }
+    .row { display:flex; gap:12px; align-items:center; margin-top:12px }
+    .pill { padding:8px 14px; border-radius:6px; border:1px solid #ccc; background:#f5f7fa }
+    .error { color:#c0392b; margin-top:8px }
+    label { display:block; margin-top:8px; font-weight:600 }
+    .hero { display:flex; justify-content:space-between; align-items:left; gap:12px; margin-bottom:18px; padding-left:18px }
+    .hero .hero-actions { display:flex; gap:8px }
+    .hero > div { text-align: left; }
+    .sender-badge { display:inline-block; background:#eef3ff; color:#12306b; padding:4px 8px; border-radius:999px; font-size:12px; margin-right:8px }
+    .message-text { margin-top:8px; white-space:normal; overflow-wrap:anywhere; }
+    .message-text.collapsed { max-height:5.2em; overflow:hidden; }
+    .show-more { display:inline-block; margin-top:8px; color:#367bfc; cursor:pointer; font-weight:600 }
+    .messages-list .broadcast { border-top: 1px solid #e9eef6; padding-top:12px; margin-top:12px; background-color: #f6f8fb; border-radius: 6px; }
+    .messages-list .broadcast:first-child { margin-top:0; border-top: none; padding-top:0; background-color: transparent; border-radius: 0; }
+  </style>
+</head>
+
+<body>
+  <div class="toolbar">
+    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='../Administrator/admin-dashboard.html'">
+    <button class="toolbar-btn" onclick="location.href='../Administrator/admin-dashboard.html'">Home</button>
+    <button class="toolbar-btn" onclick="location.href='AdminAnalytics.html'">Analytics</button>
+    <button class="toolbar-btn" onclick="location.href='AdminApproval.html'">Approvals</button>
+    <button class="toolbar-btn" onclick="location.href='broadcast.html'">Broadcast</button>
+    <div class="toolbar-spacer"></div>
+    <div id="authBtnContainer">
+      <button id="logout-btn" class="auth-btn">Log Out</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="hero">
+      <div>
+        <h1>Admin Broadcasts</h1>
+        <p class="muted">Administrators can send announcements to the entire system.</p>
+      </div>
+      <div class="hero-actions">
+        <button class="btn secondary" onclick="location.href='admin-dashboard.html'">Back to Dashboard</button>
+      </div>
+    </div>
+
+    <div class="broadcast-card">
+      <h2 style="margin-top:0">Send Broadcast Message</h2>
+      <p id="accessNote" class="muted">Checking access...</p>
+
+      <div id="broadcastForm" style="display:none">
+        <label for="title">Title (optional)</label>
+        <input id="title" class="pill" placeholder="Short title">
+
+        <label for="message">Message</label>
+        <textarea id="message" placeholder="Write your broadcast message here..."></textarea>
+
+        <div class="row">
+          <label style="margin:0">Send to:</label>
+          <select id="targetSelect" class="pill">
+            <option value="students">All students</option>
+            <option value="organizers">All organizers</option>
+            <option value="both">Students & Organizers</option>
+          </select>
+          <label style="margin:0">Event (optional)</label>
+          <select id="eventSelect" class="pill">
+            <option value="">All events / No specific event</option>
+          </select>
+          <button id="sendBtn" class="btn primary">Send Broadcast</button>
+        </div>
+
+        <p id="formMsg" class="error"></p>
+      </div>
+      
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="prev-card" style="max-width:1000px; margin:18px auto;">
+      <div class="broadcast-card">
+        <h3 style="margin-top:0; margin-bottom:8px">Previous broadcasts</h3>
+        <p id="prevLoading" class="muted">Loading broadcasts...</p>
+        <div id="prevBroadcasts" class="messages-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="../../js/Administrator/adminBroadcast.js"></script>
+</body>
+
+</html>
