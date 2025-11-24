@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
+    <title>Following - Campus Events</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/Shared/toolbar.css">
+    <link rel="stylesheet" href="../../css/Shared/profile.css">
+</head>
+<body>
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='#'" id="homeLogo">
+        <button class="toolbar-btn" id="homeBtn">Home</button>
+        <button class="toolbar-btn active" onclick="location.href='following.html'">Following</button>
+        <div class="toolbar-spacer"></div>
+        <button class="toolbar-btn" onclick="location.href='profile.html'">Profile</button>
+        <div id="authBtnContainer">
+            <button id="logout-btn" class="auth-btn">Log Out</button>
+        </div>
+    </div>
+
+    <main>
+        <section class="following-container">
+                        <div class="page-header">
+                            <h2>People You Follow</h2>
+                            <div class="subtext">A quick view of the accounts you keep up with</div>
+                        </div>
+            
+            <!-- Compact avatar row -->
+            <div class="following-compact" id="followingCompact" style="display:none"></div>
+
+            <div class="following-list" id="followingList">
+                <!-- Following items will be populated dynamically from database -->
+            </div>
+
+            <div class="empty-state" id="emptyState">
+                <p>No Following</p>
+                <a href="../Student/student-dashboard.html" class="btn-primary">Discover People</a>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+    import { auth, db } from '../../js/Shared/firebase-config.js';
+    import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js';
+    import { doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js';
+    import { goToHome } from '../../js/Shared/nav.js';
+
+        // Use shared goToHome from nav module (imported above)
+        try { window.goToHome = goToHome; } catch(e) {}
+
+        // Load following list from database (detailed list)
+        async function loadFollowing(userId) {
+            const followingList = document.getElementById('followingList');
+            const emptyState = document.getElementById('emptyState');
+            
+            console.log('Loading following list for user:', userId);
+            
+            try {
+                const userDoc = await getDoc(doc(db, 'users', userId));
+                const userData = userDoc.data();
+                const following = userData?.following || [];
+
+                console.log('Following array:', following);
+
+                if (following.length === 0) {
+                    console.log('No following found, showing empty state');
+                    followingList.style.display = 'none';
+                    followingList.classList.remove('grid');
+                    emptyState.style.display = 'block';
+                    return;
+                }
+
+                console.log('Loading', following.length, 'followed users');
+                followingList.innerHTML = '';
+                // use CSS grid for detailed list
+                followingList.classList.add('grid');
+                followingList.style.display = '';
+                emptyState.style.display = 'none';
+                
+                for (const followedUserId of following) {
+                    const followedUserDoc = await getDoc(doc(db, 'users', followedUserId));
+                    
+                    if (followedUserDoc.exists()) {
+                        const followedUser = followedUserDoc.data();
+                        const followingItem = createFollowingItem(followedUser, followedUserId, userId);
+                        followingList.appendChild(followingItem);
+                    }
+                }
+                // Also populate compact row
+                try { populateFollowingCompact(following); } catch(e) { console.warn('compact populate failed', e); }
+            } catch (error) {
+                console.error('Error loading following list:', error);
+                followingList.innerHTML = '<p style="color: white; text-align: center;">Error loading following list.</p>';
+            }
+        }
+
+        // Populate compact avatar row at top
+        async function populateFollowingCompact(followingIds) {
+            const compact = document.getElementById('followingCompact');
+            if (!compact) return;
+            compact.innerHTML = '';
+            if (!followingIds || followingIds.length === 0) { compact.style.display = 'none'; return; }
+            compact.style.display = 'flex';
+
+            // Limit to first 24 to avoid overload
+            const ids = followingIds.slice(0, 24);
+            const snaps = await Promise.all(ids.map(id => getDoc(doc(db, 'users', id))));
+            snaps.forEach(s => {
+                if (!s.exists()) return;
+                const u = s.data();
+                const id = s.id;
+                const initials = (u.fullname||'U').split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+                
+                // Use selectedAvatar instead of avatarUrl
+                const avatarUrl = u.selectedAvatar || u.avatarUrl;
+                const avatarHtml = avatarUrl 
+                    ? `<img src="../../${avatarUrl}" alt="${u.fullname}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                       <span style="display:none;">${initials}</span>` 
+                    : `<span>${initials}</span>`;
+                
+                const item = document.createElement('div');
+                item.className = 'following-compact-item';
+                item.innerHTML = `
+                    <a href="public-profile.html?id=${id}" title="${u.fullname||'User'}">
+                        <div class="following-compact-avatar">${avatarHtml}</div>
+                        <div class="following-compact-name">${(u.fullname||'User').split(' ')[0]}</div>
+                    </a>`;
+                compact.appendChild(item);
+            });
+        }
+
+        // Create following item HTML element
+        function createFollowingItem(user, followedUserId, currentUserId) {
+            const item = document.createElement('div');
+            // add both generic and row styles so it matches the detailed list layout
+            item.className = 'following-item row';
+            
+            // Get avatar with fallback to initials
+            let avatarHtml;
+            if (user.selectedAvatar || user.avatarUrl) {
+                const avatarUrl = user.selectedAvatar || user.avatarUrl;
+                avatarHtml = `<div class="avatar"><img src="${avatarUrl}" alt="User avatar" onerror="this.onerror=null; this.parentElement.innerHTML='<span>${(user.fullname || 'User').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}</span>';"></div>`;
+            } else {
+                const initials = (user.fullname || 'User').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                avatarHtml = `<div class="avatar"><span>${initials}</span></div>`;
+            }
+            
+            const displayName = user.fullname || 'Unknown User';
+            const userType = user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'User';
+            
+            item.innerHTML = `
+                ${avatarHtml}
+                <div class="user-info">
+                    <h3 class="user-name">${displayName}</h3>
+                    <p class="user-type">${userType}</p>
+                </div>
+                <button class="unfollow-btn" data-user-id="${followedUserId}">Unfollow</button>
+            `;
+            
+            // Add click to view profile
+            item.style.cursor = 'pointer';
+            item.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('unfollow-btn')) {
+                    window.location.href = `public-profile.html?id=${followedUserId}`;
+                }
+            });
+            
+            // Handle unfollow
+            const unfollowBtn = item.querySelector('.unfollow-btn');
+            unfollowBtn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                await handleUnfollow(currentUserId, followedUserId, item);
+            });
+            
+            return item;
+        }
+
+        // Handle unfollow action
+        async function handleUnfollow(currentUserId, followedUserId, itemElement) {
+            if (!confirm('Are you sure you want to unfollow this user?')) {
+                return;
+            }
+            
+            try {
+                const userDocRef = doc(db, 'users', currentUserId);
+                const userDoc = await getDoc(userDocRef);
+                const userData = userDoc.data();
+                const following = userData?.following || [];
+                
+                const updatedFollowing = following.filter(id => id !== followedUserId);
+                
+                await updateDoc(userDocRef, { following: updatedFollowing });
+                
+                // Update followers count for the followed user
+                const followedUserDocRef = doc(db, 'users', followedUserId);
+                const followedUserDoc = await getDoc(followedUserDocRef);
+                const followedUserData = followedUserDoc.data();
+                const followers = followedUserData?.followers || [];
+                const updatedFollowers = followers.filter(id => id !== currentUserId);
+                
+                await updateDoc(followedUserDocRef, { followers: updatedFollowers });
+                
+                // Remove the item from the UI
+                itemElement.style.transition = 'opacity 0.3s, transform 0.3s';
+                itemElement.style.opacity = '0';
+                itemElement.style.transform = 'translateX(-100%)';
+                
+                setTimeout(() => {
+                    itemElement.remove();
+                    
+                    // Check if list is now empty
+                    const followingList = document.getElementById('followingList');
+                    if (followingList.children.length === 0) {
+                        followingList.style.display = 'none';
+                        followingList.classList.remove('grid');
+                        document.getElementById('emptyState').style.display = 'block';
+                    }
+                    try {
+                        // refresh compact row
+                        const userDocRef = doc(db, 'users', currentUserId);
+                        getDoc(userDocRef).then(snap => {
+                            const newFollowing = snap.exists() ? (snap.data().following || []) : [];
+                            try { populateFollowingCompact(newFollowing); } catch(e){}
+                        }).catch(()=>{});
+                    } catch(e){}
+                }, 300);
+            } catch (error) {
+                console.error('Error unfollowing user:', error);
+                alert('Failed to unfollow user. Please try again.');
+            }
+        }
+
+        // Check authentication and set up page
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                console.log('User authenticated:', user.uid);
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    const userData = userDoc.data();
+                    const role = userData?.role || 'student';
+                    
+                    console.log('User role:', role);
+
+                    const homeBtn = document.getElementById('homeBtn');
+                    const homeLogo = document.getElementById('homeLogo');
+                    
+                    if (homeBtn && homeLogo) {
+                        homeBtn.onclick = () => {
+                            console.log('Home button clicked');
+                            goToHome();
+                        };
+                        homeLogo.onclick = () => {
+                            console.log('Home logo clicked');
+                            goToHome();
+                        };
+                        console.log('Home button and logo handlers attached');
+                    } else {
+                        console.error('Home button or logo not found');
+                    }
+
+                    // Load following list
+                    await loadFollowing(user.uid);
+                } catch (error) {
+                    console.error('Error setting up page:', error);
+                }
+            } else {
+                console.log('No user authenticated, redirecting to sign in');
+                window.location.href = '../Registration/SignIn.html';
+            }
+        });
+          
+    </script>
+    <script type="module" src="../../js/Registration/auth.js"></script>
+</body>
+</html>

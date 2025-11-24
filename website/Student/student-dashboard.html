@@ -9,7 +9,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../css/Shared/dashboard.css" />
   <link rel="stylesheet" href="../../css/Shared/toolbar.css" />
-  <!-- moved filter styles to shared CSS (`css/Shared/dashboard.css`) -->
+  <style>
+    html, body {
+      overflow-x: hidden;
+      max-width: 100%;
+    }
+
+    body {
+      position: relative;
+    }
+    /* Private badge styling for user cards */
+    .private-badge { margin-left:6px; color: #ffd166; font-size:0.95rem; vertical-align:middle }
+  </style>
 </head>
 
 <body class="student-page" data-event-page="eventPageStu.html">
@@ -27,7 +38,7 @@
     My Interests
   </button>
     <div class="toolbar-spacer"></div>
-    <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
+    <button class="toolbar-btn" onclick="location.href='../Profile/profile.html'">Profile</button>
     <div id="authBtnContainer">
       <button id="logout-btn" class="auth-btn">Log Out</button>
     </div>
@@ -39,15 +50,55 @@
     <p>Discover events on campus and RSVP quickly.</p>
   </header>
 
-  <!-- Search bar (unchanged layout, just removed category-preferences block) -->
-  <div class="search-bar">
-    <input type="text" class="search-input" placeholder="Search events...">
-    <button class="search-btn" onclick="handleSearch()">Search</button>
-    <button id="clear-search" class="search-btn" style="display:none;margin-left:8px" onclick="clearSearchView()">Clear</button>
+  <!-- Unified Search Section -->
+  <div class="search-container">
+    <!-- Toggle Buttons -->
+    <div class="search-toggle">
+      <button class="toggle-btn active" id="toggle-events" onclick="switchSearchMode('events')">
+        🎫 Search Events
+      </button>
+      <button class="toggle-btn" id="toggle-users" onclick="switchSearchMode('users')">
+        👥 Search Users
+      </button>
+    </div>
+
+    <!-- Unified Search Bar -->
+    <div class="search-bar">
+      <input type="text" id="unified-search-input" class="search-input" placeholder="Search events...">
+      <button class="search-btn" onclick="executeUnifiedSearch()">Search</button>
+      <button id="clear-unified-search" class="search-btn" style="display:none;margin-left:8px" onclick="clearUnifiedSearch()">Clear</button>
+    </div>
+  </div>
+
+  <!-- User Search Results Section -->
+  <div id="user-search-results-section" class="user-search-results-section">
+    <!-- Followed Users Container -->
+    <div id="followed-users-container">
+      <div class="user-results-header">
+        👥 Followed Users <span id="followed-users-count"></span>
+      </div>
+      <div id="followed-users-results" class="user-results-container"></div>
+    </div>
+
+    <!-- Discover Users Container -->
+    <div id="discover-users-container">
+      <div class="user-results-header">
+        🔍 Discover Users <span id="discover-users-count"></span>
+      </div>
+      <div id="discover-users-results" class="user-results-container"></div>
+    </div>
+
+    <!-- Combined Search Results Container (shown when searching) -->
+    <div id="combined-search-results-container">
+      <div class="user-results-header">
+        🔍 Search Results <span id="combined-users-count"></span>
+      </div>
+      <div id="combined-users-results" class="user-results-container"></div>
+    </div>
   </div>
 
   <!-- Date Filter -->
-  <div class="filter-panel">
+  <div class="filter-panel" id="filter-panel">
     <div class="filter-title">Filter</div>
     <div class="filters-wrap">
       <form id="date-filter" class="date-filter">
@@ -97,8 +148,7 @@
     </div>
   </div>
 
-  <!-- Dynamic sections -->
-  <!-- Search results -->
+  <!-- Search results (sibling placed here so it occupies same visual area as main content) -->
   <div id="search-results-section" class="is-hidden search-results-section">
     <div class="search-header">
       Results <span id="search-count" class="search-count"></span> —
@@ -112,6 +162,7 @@
     </div>
   </div>
 
+  <!-- Dynamic sections -->
   <div class="main-content">
     <!-- RECOMMENDED (Personalized) — FIRST -->
     <div>
@@ -134,7 +185,6 @@
     </div>
 
     <div>
-      <!--events from followed organizers-->
       <div class="section-bar">From Your Followed Organizers</div>
       <div class="events-container">
         <div class="events" id="following-events"></div>
@@ -152,19 +202,132 @@
     </div>
   </div>
 
-  <!-- Search + Date filter logic -->
+  <!-- Unified Search + User Search Logic -->
   <script type="module">
-    // ---- SEARCH ----
-    function clearSearchView() {
-      const input = document.querySelector('.search-input'); if (input) input.value = '';
-      document.getElementById('clear-search').style.display = 'none';
-      filterVisibleByDate(null, null);
+    import { db } from '../../js/Shared/firebase-config.js';
+    import { collection, getDocs, doc, getDoc } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js';
+    import { getAuth } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js';
+
+    // Track current search mode
+    let currentSearchMode = 'events'; // 'events' or 'users'
+
+    // Switch between Events and Users search mode
+    window.switchSearchMode = function(mode) {
+      console.log('switchSearchMode called with mode:', mode);
+      currentSearchMode = mode;
+      
+      // Update toggle buttons
+      document.getElementById('toggle-events').classList.toggle('active', mode === 'events');
+      document.getElementById('toggle-users').classList.toggle('active', mode === 'users');
+      
+      // Update placeholder
+      const input = document.getElementById('unified-search-input');
+      input.placeholder = mode === 'events' 
+        ? 'Search events...' 
+        : 'Search users by name, email, or school...';
+      
+      // Show/hide filter panel based on mode
+      const filterPanel = document.getElementById('filter-panel');
+      if (filterPanel) {
+        filterPanel.style.display = mode === 'events' ? '' : 'none';
+      }
+      
+      // Clear previous results
+      clearUnifiedSearch();
+      
+      // If switching to users mode, automatically load all users
+      if (mode === 'users') {
+        console.log('Loading all users...');
+        try {
+          loadAllUsers();
+        } catch (error) {
+          console.error('Error in loadAllUsers:', error);
+        }
+      }
+    };
+
+    // Execute search based on current mode
+    window.executeUnifiedSearch = function() {
+      const query = document.getElementById('unified-search-input').value.trim();
+      if (!query) {
+        if (currentSearchMode === 'users') {
+          // If no query in user mode, show all users
+          loadAllUsers();
+        } else {
+          clearUnifiedSearch();
+        }
+        return;
+      }
+
+      if (currentSearchMode === 'events') {
+        handleSearch(query);
+      } else {
+        handleUserSearch(query);
+      }
+
+      document.getElementById('clear-unified-search').style.display = 'inline-block';
+    };
+
+    // Load all users (followed and discover) without search query
+    async function loadAllUsers() {
+      const auth = getAuth();
+      const currentUser = auth.currentUser;
+
+      if (!currentUser) {
+        console.error('User not authenticated');
+        return;
+      }
+
+      try {
+        // Get current user's following list
+        const currentUserRef = doc(db, 'users', currentUser.uid);
+        const currentUserSnap = await getDoc(currentUserRef);
+        const followingList = currentUserSnap.exists() ? (currentUserSnap.data().following || []) : [];
+
+        const usersRef = collection(db, 'users');
+        const snapshot = await getDocs(usersRef);
+        
+        const followedUsers = [];
+        const discoverUsers = [];
+        
+        snapshot.forEach(docSnap => {
+          const userData = docSnap.data();
+          
+          // Skip current user
+          if (docSnap.id === currentUser.uid) {
+            return;
+          }
+          
+          // Include private profiles in results; public-profile page controls access when opened
+          
+          const userObj = { id: docSnap.id, ...userData };
+          
+          // Separate into followed vs discover
+          if (followingList.includes(docSnap.id)) {
+            followedUsers.push(userObj);
+          } else {
+            discoverUsers.push(userObj);
+          }
+        });
+
+        console.log('Followed users:', followedUsers.length);
+        console.log('Discover users:', discoverUsers.length);
+
+        displayUserResults(followedUsers, discoverUsers, '');
+        
+      } catch (error) {
+        console.error('Error loading users:', error);
+        const followedDiv = document.getElementById('followed-users-results');
+        const discoverDiv = document.getElementById('discover-users-results');
+        followedDiv.innerHTML = '<div class="no-user-results">Error loading users. Please try again.</div>';
+        discoverDiv.innerHTML = '<div class="no-user-results">Error loading users. Please try again.</div>';
+      }
     }
-    window.clearSearchView = clearSearchView;
-    window.handleSearch = function () {
-      const queryRaw = document.querySelector('.search-input')?.value || '';
-      const query = queryRaw.toLowerCase().trim();
-      if (!query) { clearSearchView(); return; }
+
+    // Event Search Logic (existing)
+    function handleSearch(queryRaw) {
+      const query = (queryRaw || '').toLowerCase().trim();
+      if (!query) { clearUnifiedSearch(); return; }
 
       const lists = document.querySelectorAll('.events');
       const matches = []; const seen = new Set();
@@ -178,6 +341,10 @@
         });
       });
 
+      // Hide user results
+      document.getElementById('user-search-results-section').classList.remove('show');
+
+      // populate results container
       const sr = document.getElementById('search-results');
       const srSection = document.getElementById('search-results-section');
       const noResults = document.getElementById('no-results');
@@ -187,10 +354,10 @@
           const clone = card.cloneNode(true);
           clone.style.display = 'block';
           const id = clone.getAttribute('data-event-id') || card.getAttribute('data-event-id');
-          if (id) {
-            const target = document.body?.dataset?.eventPage || 'eventPageStu.html';
-            clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; });
-            clone.style.cursor = 'pointer';
+          if (id) { 
+            const target = document.body?.dataset?.eventPage || 'eventPageStu.html'; 
+            clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; }); 
+            clone.style.cursor = 'pointer'; 
           }
           sr.appendChild(clone);
         });
@@ -204,12 +371,279 @@
       }
       if (noResults) noResults.style.display = matches.length === 0 ? '' : 'none';
       const countEl = document.getElementById('search-count'); if (countEl) countEl.textContent = `(${matches.length})`;
-      const qText = document.getElementById('search-query-text'); if (qText) qText.textContent = queryRaw;
-      const clearBtn = document.getElementById('clear-search'); if (clearBtn) clearBtn.style.display = '';
-    };
-    document.getElementById('clear-search').addEventListener('click', clearSearchView);
+      const qText = document.getElementById('search-query-text'); if (qText) qText.textContent = queryRaw || query;
+    }
+    window.handleSearch = handleSearch;
 
-    // ---- DATE FILTER (same as your current logic, unchanged) ----
+    // User Search Logic - Filter by public profile
+    async function handleUserSearch(query) {
+      const searchQuery = query.toLowerCase();
+      const auth = getAuth();
+      const currentUser = auth.currentUser;
+
+      if (!currentUser) {
+        console.error('User not authenticated');
+        return;
+      }
+
+      try {
+        // Get current user's following list
+        const currentUserRef = doc(db, 'users', currentUser.uid);
+        const currentUserSnap = await getDoc(currentUserRef);
+        const followingList = currentUserSnap.exists() ? (currentUserSnap.data().following || []) : [];
+
+        const usersRef = collection(db, 'users');
+        const snapshot = await getDocs(usersRef);
+        
+        const followedUsers = [];
+        const discoverUsers = [];
+        
+        snapshot.forEach(docSnap => {
+          const userData = docSnap.data();
+          
+          // Skip current user
+          if (docSnap.id === currentUser.uid) {
+            return;
+          }
+          
+          // Include private profiles in search results; actual profile display enforces privacy
+          
+          const fullname = (userData.fullname || '').toLowerCase();
+          const email = (userData.email || '').toLowerCase();
+          const school = (userData.school || userData.organization || '').toLowerCase();
+          
+          // Check if matches search query
+          if (fullname.includes(searchQuery) || email.includes(searchQuery) || school.includes(searchQuery)) {
+            const userObj = { id: docSnap.id, ...userData };
+            
+            // Separate into followed vs discover
+            if (followingList.includes(docSnap.id)) {
+              followedUsers.push(userObj);
+            } else {
+              discoverUsers.push(userObj);
+            }
+          }
+        });
+
+        console.log('Search results - Followed:', followedUsers.length, 'Discover:', discoverUsers.length);
+
+        displayUserResults(followedUsers, discoverUsers, query);
+        
+      } catch (error) {
+        console.error('Error searching users:', error);
+        const followedDiv = document.getElementById('followed-users-results');
+        const discoverDiv = document.getElementById('discover-users-results');
+        followedDiv.innerHTML = '<div class="no-user-results">Error searching users. Please try again.</div>';
+        discoverDiv.innerHTML = '<div class="no-user-results">Error searching users. Please try again.</div>';
+      }
+    }
+
+    function displayUserResults(followedUsers, discoverUsers, query) {
+      console.log('displayUserResults called with:', { 
+        followedCount: followedUsers.length, 
+        discoverCount: discoverUsers.length, 
+        query: query 
+      });
+
+      // Hide event sections and results
+      const main = document.querySelector('.main-content'); 
+      if (main) main.classList.add('collapsed');
+      
+      const eventResultsSection = document.getElementById('search-results-section');
+      if (eventResultsSection) {
+        eventResultsSection.classList.remove('show');
+        eventResultsSection.classList.add('is-hidden');
+      }
+
+      const followedContainer = document.getElementById('followed-users-container');
+      const discoverContainer = document.getElementById('discover-users-container');
+      const combinedContainer = document.getElementById('combined-search-results-container');
+      const followedDiv = document.getElementById('followed-users-results');
+      const discoverDiv = document.getElementById('discover-users-results');
+      const combinedDiv = document.getElementById('combined-users-results');
+      const resultsSection = document.getElementById('user-search-results-section');
+      const followedCountEl = document.getElementById('followed-users-count');
+      const discoverCountEl = document.getElementById('discover-users-count');
+      const combinedCountEl = document.getElementById('combined-users-count');
+      
+      console.log('User search results section exists:', !!resultsSection);
+      console.log('Containers exist:', {
+        followed: !!followedContainer,
+        discover: !!discoverContainer,
+        combined: !!combinedContainer
+      });
+
+      if (!resultsSection) {
+        console.error('user-search-results-section not found!');
+        return;
+      }
+
+      resultsSection.classList.add('show');
+      console.log('Added show class to results section');
+      
+      // If there's a search query, show combined results
+      if (query && query.trim()) {
+        console.log('Showing combined search results');
+        // Hide separate containers
+        if (followedContainer) followedContainer.classList.add('hidden');
+        if (discoverContainer) discoverContainer.classList.add('hidden');
+        if (combinedContainer) combinedContainer.classList.add('show');
+        
+        // Combine all users
+        const allUsers = [...followedUsers, ...discoverUsers];
+        const totalCount = allUsers.length;
+        
+        if (combinedCountEl) combinedCountEl.textContent = `(${totalCount})`;
+        
+        if (allUsers.length === 0) {
+          if (combinedDiv) combinedDiv.innerHTML = '<div class="no-user-results">No users found matching your search.</div>';
+        } else {
+          const combinedHtml = allUsers.map(user => createUserCard(user)).join('');
+          if (combinedDiv) combinedDiv.innerHTML = combinedHtml;
+        }
+      } else {
+        console.log('Showing separate followed/discover containers');
+        // Show separate containers (no search query)
+        if (followedContainer) followedContainer.classList.remove('hidden');
+        if (discoverContainer) discoverContainer.classList.remove('hidden');
+        if (combinedContainer) combinedContainer.classList.remove('show');
+        
+        // Update counts
+        if (followedCountEl) followedCountEl.textContent = `(${followedUsers.length})`;
+        if (discoverCountEl) discoverCountEl.textContent = `(${discoverUsers.length})`;
+
+        // Render followed users
+        if (followedUsers.length === 0) {
+          if (followedDiv) followedDiv.innerHTML = '<div class="no-user-results">No followed users found.</div>';
+        } else {
+          const followedHtml = followedUsers.map(user => createUserCard(user)).join('');
+          if (followedDiv) followedDiv.innerHTML = followedHtml;
+        }
+
+        // Render discover users
+        if (discoverUsers.length === 0) {
+          if (discoverDiv) discoverDiv.innerHTML = '<div class="no-user-results">No new users found.</div>';
+        } else {
+          const discoverHtml = discoverUsers.map(user => createUserCard(user)).join('');
+          if (discoverDiv) discoverDiv.innerHTML = discoverHtml;
+        }
+      }
+
+      try { resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+    }
+
+    function createUserCard(user) {
+      const initials = (user.fullname || 'User').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+      const roleClass = user.role === 'organizer' ? 'role-organizer' : user.role === 'admin' ? 'role-admin' : 'role-student';
+      
+      // Debug: Log original avatar data
+      console.log('Original avatar data:', {
+        name: user.fullname,
+        selectedAvatar: user.selectedAvatar,
+        avatarUrl: user.avatarUrl
+      });
+      
+      // Fix avatar path - try multiple approaches
+      let avatarUrl = user.selectedAvatar || user.avatarUrl;
+      if (avatarUrl) {
+        const originalUrl = avatarUrl;
+        
+        // Extract just the filename if it's a full path
+        if (avatarUrl.includes('avatar_')) {
+          const match = avatarUrl.match(/avatar_\d+\.png/);
+          if (match) {
+            // Build correct path from student dashboard
+            avatarUrl = `../../assets/avatars/${match[0]}`;
+          }
+        }
+        
+        console.log('Avatar URL conversion:', {
+          original: originalUrl,
+          fixed: avatarUrl,
+          currentPage: window.location.pathname
+        });
+      }
+      
+      const avatarHtml = avatarUrl 
+        ? `<img src="${avatarUrl}" alt="${user.fullname || 'User'}" onerror="console.error('Image failed to load. Tried URL:', '${avatarUrl}'); this.style.display='none'; this.parentElement.innerHTML='<span>${initials}</span>';">` 
+        : `<span>${initials}</span>`;
+        const privateBadgeHtml = (user.publicProfile === false) ? '<span class="private-badge" title="Private account">🔒 Private</span>' : '';
+      
+        return `
+          <div class="user-result-card" onclick="window.location.href='../Profile/public-profile.html?id=${user.id}'">
+            <div class="user-avatar">
+              ${avatarHtml}
+            </div>
+            <div class="user-info">
+              <div class="user-name">${user.fullname || 'Unknown User'} ${privateBadgeHtml}</div>
+              <div class="user-email">${user.email || ''}</div>
+              <div class="user-meta">
+                <span class="user-role-badge ${roleClass}">
+                  ${(user.role || 'student').toUpperCase()}
+                </span>
+                ${user.school || user.organization || ''}
+              </div>
+            </div>
+          </div>
+        `;
+    }
+
+    // Clear Unified Search
+    window.clearUnifiedSearch = function() {
+      // Reset input
+      document.getElementById('unified-search-input').value = '';
+      document.getElementById('clear-unified-search').style.display = 'none';
+
+      // Hide all search results
+      document.getElementById('search-results-section').classList.remove('show');
+      document.getElementById('search-results-section').classList.add('is-hidden');
+      document.getElementById('user-search-results-section').classList.remove('show');
+
+      // Show all event sections only if in events mode
+      const main = document.querySelector('.main-content'); 
+      if (main) {
+        if (currentSearchMode === 'events') {
+          main.classList.remove('collapsed');
+        } else {
+          main.classList.add('collapsed');
+        }
+      }
+
+      // Clear results
+      const eventResults = document.getElementById('search-results');
+      while (eventResults && eventResults.firstChild) {
+        eventResults.removeChild(eventResults.firstChild);
+      }
+
+      const followedResults = document.getElementById('followed-users-results');
+      while (followedResults && followedResults.firstChild) {
+        followedResults.removeChild(followedResults.firstChild);
+      }
+
+      const discoverResults = document.getElementById('discover-users-results');
+      while (discoverResults && discoverResults.firstChild) {
+        discoverResults.removeChild(discoverResults.firstChild);
+      }
+
+      const combinedResults = document.getElementById('combined-users-results');
+      while (combinedResults && combinedResults.firstChild) {
+        combinedResults.removeChild(combinedResults.firstChild);
+      }
+
+      const noResults = document.getElementById('no-results');
+      if (noResults) noResults.style.display = 'none';
+    };
+
+    // Allow Enter key to trigger search
+    document.getElementById('unified-search-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        executeUnifiedSearch();
+      }
+    });
+  </script>
+
+  <!-- Date Filter Logic -->
+  <script type="module">
     const form = document.getElementById("date-filter");
     const inputFrom = document.getElementById("df-from");
     const inputTo   = document.getElementById("df-to");
@@ -256,8 +690,8 @@
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
-      let from = inputFrom.value ? startOfDay(new Date(inputFrom.value)) : null;
-      let to   = inputTo.value   ? endOfDay(new Date(inputTo.value))     : null;
+      const from = inputFrom.value ? startOfDay(new Date(inputFrom.value)) : null;
+      const to   = inputTo.value   ? endOfDay(new Date(inputTo.value))     : null;
       if (from && to && from > to) {
         const tmp = from; (from = to), (to = tmp);
         inputFrom.valueAsDate = from; inputTo.valueAsDate = to;
@@ -418,9 +852,10 @@
       if (noResults) noResults.style.display = matches.length === 0 ? '' : 'none';
       lists.forEach(list => list.dispatchEvent(new Event('scroll')));
     }
+
+    window.filterVisibleByDate = filterVisibleByDate;
   </script>
 
-  <!-- Existing scripts -->
   <script type="module" src="../../js/Registration/auth.js"></script>
   <script type="module" src="../../js/Events/LoadEvents.js"></script>
 

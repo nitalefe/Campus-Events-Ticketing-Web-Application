@@ -15,14 +15,12 @@
   <!-- Toolbar -->
   <div class="toolbar">
     <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
-      onclick="location.href='../Student/student-dashboard.html'">
-
-    <button class="toolbar-btn" onclick="location.href='../Student/student-dashboard.html'">Home</button>
-    <button class="toolbar-btn" onclick="location.href='../Student/myTickets.html'">My Tickets</button>
-    <button class="toolbar-btn" onclick="location.href='interestPage.html'">My Interests</button>
+      onclick="location.href='student-dashboard.html'">
+    <button class="toolbar-btn" onclick="location.href='student-dashboard.html'">Home</button>
+    <button class="toolbar-btn" onclick="location.href='myTickets.html'">My Tickets</button>
+    <button class="toolbar-btn" onclick="location.href='../Profile/following.html'">Following</button>
     <div class="toolbar-spacer"></div>
-    <!--to be added with 4th feature-->
-    <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
+    <button class="toolbar-btn" onclick="location.href='../Profile/profile.html'">Profile</button>
     <div id="authBtnContainer">
       <button id="logout-btn" class="auth-btn">Log Out</button>
     </div>
@@ -47,14 +45,12 @@
       <button id="saveBtn" class="save-btn">Save Event</button>
       <button id="calendarBtn" class="save-btn">Add to Calendar</button>
       <button id="contactBtn" class="save-btn">Contact Organizer</button>
-      <button id="followBtn" class="save-btn">Follow Organizer</button>
+      <button id="viewOrganizerBtn" class="save-btn">View Organizer</button>
 
       <button id="viewTicketBtn" class="save-btn"
         onclick="location.href='qrGenerator.html?id=' + new URLSearchParams(window.location.search).get('id')">
         View Ticket
       </button>
-
-
     </div>
   </div>
 
@@ -76,7 +72,7 @@
     const bannerEl = document.getElementById("eventBanner");
     const saveBtn = document.getElementById("saveBtn");
     const contactBtn = document.getElementById("contactBtn");
-    const followBtn = document.getElementById("followBtn");
+    const viewOrganizerBtn = document.getElementById("viewOrganizerBtn");
     const viewTicketBtn = document.getElementById("viewTicketBtn");
 
     // Store event data for other functions
@@ -193,33 +189,19 @@
     }
 
     /* =======================================================
-       4️⃣ FOLLOW / UNFOLLOW ORGANIZER
+       4️⃣ VIEW ORGANIZER PROFILE
     ======================================================= */
-    async function setupFollow(user, userData) {
-      followBtn.style.display = "none";
+    async function setupViewOrganizer(user, userData) {
+      viewOrganizerBtn.style.display = "none";
 
       if (!loadedEventData?.createdBy) return;
 
       const organizerID = loadedEventData.createdBy;
-      const userRef = doc(db, "users", user.uid);
 
-      let following = userData.following || [];
-      let already = following.includes(organizerID);
+      viewOrganizerBtn.style.display = "inline-block";
 
-      followBtn.textContent = already ? "Unfollow Organizer" : "Follow Organizer";
-      followBtn.style.display = "inline-block";
-
-      followBtn.onclick = async () => {
-        if (already) {
-          await updateDoc(userRef, { following: arrayRemove(organizerID) });
-          followBtn.textContent = "Follow Organizer";
-          alert("Unfollowed organizer.");
-        } else {
-          await updateDoc(userRef, { following: arrayUnion(organizerID) });
-          followBtn.textContent = "Unfollow Organizer";
-          alert("Following organizer!");
-        }
-        already = !already;
+      viewOrganizerBtn.onclick = () => {
+        window.location.href = `../public-profile.html?id=${organizerID}`;
       };
     }
 
@@ -372,8 +354,8 @@
         // 👇 toggleSaveEvent now works
         saveBtn.onclick = () => toggleSaveEvent(user);
       }
-      // FOLLOW
-      setupFollow(user, userData);
+      // VIEW ORGANIZER
+      setupViewOrganizer(user, userData);
 
       // VIEW TICKET
       setupViewTicket(userData);

@@ -2,62 +2,460 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png">
-  <title>Organizer Home Page</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../css/Shared/dashboard.css">
-  <link rel="stylesheet" href="../../css/Shared/toolbar.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="../../assets/images/evently_logo_DT.png" />
+  <title>Organizer Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/Shared/dashboard.css" />
+  <link rel="stylesheet" href="../../css/Shared/toolbar.css" />
+  <style>
+    html, body {
+      overflow-x: hidden;
+      max-width: 100%;
+    }
+
+    body {
+      position: relative;
+    }
+
+    .search-container {
+      max-width: 800px;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+    }
+
+    .search-toggle {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      justify-content: center;
+    }
+
+    .toggle-btn {
+      padding: 0.75rem 1.5rem;
+      border: 2px solid #4a90e2;
+      background: white;
+      color: #4a90e2;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .toggle-btn.active {
+      background: #4a90e2;
+      color: white;
+    }
+
+    .toggle-btn:hover:not(.active) {
+      background: #e8f4ff;
+    }
+
+    .user-search-results-section {
+      max-width: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 2rem;
+      display: none;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e8f0fe 100%);
+      overflow-x: hidden;
+      box-sizing: border-box;
+    }
+
+    .user-search-results-section.show {
+      display: block;
+    }
+
+    #followed-users-container,
+    #discover-users-container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto 2rem auto;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      overflow: hidden;
+      background: white;
+      position: relative;
+      box-sizing: border-box;
+    }
+
+    #followed-users-container.hidden,
+    #discover-users-container.hidden {
+      display: none;
+    }
+
+    #followed-users-container {
+      border-left: 4px solid #667eea;
+    }
+
+    #discover-users-container {
+      border-left: 4px solid #4a90e2;
+      margin-bottom: 0;
+    }
+
+    #combined-search-results-container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      overflow: hidden;
+      background: white;
+      position: relative;
+      border-left: 4px solid #4a90e2;
+      display: none;
+    }
+
+    #combined-search-results-container.show {
+      display: block;
+    }
+
+    .user-result-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: white;
+      border-right: 1px solid #f0f0f0;
+      flex: 0 0 auto;
+      width: calc(33.333% - 2px);
+      min-width: 280px;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .user-result-card:hover {
+      background: #f8f9fa;
+      transform: translateY(-8px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      z-index: 1;
+    }
+
+    .user-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      overflow: hidden;
+      border: 3px solid #f0f0f0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .user-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .user-info {
+      flex: 1;
+      min-width: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .user-name {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #1a1a1a;
+      margin-bottom: 0.35rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 100%;
+    }
+
+    .user-email {
+      font-size: 0.85rem;
+      color: #666;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+
+    .user-meta {
+      font-size: 0.85rem;
+      color: #888;
+      margin-top: 0.35rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .user-role-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .role-student {
+      background: linear-gradient(135deg, #28a745 0%, #20873a 100%);
+    }
+
+    .role-organizer {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .role-admin {
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    }
+
+    .user-results-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 1.25rem 1.5rem;
+      border-radius: 0;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: white;
+      box-shadow: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    #discover-users-container .user-results-header {
+      background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+    }
+
+    .user-results-container {
+      background: white;
+      border-radius: 0;
+      box-shadow: none;
+      min-height: 300px;
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 1rem 0;
+      gap: 0;
+      align-items: stretch;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x proximity;
+    }
+
+    .user-results-container::-webkit-scrollbar {
+      height: 10px;
+    }
+
+    .user-results-container::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    .user-results-container::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 5px;
+    }
+
+    .user-results-container::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    .no-user-results {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: #999;
+      background: white;
+      border-radius: 0;
+      font-size: 1rem;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 250px;
+    }
+
+    /* Responsive adjustments for user cards */
+    @media (max-width: 900px) {
+      .user-result-card {
+        width: calc(50% - 2px);
+        min-width: 250px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .user-result-card {
+        width: 100%;
+        min-width: 220px;
+      }
+
+      .user-search-results-section {
+        padding: 1rem;
+      }
+
+      #followed-users-container,
+      #discover-users-container {
+        max-width: 100%;
+      }
+    }
+  </style>
 </head>
 
-<body class="organizer-page">
+<body class="organizer-page" data-event-page="eventPage.html">
 
   <!-- Toolbar -->
   <div class="toolbar">
     <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
       onclick="location.href='organizer-dashboard.html'">
-
     <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
   <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
   <button class="toolbar-btn" onclick="location.href='myEvents.html'">My Events</button>
   <button class="toolbar-btn" onclick="location.href='broadcast.html'">Broadcast</button>
   <button class="toolbar-btn" onclick="location.href='../Shared_Pages/inbox.html'">Inbox</button>
     <div class="toolbar-spacer"></div>
-    <button class="toolbar-btn" onclick="location.href='settings.html'">Settings</button>
-    <button class="toolbar-btn" onclick="location.href='profile.html'">Profile</button>
+    <button class="toolbar-btn" onclick="location.href='../Profile/profile.html'">Profile</button>
     <div id="authBtnContainer">
       <button id="logout-btn" class="auth-btn">Log Out</button>
     </div>
   </div>
 
   <header>
-    <h1>Organizer Home Page</h1>
-    <p>Welcome! Here are your upcoming events.</p>
+    <h1>Organizer Dashboard</h1>
+    <p>Manage your events and discover other organizers.</p>
   </header>
 
-  <!-- Search -->
-  <div class="search-bar">
-    <input type="text" class="search-input" placeholder="Search events...">
-    <button class="search-btn" onclick="handleSearch()">Search</button>
-    <button id="clear-search" class="search-btn" style="display:none;margin-left:8px"
-      onclick="clearSearchView()">Clear</button>
+  <!-- Unified Search Section -->
+  <div class="search-container">
+    <!-- Toggle Buttons -->
+    <div class="search-toggle">
+      <button class="toggle-btn active" id="toggle-events" onclick="switchSearchMode('events')">
+        🎫 Search Events
+      </button>
+      <button class="toggle-btn" id="toggle-users" onclick="switchSearchMode('users')">
+        👥 Search Users
+      </button>
+    </div>
+
+    <!-- Unified Search Bar -->
+    <div class="search-bar">
+      <input type="text" id="unified-search-input" class="search-input" placeholder="Search events...">
+      <button class="search-btn" onclick="executeUnifiedSearch()">Search</button>
+      <button id="clear-unified-search" class="search-btn" style="display:none;margin-left:8px" onclick="clearUnifiedSearch()">Clear</button>
+    </div>
   </div>
 
-  <!-- Dynamic event sections -->
+  <!-- User Search Results Section -->
+  <div id="user-search-results-section" class="user-search-results-section">
+    <!-- Followed Users Container -->
+    <div id="followed-users-container">
+      <div class="user-results-header">
+        👥 Followed Users <span id="followed-users-count"></span>
+      </div>
+      <div id="followed-users-results" class="user-results-container"></div>
+    </div>
+
+    <!-- Discover Users Container -->
+    <div id="discover-users-container">
+      <div class="user-results-header">
+        🔍 Discover Users <span id="discover-users-count"></span>
+      </div>
+      <div id="discover-users-results" class="user-results-container"></div>
+    </div>
+
+    <!-- Combined Search Results Container (shown when searching) -->
+    <div id="combined-search-results-container">
+      <div class="user-results-header">
+        🔍 Search Results <span id="combined-users-count"></span>
+      </div>
+      <div id="combined-users-results" class="user-results-container"></div>
+    </div>
+  </div>
+
+  <!-- Date Filter -->
+  <div class="filter-panel" id="filter-panel">
+    <div class="filter-title">Filter</div>
+    <div class="filters-wrap">
+      <form id="date-filter" class="date-filter">
+        <label>
+          <span>From</span>
+          <input id="df-from" type="date" />
+        </label>
+        <label>
+          <span>To</span>
+          <input id="df-to" type="date" />
+        </label>
+
+        <div class="df-presets">
+          <button type="button" data-preset="today">Today</button>
+          <button type="button" data-preset="week">This week</button>
+          <button type="button" data-preset="weekend">This weekend</button>
+          <button type="button" id="df-clear">Clear</button>
+        </div>
+
+        <label style="display:flex;align-items:center;gap:8px;white-space:nowrap;">
+          <span style="color:inherit;font-weight:600">University:</span>
+          <select id="filterUniversity" name="filterUniversity">
+            <option value="">All universities</option>
+            <option value="Concordia">Concordia University</option>
+            <option value="McGill">McGill University</option>
+            <option value="UdeM">Université de Montréal</option>
+            <option value="Polytechnique">Polytechnique Montréal</option>
+            <option value="HEC">HEC Montréal</option>
+            <option value="UQAM">UQAM</option>
+          </select>
+        </label>
+
+        <!-- Category filter checkboxes -->
+        <div class="category-row">
+          <span class="category-title">Category:</span>
+          <div class="category-controls">
+            <label class="cat-option"><input type="checkbox" name="filterCategory" value="Workshop">Workshop</label>
+            <label class="cat-option"><input type="checkbox" name="filterCategory" value="Seminar">Seminar</label>
+            <label class="cat-option"><input type="checkbox" name="filterCategory" value="Concert">Concert</label>
+            <label class="cat-option"><input type="checkbox" name="filterCategory" value="Sports">Sports</label>
+            <label class="cat-option"><input type="checkbox" name="filterCategory" value="Other">Other</label>
+          </div>
+        </div>
+
+        <button type="submit" class="df-apply">Apply</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Search results -->
+  <div id="search-results-section" class="is-hidden search-results-section">
+    <div class="search-header">Results <span id="search-count" class="search-count"></span> — <span id="search-query-text" class="search-query"></span></div>
+    <div class="events-container">
+      <div class="events" id="search-results"></div>
+      <div id="no-results" class="no-results" style="display:none;padding:20px;color:#0b254a;font-weight:600">No events match your filters.</div>
+    </div>
+  </div>
+
+  <!-- Dynamic sections -->
   <div class="main-content">
     <div>
-      <div class="section-bar">Your Upcoming Events</div>
+      <div class="section-bar">Upcoming Events</div>
       <div class="events-container">
         <div class="events" id="upcoming-events"></div>
       </div>
     </div>
-    <div>
-      <div class="section-bar">New Events</div>
-      <div class="events-container">
-        <div class="events" id="new-events"></div>
-      </div>
-    </div>
+
     <div>
     </div>
     <div>
@@ -68,70 +466,603 @@
     </div>
   </div>
 
-  <div id="search-results-section" style="display:none">
-    <div class="section-bar">Search Results</div>
-    <div class="events-container">
-      <div class="events" id="search-results"></div>
-    </div>
-  </div>
-  </div>
-
+  <!-- Unified Search + User Search Logic -->
   <script type="module">
-    function clearSearchView() {
-      document.getElementById('search-results-section').style.display = 'none';
-      document.getElementById('clear-search').style.display = 'none';
-      document.querySelectorAll('.main-content > div').forEach(section => {
-        if (section.id !== 'search-results-section') section.style.display = '';
-      });
-      const sr = document.getElementById('search-results'); while (sr && sr.firstChild) sr.removeChild(sr.firstChild);
+    import { db } from '../../js/Shared/firebase-config.js';
+    import { collection, getDocs, doc, getDoc } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js';
+    import { getAuth } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js';
+
+    // Track current search mode
+    let currentSearchMode = 'events'; // 'events' or 'users'
+
+    // Switch between Events and Users search mode
+    window.switchSearchMode = function(mode) {
+      currentSearchMode = mode;
+      
+      // Update toggle buttons
+      document.getElementById('toggle-events').classList.toggle('active', mode === 'events');
+      document.getElementById('toggle-users').classList.toggle('active', mode === 'users');
+      
+      // Update placeholder
+      const input = document.getElementById('unified-search-input');
+      input.placeholder = mode === 'events' 
+        ? 'Search events...' 
+        : 'Search users by name, email, or school...';
+      
+      // Show/hide filter panel based on mode
+      const filterPanel = document.getElementById('filter-panel');
+      if (filterPanel) {
+        filterPanel.style.display = mode === 'events' ? '' : 'none';
+      }
+      
+      // Clear previous results
+      clearUnifiedSearch();
+      
+      // If switching to users mode, automatically load all users
+      if (mode === 'users') {
+        loadAllUsers();
+      }
+    };
+
+    // Execute search based on current mode
+    window.executeUnifiedSearch = function() {
+      const query = document.getElementById('unified-search-input').value.trim();
+      if (!query) {
+        if (currentSearchMode === 'users') {
+          // If no query in user mode, show all users
+          loadAllUsers();
+        } else {
+          clearUnifiedSearch();
+        }
+        return;
+      }
+
+      if (currentSearchMode === 'events') {
+        handleSearch(query);
+      } else {
+        handleUserSearch(query);
+      }
+
+      document.getElementById('clear-unified-search').style.display = 'inline-block';
+    };
+
+    // Load all users (followed and discover) without search query
+    async function loadAllUsers() {
+      const auth = getAuth();
+      const currentUser = auth.currentUser;
+
+      if (!currentUser) {
+        console.error('User not authenticated');
+        return;
+      }
+
+      try {
+        // Get current user's following list
+        const currentUserRef = doc(db, 'users', currentUser.uid);
+        const currentUserSnap = await getDoc(currentUserRef);
+        const followingList = currentUserSnap.exists() ? (currentUserSnap.data().following || []) : [];
+
+        const usersRef = collection(db, 'users');
+        const snapshot = await getDocs(usersRef);
+        
+        const followedUsers = [];
+        const discoverUsers = [];
+        
+        snapshot.forEach(docSnap => {
+          const userData = docSnap.data();
+          
+          // Skip current user
+          if (docSnap.id === currentUser.uid) {
+            return;
+          }
+          
+          // Organizers can only see public profiles
+          if (!userData.publicProfile) {
+            return;
+          }
+          
+          const userObj = { id: docSnap.id, ...userData };
+          
+          // Separate into followed vs discover
+          if (followingList.includes(docSnap.id)) {
+            followedUsers.push(userObj);
+          } else {
+            discoverUsers.push(userObj);
+          }
+        });
+
+        displayUserResults(followedUsers, discoverUsers, '');
+        
+      } catch (error) {
+        console.error('Error loading users:', error);
+        const followedDiv = document.getElementById('followed-users-results');
+        const discoverDiv = document.getElementById('discover-users-results');
+        followedDiv.innerHTML = '<div class="no-user-results">Error loading users. Please try again.</div>';
+        discoverDiv.innerHTML = '<div class="no-user-results">Error loading users. Please try again.</div>';
+      }
     }
 
-    window.handleSearch = function () {
-      const query = document.querySelector('.search-input').value.toLowerCase().trim();
-      if (!query) { clearSearchView(); return; }
+    // Event Search Logic
+    function handleSearch(queryRaw) {
+      const query = (queryRaw || '').toLowerCase().trim();
+      if (!query) { clearUnifiedSearch(); return; }
 
-      const matches = [];
-      const seen = new Set();
-      document.querySelectorAll('.events').forEach(list => {
+      const lists = document.querySelectorAll('.events');
+      const matches = []; const seen = new Set();
+      lists.forEach(list => {
         list.querySelectorAll('.event-card').forEach(card => {
           const id = card.getAttribute('data-event-id') || '';
           if (seen.has(id)) return;
           const title = (card.querySelector('.event-title') || { textContent: '' }).textContent.toLowerCase();
-          if (title.includes(query)) {
-            matches.push(card);
-            seen.add(id);
-          }
+          const desc = (card.querySelector('.event-desc') || { textContent: '' }).textContent.toLowerCase();
+          if (title.includes(query) || desc.includes(query)) { matches.push(card); seen.add(id); }
         });
       });
 
-      document.querySelectorAll('.main-content > div').forEach(section => {
-        if (section.id !== 'search-results-section') section.style.display = 'none';
-      });
+      // Hide user results
+      document.getElementById('user-search-results-section').classList.remove('show');
 
-      const sr = document.getElementById('search-results'); while (sr && sr.firstChild) sr.removeChild(sr.firstChild);
-      matches.forEach(card => {
-        const clone = card.cloneNode(true);
-        clone.style.display = 'block';
-        const id = clone.getAttribute('data-event-id') || card.getAttribute('data-event-id');
-        if (id) {
-          clone.addEventListener('click', () => { window.location.href = `eventPage.html?id=${id}`; });
-          clone.style.cursor = 'pointer';
+      // populate results container
+      const sr = document.getElementById('search-results');
+      const srSection = document.getElementById('search-results-section');
+      const noResults = document.getElementById('no-results');
+      if (sr) {
+        while (sr.firstChild) sr.removeChild(sr.firstChild);
+        matches.forEach(card => {
+          const clone = card.cloneNode(true);
+          clone.style.display = 'block';
+          const id = clone.getAttribute('data-event-id') || card.getAttribute('data-event-id');
+          if (id) { 
+            const target = document.body?.dataset?.eventPage || 'eventPage.html'; 
+            clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; }); 
+            clone.style.cursor = 'pointer'; 
+          }
+          sr.appendChild(clone);
+        });
+      }
+
+      // show results and collapse main
+      const main = document.querySelector('.main-content'); if (main) main.classList.add('collapsed');
+      if (srSection) {
+        srSection.classList.remove('is-hidden');
+        srSection.classList.add('show');
+        try { srSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+      }
+      if (noResults) noResults.style.display = matches.length === 0 ? '' : 'none';
+      const countEl = document.getElementById('search-count'); if (countEl) countEl.textContent = `(${matches.length})`;
+      const qText = document.getElementById('search-query-text'); if (qText) qText.textContent = queryRaw || query;
+    }
+    window.handleSearch = handleSearch;
+
+    // User Search Logic - Filter by public profile
+    async function handleUserSearch(query) {
+      const searchQuery = query.toLowerCase();
+      const auth = getAuth();
+      const currentUser = auth.currentUser;
+
+      if (!currentUser) {
+        console.error('User not authenticated');
+        return;
+      }
+
+      try {
+        // Get current user's following list
+        const currentUserRef = doc(db, 'users', currentUser.uid);
+        const currentUserSnap = await getDoc(currentUserRef);
+        const followingList = currentUserSnap.exists() ? (currentUserSnap.data().following || []) : [];
+
+        const usersRef = collection(db, 'users');
+        const snapshot = await getDocs(usersRef);
+        
+        const followedUsers = [];
+        const discoverUsers = [];
+        
+        snapshot.forEach(docSnap => {
+          const userData = docSnap.data();
+          
+          // Skip current user
+          if (docSnap.id === currentUser.uid) {
+            return;
+          }
+          
+          // Organizers can only see public profiles
+          if (!userData.publicProfile) {
+            return;
+          }
+          
+          const fullname = (userData.fullname || '').toLowerCase();
+          const email = (userData.email || '').toLowerCase();
+          const school = (userData.school || userData.organization || '').toLowerCase();
+          
+          // Check if matches search query
+          if (fullname.includes(searchQuery) || email.includes(searchQuery) || school.includes(searchQuery)) {
+            const userObj = { id: docSnap.id, ...userData };
+            
+            // Separate into followed vs discover
+            if (followingList.includes(docSnap.id)) {
+              followedUsers.push(userObj);
+            } else {
+              discoverUsers.push(userObj);
+            }
+          }
+        });
+
+        displayUserResults(followedUsers, discoverUsers, query);
+        
+      } catch (error) {
+        console.error('Error searching users:', error);
+        const followedDiv = document.getElementById('followed-users-results');
+        const discoverDiv = document.getElementById('discover-users-results');
+        followedDiv.innerHTML = '<div class="no-user-results">Error searching users. Please try again.</div>';
+        discoverDiv.innerHTML = '<div class="no-user-results">Error searching users. Please try again.</div>';
+      }
+    }
+
+    function displayUserResults(followedUsers, discoverUsers, query) {
+      // Hide event sections and results
+      const main = document.querySelector('.main-content'); if (main) main.classList.add('collapsed');
+      document.getElementById('search-results-section').classList.remove('show');
+      document.getElementById('search-results-section').classList.add('is-hidden');
+
+      const followedContainer = document.getElementById('followed-users-container');
+      const discoverContainer = document.getElementById('discover-users-container');
+      const combinedContainer = document.getElementById('combined-search-results-container');
+      const followedDiv = document.getElementById('followed-users-results');
+      const discoverDiv = document.getElementById('discover-users-results');
+      const combinedDiv = document.getElementById('combined-users-results');
+      const resultsSection = document.getElementById('user-search-results-section');
+      const followedCountEl = document.getElementById('followed-users-count');
+      const discoverCountEl = document.getElementById('discover-users-count');
+      const combinedCountEl = document.getElementById('combined-users-count');
+      
+      resultsSection.classList.add('show');
+      
+      // If there's a search query, show combined results
+      if (query && query.trim()) {
+        // Hide separate containers
+        followedContainer.classList.add('hidden');
+        discoverContainer.classList.add('hidden');
+        combinedContainer.classList.remove('show');
+        combinedContainer.classList.add('show');
+        
+        // Combine all users
+        const allUsers = [...followedUsers, ...discoverUsers];
+        const totalCount = allUsers.length;
+        
+        if (combinedCountEl) combinedCountEl.textContent = `(${totalCount})`;
+        
+        if (allUsers.length === 0) {
+          combinedDiv.innerHTML = '<div class="no-user-results">No users found matching your search.</div>';
+        } else {
+          const combinedHtml = allUsers.map(user => createUserCard(user)).join('');
+          combinedDiv.innerHTML = combinedHtml;
         }
-        sr.appendChild(clone);
-      });
+      } else {
+        // Show separate containers (no search query)
+        followedContainer.classList.remove('hidden');
+        discoverContainer.classList.remove('hidden');
+        combinedContainer.classList.remove('show');
+        
+        // Update counts
+        if (followedCountEl) followedCountEl.textContent = `(${followedUsers.length})`;
+        if (discoverCountEl) discoverCountEl.textContent = `(${discoverUsers.length})`;
 
-      document.getElementById('search-results-section').style.display = '';
-      document.getElementById('clear-search').style.display = '';
+        // Render followed users
+        if (followedUsers.length === 0) {
+          followedDiv.innerHTML = '<div class="no-user-results">No followed users found.</div>';
+        } else {
+          const followedHtml = followedUsers.map(user => createUserCard(user)).join('');
+          followedDiv.innerHTML = followedHtml;
+        }
+
+        // Render discover users
+        if (discoverUsers.length === 0) {
+          discoverDiv.innerHTML = '<div class="no-user-results">No new users found.</div>';
+        } else {
+          const discoverHtml = discoverUsers.map(user => createUserCard(user)).join('');
+          discoverDiv.innerHTML = discoverHtml;
+        }
+      }
+
+      try { resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+    }
+
+    function createUserCard(user) {
+      const initials = (user.fullname || 'User').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+      const roleClass = user.role === 'organizer' ? 'role-organizer' : user.role === 'admin' ? 'role-admin' : 'role-student';
+      
+      // Fix avatar path - extract filename and build correct relative path
+      let avatarUrl = user.selectedAvatar || user.avatarUrl;
+      if (avatarUrl && avatarUrl.includes('avatar_')) {
+        const match = avatarUrl.match(/avatar_\d+\.png/);
+        if (match) {
+          // Build correct path from organizer dashboard
+          avatarUrl = `../../assets/avatars/${match[0]}`;
+        }
+      }
+      
+      const avatarHtml = avatarUrl 
+        ? `<img src="${avatarUrl}" alt="${user.fullname || 'User'}" onerror="this.style.display='none'; this.parentElement.innerHTML='<span>${initials}</span>';">` 
+        : `<span>${initials}</span>`;
+      
+      return `
+        <div class="user-result-card" onclick="window.location.href='../Profile/public-profile.html?id=${user.id}'">
+          <div class="user-avatar">
+            ${avatarHtml}
+          </div>
+          <div class="user-info">
+            <div class="user-name">${user.fullname || 'Unknown User'}</div>
+            <div class="user-email">${user.email || ''}</div>
+            <div class="user-meta">
+              <span class="user-role-badge ${roleClass}">
+                ${(user.role || 'student').toUpperCase()}
+              </span>
+              ${user.school || user.organization || ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Clear Unified Search
+    window.clearUnifiedSearch = function() {
+      // Reset input
+      document.getElementById('unified-search-input').value = '';
+      document.getElementById('clear-unified-search').style.display = 'none';
+
+      // Hide all search results
+      document.getElementById('search-results-section').classList.remove('show');
+      document.getElementById('search-results-section').classList.add('is-hidden');
+      document.getElementById('user-search-results-section').classList.remove('show');
+
+      // Show all event sections only if in events mode
+      const main = document.querySelector('.main-content'); 
+      if (main) {
+        if (currentSearchMode === 'events') {
+          main.classList.remove('collapsed');
+        } else {
+          main.classList.add('collapsed');
+        }
+      }
+
+      // Clear results
+      const eventResults = document.getElementById('search-results');
+      while (eventResults && eventResults.firstChild) {
+        eventResults.removeChild(eventResults.firstChild);
+      }
+
+      const followedResults = document.getElementById('followed-users-results');
+      while (followedResults && followedResults.firstChild) {
+        followedResults.removeChild(followedResults.firstChild);
+      }
+
+      const discoverResults = document.getElementById('discover-users-results');
+      while (discoverResults && discoverResults.firstChild) {
+        discoverResults.removeChild(discoverResults.firstChild);
+      }
+
+      const combinedResults = document.getElementById('combined-users-results');
+      while (combinedResults && combinedResults.firstChild) {
+        combinedResults.removeChild(combinedResults.firstChild);
+      }
+
+      const noResults = document.getElementById('no-results');
+      if (noResults) noResults.style.display = 'none';
     };
 
-    document.getElementById('clear-search').addEventListener('click', clearSearchView);
+    // Allow Enter key to trigger search
+    document.getElementById('unified-search-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        executeUnifiedSearch();
+      }
+    });
   </script>
 
-  <!-- Firebase + Auth + Events -->
+  <!-- Date Filter Logic -->
+  <script type="module">
+    const form = document.getElementById("date-filter");
+    const inputFrom = document.getElementById("df-from");
+    const inputTo   = document.getElementById("df-to");
+    const btnClear  = document.getElementById("df-clear");
+    const presets   = form.querySelectorAll("[data-preset]");
+
+    const startOfDay = (d)=> new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0,0,0,0);
+    const endOfDay   = (d)=> new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23,59,59,999);
+
+    function setPresetActive(key) {
+      presets.forEach(b => b.classList.toggle('active', b.dataset.preset === key));
+    }
+
+    function applyPreset(key) {
+      const now = new Date();
+      if (key === "today") {
+        inputFrom.valueAsDate = now; inputTo.valueAsDate = now;
+      } else if (key === "week") {
+        const day = now.getDay();
+        const diffToMon = (day + 6) % 7;
+        const monday = new Date(now); monday.setDate(now.getDate() - diffToMon);
+        const sunday = new Date(monday); sunday.setDate(monday.getDate() + 6);
+        inputFrom.valueAsDate = monday; inputTo.valueAsDate = sunday;
+      } else if (key === "weekend") {
+        const day = now.getDay();
+        const sat = new Date(now); sat.setDate(sat.getDate() + ((6 - day + 7) % 7));
+        const sun = new Date(sat); sun.setDate(sat.getDate() + 1);
+        inputFrom.valueAsDate = sat; inputTo.valueAsDate = sun;
+      }
+      setPresetActive(key);
+    }
+
+    presets.forEach(btn => {
+      btn.addEventListener("click", () => {
+        applyPreset(btn.dataset.preset);
+        form.dispatchEvent(new Event("submit"));
+      });
+    });
+
+    btnClear.addEventListener("click", () => {
+      inputFrom.value = ""; inputTo.value = ""; setPresetActive(null);
+      filterVisibleByDate(null, null);
+    });
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const from = inputFrom.value ? startOfDay(new Date(inputFrom.value)) : null;
+      const to   = inputTo.value   ? endOfDay(new Date(inputTo.value))     : null;
+      if (from && to && from > to) {
+        const tmp = from; (from = to), (to = tmp);
+        inputFrom.valueAsDate = from; inputTo.valueAsDate = to;
+      }
+      setPresetActive(null);
+      filterVisibleByDate(from, to);
+    });
+
+    const filterUniversity = document.getElementById('filterUniversity');
+    if (filterUniversity) {
+      filterUniversity.addEventListener('change', () => {
+        const from = inputFrom.value ? startOfDay(new Date(inputFrom.value)) : null;
+        const to   = inputTo.value   ? endOfDay(new Date(inputTo.value))     : null;
+        filterVisibleByDate(from, to);
+      });
+    }
+
+    const categoryCheckboxes = Array.from(document.querySelectorAll('input[name="filterCategory"]'));
+    if (categoryCheckboxes.length) {
+      categoryCheckboxes.forEach(cb => cb.addEventListener('change', () => {
+        const from = inputFrom.value ? startOfDay(new Date(inputFrom.value)) : null;
+        const to   = inputTo.value   ? endOfDay(new Date(inputTo.value))     : null;
+        filterVisibleByDate(from, to);
+      }));
+    }
+
+    function parseEventStart(card) {
+      const ds = card.getAttribute('data-start');
+      if (ds) { const n = Number(ds); if (!Number.isNaN(n)) return n; }
+
+      const t = card.querySelector('time[datetime]');
+      if (t && t.getAttribute('datetime')) {
+        const n = Date.parse(t.getAttribute('datetime')); if (!Number.isNaN(n)) return n;
+      }
+
+      const maybe = card.querySelector('.event-date, .date, .text-sm, .meta');
+      const text = (maybe?.textContent || card.textContent || '').trim();
+      const n = Date.parse(text);
+      return Number.isNaN(n) ? null : n;
+    }
+
+    const mo = new MutationObserver(entries => {
+      entries.forEach(e => {
+        e.addedNodes.forEach(n => {
+          if (!(n instanceof HTMLElement)) return;
+          if (n.classList?.contains('event-card')) {
+            if (!n.hasAttribute('data-start')) {
+              const ts = parseEventStart(n);
+              if (ts) n.setAttribute('data-start', String(ts));
+            }
+          }
+        });
+      });
+    });
+    document.querySelectorAll('.events').forEach(list => {
+      mo.observe(list, { childList: true, subtree: true });
+    });
+
+    function filterVisibleByDate(from, to) {
+      const lists = document.querySelectorAll('.events');
+      const selectedUni = document.getElementById('filterUniversity')?.value || '';
+      const selectedCategories = Array.from(document.querySelectorAll('input[name="filterCategory"]:checked')).map(n => n.value.toLowerCase());
+
+      const isFilteringActive = Boolean(from || to || selectedUni || selectedCategories.length > 0);
+      const srSection = document.getElementById('search-results-section');
+      const sr = document.getElementById('search-results');
+      const noResults = document.getElementById('no-results');
+
+      function isUniversityEvent(card, selected) {
+        if (!selected) return true;
+        const selectedNorm = String(selected).toLowerCase().replace(/[^a-z0-9]+/g, '');
+        let openAttr = card.getAttribute('data-open-to') || card.dataset.openTo || '';
+        if (!openAttr) openAttr = (card.querySelector('.event-open-to')?.textContent || '').trim();
+        if (openAttr && openAttr.trim() !== '') {
+          const arr = String(openAttr).split(/[,;]+/).map(s => s.trim()).filter(Boolean);
+          const norm = arr.map(a => a.toLowerCase().replace(/[^a-z0-9]+/g, ''));
+          if (norm.includes(selectedNorm)) return true;
+          if (norm.some(n => n.includes(selectedNorm) || selectedNorm.includes(n))) return true;
+          return false;
+        }
+        return true;
+      }
+
+      function isCategoryMatch(card, selectedCats) {
+        if (!selectedCats || selectedCats.length === 0) return true;
+        const cat = (card.getAttribute('data-category') || card.dataset.category || '').toLowerCase().trim();
+        if (cat) return selectedCats.includes(cat);
+        const title = (card.querySelector('.event-title')?.textContent || '').toLowerCase();
+        const loc = (card.querySelector('.event-location')?.textContent || '').toLowerCase();
+        return selectedCats.some(sc => title.includes(sc) || loc.includes(sc));
+      }
+
+      function isDateMatch(card, fromDate, toDate) {
+        let ts = card.getAttribute('data-start');
+        if (!ts) { const parsed = parseEventStart(card); if (parsed) { ts = String(parsed); card.setAttribute('data-start', ts); } }
+        const n = ts ? Number(ts) : NaN;
+        if (fromDate && !(n >= +fromDate)) return false;
+        if (toDate && !(n <= +toDate)) return false;
+        return true;
+      }
+
+      if (!isFilteringActive) {
+        const main = document.querySelector('.main-content'); if (main) main.classList.remove('collapsed');
+        lists.forEach(list => { list.querySelectorAll('.event-card').forEach(card => card.style.display = ''); list.dispatchEvent(new Event('scroll')); });
+        if (sr) while (sr.firstChild) sr.removeChild(sr.firstChild);
+        if (srSection) { srSection.classList.remove('show'); setTimeout(() => srSection.classList.add('is-hidden'), 380); }
+        if (noResults) noResults.style.display = 'none';
+        const qText = document.getElementById('search-query-text'); if (qText) qText.textContent = '';
+        const countEl = document.getElementById('search-count'); if (countEl) countEl.textContent = '';
+        return;
+      }
+
+      const matches = []; const seen = new Set();
+      lists.forEach(list => {
+        list.querySelectorAll('.event-card').forEach(card => {
+          if (!isDateMatch(card, from, to)) return;
+          if (!isUniversityEvent(card, selectedUni)) return;
+          if (!isCategoryMatch(card, selectedCategories)) return;
+          const id = card.getAttribute('data-event-id') || '';
+          if (!seen.has(id)) { seen.add(id); matches.push(card); }
+        });
+      });
+
+      if (sr) {
+        while (sr.firstChild) sr.removeChild(sr.firstChild);
+        matches.forEach(card => {
+          const clone = card.cloneNode(true);
+          clone.style.display = 'block';
+          const id = clone.getAttribute('data-event-id') || card.getAttribute('data-event-id');
+          if (id) { const target = document.body?.dataset?.eventPage || 'eventPage.html'; clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; }); clone.style.cursor = 'pointer'; }
+          sr.appendChild(clone);
+        });
+      }
+
+      const main = document.querySelector('.main-content'); if (main) main.classList.add('collapsed');
+      if (srSection) { srSection.classList.remove('is-hidden'); srSection.classList.add('show'); try { srSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} }
+
+      const countEl = document.getElementById('search-count'); if (countEl) countEl.textContent = `(${matches.length})`;
+      const parts = [];
+      if (selectedUni) parts.push(selectedUni);
+      if (selectedCategories.length) parts.push(selectedCategories.join(', '));
+      if (from || to) { const fromStr = from ? new Date(+from).toLocaleDateString() : ''; const toStr = to ? new Date(+to).toLocaleDateString() : ''; parts.push(`${fromStr}${from && to ? ' – ' : ''}${toStr}`.trim()); }
+      const qText = document.getElementById('search-query-text'); if (qText) qText.textContent = parts.join(' | ') || 'filters applied';
+
+      if (noResults) noResults.style.display = matches.length === 0 ? '' : 'none';
+
+      lists.forEach(list => list.dispatchEvent(new Event('scroll')));
+    }
+
+    window.filterVisibleByDate = filterVisibleByDate;
+  </script>
+
   <script type="module" src="../../js/Registration/auth.js"></script>
   <script type="module" src="../../js/Events/LoadEvents.js"></script>
   <script type="module" src="../../js/Shared/scroll-controls.js"></script>
 
 </body>
-
 </html>
