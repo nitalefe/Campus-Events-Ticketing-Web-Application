@@ -4,40 +4,8 @@
  * and creates minimal DOM elements the module expects before requiring it.
  */
 
-jest.mock('../../js/Shared/firebase_import.js', () => {
-  const getDoc = jest.fn();
-  const getDocs = jest.fn();
-  const setDoc = jest.fn().mockResolvedValue(true);
-  const updateDoc = jest.fn().mockResolvedValue(true);
-  const doc = (...args) => args.join('/');
-  const collection = (...args) => args.join('/');
-  const query = (...args) => ({ args });
-  const where = (...args) => ({ args });
-  const increment = (n) => ({ _increment: n });
-  const arrayUnion = (v) => ({ _arrayUnion: v });
-  const serverTimestamp = () => ({ _serverTimestamp: true });
-  const auth = {};
-  const db = {};
-  // Call the callback immediately with a fake user to avoid redirect branch
-  const onAuthStateChanged = (a, cb) => cb({ uid: 'user1', email: 'test@example.com' });
-
-  return {
-    auth,
-    db,
-    doc,
-    query,
-    where,
-    getDoc,
-    updateDoc,
-    getDocs,
-    setDoc,
-    increment,
-    collection,
-    arrayUnion,
-    serverTimestamp,
-    onAuthStateChanged
-  };
-});
+// We'll mock `js/Shared/firebase_import.js` inside each test using `jest.doMock`
+// to avoid hoisting/mocking interference when running the full suite.
 
 describe('Claim Event (no DOM full page) integration', () => {
   beforeEach(() => {
@@ -72,8 +40,70 @@ describe('Claim Event (no DOM full page) integration', () => {
   });
 
   test('successfully claims a ticket (mocked firestore)', async () => {
-    // Grab the mocked functions so we can configure/inspect them
-    const firebaseMock = require('../../js/Shared/firebase_import.js');
+    // Use isolateModules + doMock so we never import the real firebase packages
+    jest.resetModules();
+    let firebaseMock;
+    jest.isolateModules(() => {
+      jest.doMock('../../js/Shared/firebase_import.js', () => {
+        const getDoc = jest.fn();
+        const getDocs = jest.fn();
+        const setDoc = jest.fn().mockResolvedValue(true);
+        const updateDoc = jest.fn().mockResolvedValue(true);
+        const doc = (...args) => args.join('/');
+        const collection = (...args) => args.join('/');
+        const query = (...args) => ({ args });
+        const where = (...args) => ({ args });
+        const increment = (n) => ({ _increment: n });
+        const arrayUnion = (v) => ({ _arrayUnion: v });
+        const serverTimestamp = () => ({ _serverTimestamp: true });
+        const auth = {};
+        const db = {};
+        // Call the callback immediately with a fake user to avoid redirect branch
+          const onAuthStateChanged = (a, cb) => cb({ uid: 'user1', email: 'test@example.com' });
+
+          // Default implementations so import-time calls succeed
+          getDoc.mockImplementation(async (ref) => {
+            const str = String(ref);
+            if (str.includes('/events/')) {
+              return {
+                exists: () => true,
+                id: 'testEvent',
+                data: () => ({ capacity: 10, ticketsSold: 0, createdBy: 'org1', eventName: 'Test Event' })
+              };
+            }
+            if (str.includes('/users/')) {
+              return {
+                exists: () => true,
+                data: () => ({ firstname: 'Test', lastname: 'User', email: 'test@example.com' })
+              };
+            }
+            return { exists: () => false };
+          });
+          getDocs.mockResolvedValue({ empty: true });
+
+        return {
+          auth,
+          db,
+          doc,
+          query,
+          where,
+          getDoc,
+          updateDoc,
+          getDocs,
+          setDoc,
+          increment,
+          collection,
+          arrayUnion,
+          serverTimestamp,
+          onAuthStateChanged
+        };
+      });
+
+      firebaseMock = require('../../js/Shared/firebase_import.js');
+
+      // Now require the module under test inside the isolated module registry
+      require('../../js/User/claimEvent.js');
+    });
 
     // Some helpers are referenced as globals in the original module (not imported),
     // so attach them to the global scope so the module finds them at runtime.
@@ -106,17 +136,20 @@ describe('Claim Event (no DOM full page) integration', () => {
     // Now require the module under test - it will run initialization
     require('../../js/User/claimEvent.js');
 
-    // Wait a tick for any async initialization
-    await new Promise((res) => setTimeout(res, 0));
+    // Wait a short time for async initialization (auth + loadEventData) to complete
+    await new Promise((res) => setTimeout(res, 200));
 
     // Simulate selecting a ticket then clicking confirm
     const ticketCard = document.getElementById('ticket-card');
     ticketCard.classList.add('selected');
     const confirmBtn = document.getElementById('confirm');
+    // sanity check for test debugging
+    // eslint-disable-next-line no-console
+    console.log('before click, selected=', ticketCard.classList.contains('selected'), 'confirm exists=', !!confirmBtn);
     confirmBtn.click();
 
     // Wait for claim flow to complete
-    await new Promise((res) => setTimeout(res, 20));
+    await new Promise((res) => setTimeout(res, 200));
 
     // Assertions: setDoc (attendee) and updateDoc (event/users) should be called
     expect(firebaseMock.setDoc).toHaveBeenCalled();
