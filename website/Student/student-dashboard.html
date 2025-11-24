@@ -9,7 +9,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../css/Shared/dashboard.css" />
   <link rel="stylesheet" href="../../css/Shared/toolbar.css" />
-  <!-- moved filter styles to shared CSS (`css/Shared/dashboard.css`) -->
+  <style>
+    html, body {
+      overflow-x: hidden;
+      max-width: 100%;
+    }
+
+    body {
+      position: relative;
+    }
+    /* Private badge styling for user cards */
+    .private-badge { margin-left:6px; color: #ffd166; font-size:0.95rem; vertical-align:middle }
+  </style>
 </head>
 
 <body class="student-page" data-event-page="eventPageStu.html">
@@ -18,88 +29,151 @@
   <div class="toolbar">
     <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
       onclick="location.href='../Student/student-dashboard.html'">
-    <button class="toolbar-btn" onclick="location.href='../Student/student-dashboard.html'">Home</button>
-    <button class="toolbar-btn" onclick="location.href='../Student/myTickets.html'">My Tickets</button>
+
+  <button class="toolbar-btn" onclick="location.href='../Student/student-dashboard.html'">Home</button>
+  <button class="toolbar-btn" onclick="location.href='../Student/myTickets.html'">My Tickets</button>
+  <button class="toolbar-btn" onclick="location.href='../Shared_Pages/inbox.html'">Inbox</button>
+        <!-- 🔹 New button to open interest page -->
+  <button class="toolbar-btn" onclick="location.href='../Student/interestPage.html'">
+    My Interests
+  </button>
     <div class="toolbar-spacer"></div>
-    <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
+    <button class="toolbar-btn" onclick="location.href='../Profile/profile.html'">Profile</button>
     <div id="authBtnContainer">
       <button id="logout-btn" class="auth-btn">Log Out</button>
     </div>
   </div>
+</div>
 
   <header>
     <h1>Explore Events</h1>
     <p>Discover events on campus and RSVP quickly.</p>
   </header>
 
-  <!-- Search -->
-  <div class="search-bar">
-    <input type="text" class="search-input" placeholder="Search events...">
-    <button class="search-btn" onclick="handleSearch()">Search</button>
-    <button id="clear-search" class="search-btn" style="display:none;margin-left:8px" onclick="clearSearchView()">Clear</button>
+  <!-- Unified Search Section -->
+  <div class="search-container">
+    <!-- Toggle Buttons -->
+    <div class="search-toggle">
+      <button class="toggle-btn active" id="toggle-events" onclick="switchSearchMode('events')">
+        🎫 Search Events
+      </button>
+      <button class="toggle-btn" id="toggle-users" onclick="switchSearchMode('users')">
+        👥 Search Users
+      </button>
+    </div>
+
+    <!-- Unified Search Bar -->
+    <div class="search-bar">
+      <input type="text" id="unified-search-input" class="search-input" placeholder="Search events...">
+      <button class="search-btn" onclick="executeUnifiedSearch()">Search</button>
+      <button id="clear-unified-search" class="search-btn" style="display:none;margin-left:8px" onclick="clearUnifiedSearch()">Clear</button>
+    </div>
+  </div>
+
+  <!-- User Search Results Section -->
+  <div id="user-search-results-section" class="user-search-results-section">
+    <!-- Followed Users Container -->
+    <div id="followed-users-container">
+      <div class="user-results-header">
+        👥 Followed Users <span id="followed-users-count"></span>
+      </div>
+      <div id="followed-users-results" class="user-results-container"></div>
+    </div>
+
+    <!-- Discover Users Container -->
+    <div id="discover-users-container">
+      <div class="user-results-header">
+        🔍 Discover Users <span id="discover-users-count"></span>
+      </div>
+      <div id="discover-users-results" class="user-results-container"></div>
+    </div>
+
+    <!-- Combined Search Results Container (shown when searching) -->
+    <div id="combined-search-results-container">
+      <div class="user-results-header">
+        🔍 Search Results <span id="combined-users-count"></span>
+      </div>
+      <div id="combined-users-results" class="user-results-container"></div>
+    </div>
   </div>
 
   <!-- Date Filter -->
-  <div class="filter-panel">
+  <div class="filter-panel" id="filter-panel">
     <div class="filter-title">Filter</div>
     <div class="filters-wrap">
       <form id="date-filter" class="date-filter">
-      <label>
-        <span>From</span>
-        <input id="df-from" type="date" />
-      </label>
-      <label>
-        <span>To</span>
-        <input id="df-to" type="date" />
-      </label>
+        <label>
+          <span>From</span>
+          <input id="df-from" type="date" />
+        </label>
+        <label>
+          <span>To</span>
+          <input id="df-to" type="date" />
+        </label>
 
-      <div class="df-presets">
-        <button type="button" data-preset="today">Today</button>
-        <button type="button" data-preset="week">This week</button>
-        <button type="button" data-preset="weekend">This weekend</button>
-        <button type="button" id="df-clear">Clear</button>
-      </div>
-
-      <label style="display:flex;align-items:center;gap:8px;white-space:nowrap;">
-        <span style="color:inherit;font-weight:600">University:</span>
-        <select id="filterUniversity" name="filterUniversity">
-          <option value="">All universities</option>
-          <option value="Concordia">Concordia University</option>
-          <option value="McGill">McGill University</option>
-          <option value="UdeM">Université de Montréal</option>
-          <option value="Polytechnique">Polytechnique Montréal</option>
-          <option value="HEC">HEC Montréal</option>
-          <option value="UQAM">UQAM</option>
-        </select>
-      </label>
-
-      <!-- Category filter checkboxes (match eventCreation.html options) -->
-      <div class="category-row">
-        <span class="category-title">Category:</span>
-        <div class="category-controls">
-          <label class="cat-option"><input type="checkbox" name="filterCategory" value="Workshop">Workshop</label>
-          <label class="cat-option"><input type="checkbox" name="filterCategory" value="Seminar">Seminar</label>
-          <label class="cat-option"><input type="checkbox" name="filterCategory" value="Concert">Concert</label>
-          <label class="cat-option"><input type="checkbox" name="filterCategory" value="Sports">Sports</label>
-          <label class="cat-option"><input type="checkbox" name="filterCategory" value="Other">Other</label>
+        <div class="df-presets">
+          <button type="button" data-preset="today">Today</button>
+          <button type="button" data-preset="week">This week</button>
+          <button type="button" data-preset="weekend">This weekend</button>
+          <button type="button" id="df-clear">Clear</button>
         </div>
-      </div>
 
-      <button type="submit" class="df-apply">Apply</button>
+        <label style="display:flex;align-items:center;gap:8px;white-space:nowrap;">
+          <span style="color:inherit;font-weight:600">University:</span>
+          <select id="filterUniversity" name="filterUniversity">
+            <option value="">All universities</option>
+            <option value="Concordia">Concordia University</option>
+            <option value="McGill">McGill University</option>
+            <option value="UdeM">Université de Montréal</option>
+            <option value="Polytechnique">Polytechnique Montréal</option>
+            <option value="HEC">HEC Montréal</option>
+            <option value="UQAM">UQAM</option>
+          </select>
+        </label>
+
+        <!-- Category filter checkboxes (match eventCreation.html options) -->
+        <div class="category-row">
+          <span class="category-title">Category:</span>
+          <div class="category-controls">
+            <label class="cat-option"><input type="checkbox" name="filterCategory" value="Workshop">Workshop</label>
+            <label class="cat-option"><input type="checkbox" name="filterCategory" value="Seminar">Seminar</label>
+            <label class="cat-option"><input type="checkbox" name="filterCategory" value="Concert">Concert</label>
+            <label class="cat-option"><input type="checkbox" name="filterCategory" value="Sports">Sports</label>
+            <label class="cat-option"><input type="checkbox" name="filterCategory" value="Other">Other</label>
+          </div>
+        </div>
+
+        <button type="submit" class="df-apply">Apply</button>
       </form>
     </div>
   </div>
 
-  <!-- Dynamic sections -->
   <!-- Search results (sibling placed here so it occupies same visual area as main content) -->
   <div id="search-results-section" class="is-hidden search-results-section">
-    <div class="search-header">Results <span id="search-count" class="search-count"></span> — <span id="search-query-text" class="search-query"></span></div>
+    <div class="search-header">
+      Results <span id="search-count" class="search-count"></span> —
+      <span id="search-query-text" class="search-query"></span>
+    </div>
     <div class="events-container">
       <div class="events" id="search-results"></div>
-      <div id="no-results" class="no-results" style="display:none;padding:20px;color:#0b254a;font-weight:600">No events match your filters.</div>
+      <div id="no-results" class="no-results" style="display:none;padding:20px;color:#0b254a;font-weight:600">
+        No events match your filters.
+      </div>
     </div>
   </div>
+
+  <!-- Dynamic sections -->
   <div class="main-content">
+    <!-- RECOMMENDED (Personalized) — FIRST -->
+    <div>
+      <div class="section-bar">Recommended</div>
+      <div class="events-container">
+        <div class="events" id="feed">
+          <div class="feed-empty">Loading your recommended events...</div>
+        </div>
+      </div>
+    </div>
+
     <div>
       <div class="section-bar">My Events</div>
       <div class="events-container"><div class="events" id="myEventsSection"></div></div>
@@ -111,7 +185,6 @@
     </div>
 
     <div>
-      <!--events from followed organizers-->
       <div class="section-bar">From Your Followed Organizers</div>
       <div class="events-container">
         <div class="events" id="following-events"></div>
@@ -119,7 +192,6 @@
     </div>
 
     <div>
-      <!--upcoming events for the user's school'scampus-->
       <div class="section-bar">Upcoming On Campus</div>
       <div class="events-container"><div class="events" id="upcoming-events"></div></div>
     </div>
@@ -128,25 +200,134 @@
       <div class="section-bar">Discover</div>
       <div class="events-container"><div class="events" id="discover-events"></div></div>
     </div>
+  </div>
 
-    </div>
-
-
-  <!-- Search + Date filter logic -->
+  <!-- Unified Search + User Search Logic -->
   <script type="module">
-    // ---- SEARCH (existing) ----
-    function clearSearchView() {
-      // clear the input and restore the dashboard view
-      const input = document.querySelector('.search-input'); if (input) input.value = '';
-      document.getElementById('clear-search').style.display = 'none';
-      // delegate to filterVisibleByDate to restore UI
-      filterVisibleByDate(null, null);
+    import { db } from '../../js/Shared/firebase-config.js';
+    import { collection, getDocs, doc, getDoc } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js';
+    import { getAuth } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js';
+
+    // Track current search mode
+    let currentSearchMode = 'events'; // 'events' or 'users'
+
+    // Switch between Events and Users search mode
+    window.switchSearchMode = function(mode) {
+      console.log('switchSearchMode called with mode:', mode);
+      currentSearchMode = mode;
+      
+      // Update toggle buttons
+      document.getElementById('toggle-events').classList.toggle('active', mode === 'events');
+      document.getElementById('toggle-users').classList.toggle('active', mode === 'users');
+      
+      // Update placeholder
+      const input = document.getElementById('unified-search-input');
+      input.placeholder = mode === 'events' 
+        ? 'Search events...' 
+        : 'Search users by name, email, or school...';
+      
+      // Show/hide filter panel based on mode
+      const filterPanel = document.getElementById('filter-panel');
+      if (filterPanel) {
+        filterPanel.style.display = mode === 'events' ? '' : 'none';
+      }
+      
+      // Clear previous results
+      clearUnifiedSearch();
+      
+      // If switching to users mode, automatically load all users
+      if (mode === 'users') {
+        console.log('Loading all users...');
+        try {
+          loadAllUsers();
+        } catch (error) {
+          console.error('Error in loadAllUsers:', error);
+        }
+      }
+    };
+
+    // Execute search based on current mode
+    window.executeUnifiedSearch = function() {
+      const query = document.getElementById('unified-search-input').value.trim();
+      if (!query) {
+        if (currentSearchMode === 'users') {
+          // If no query in user mode, show all users
+          loadAllUsers();
+        } else {
+          clearUnifiedSearch();
+        }
+        return;
+      }
+
+      if (currentSearchMode === 'events') {
+        handleSearch(query);
+      } else {
+        handleUserSearch(query);
+      }
+
+      document.getElementById('clear-unified-search').style.display = 'inline-block';
+    };
+
+    // Load all users (followed and discover) without search query
+    async function loadAllUsers() {
+      const auth = getAuth();
+      const currentUser = auth.currentUser;
+
+      if (!currentUser) {
+        console.error('User not authenticated');
+        return;
+      }
+
+      try {
+        // Get current user's following list
+        const currentUserRef = doc(db, 'users', currentUser.uid);
+        const currentUserSnap = await getDoc(currentUserRef);
+        const followingList = currentUserSnap.exists() ? (currentUserSnap.data().following || []) : [];
+
+        const usersRef = collection(db, 'users');
+        const snapshot = await getDocs(usersRef);
+        
+        const followedUsers = [];
+        const discoverUsers = [];
+        
+        snapshot.forEach(docSnap => {
+          const userData = docSnap.data();
+          
+          // Skip current user
+          if (docSnap.id === currentUser.uid) {
+            return;
+          }
+          
+          // Include private profiles in results; public-profile page controls access when opened
+          
+          const userObj = { id: docSnap.id, ...userData };
+          
+          // Separate into followed vs discover
+          if (followingList.includes(docSnap.id)) {
+            followedUsers.push(userObj);
+          } else {
+            discoverUsers.push(userObj);
+          }
+        });
+
+        console.log('Followed users:', followedUsers.length);
+        console.log('Discover users:', discoverUsers.length);
+
+        displayUserResults(followedUsers, discoverUsers, '');
+        
+      } catch (error) {
+        console.error('Error loading users:', error);
+        const followedDiv = document.getElementById('followed-users-results');
+        const discoverDiv = document.getElementById('discover-users-results');
+        followedDiv.innerHTML = '<div class="no-user-results">Error loading users. Please try again.</div>';
+        discoverDiv.innerHTML = '<div class="no-user-results">Error loading users. Please try again.</div>';
+      }
     }
 
-    window.handleSearch = function () {
-      const queryRaw = document.querySelector('.search-input')?.value || '';
-      const query = queryRaw.toLowerCase().trim();
-      if (!query) { clearSearchView(); return; }
+    // Event Search Logic (existing)
+    function handleSearch(queryRaw) {
+      const query = (queryRaw || '').toLowerCase().trim();
+      if (!query) { clearUnifiedSearch(); return; }
 
       const lists = document.querySelectorAll('.events');
       const matches = []; const seen = new Set();
@@ -160,6 +341,9 @@
         });
       });
 
+      // Hide user results
+      document.getElementById('user-search-results-section').classList.remove('show');
+
       // populate results container
       const sr = document.getElementById('search-results');
       const srSection = document.getElementById('search-results-section');
@@ -170,12 +354,15 @@
           const clone = card.cloneNode(true);
           clone.style.display = 'block';
           const id = clone.getAttribute('data-event-id') || card.getAttribute('data-event-id');
-          if (id) { const target = document.body?.dataset?.eventPage || 'eventPageStu.html'; clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; }); clone.style.cursor = 'pointer'; }
+          if (id) { 
+            const target = document.body?.dataset?.eventPage || 'eventPageStu.html'; 
+            clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; }); 
+            clone.style.cursor = 'pointer'; 
+          }
           sr.appendChild(clone);
         });
       }
 
-      // show results and collapse main
       const main = document.querySelector('.main-content'); if (main) main.classList.add('collapsed');
       if (srSection) {
         srSection.classList.remove('is-hidden');
@@ -184,12 +371,279 @@
       }
       if (noResults) noResults.style.display = matches.length === 0 ? '' : 'none';
       const countEl = document.getElementById('search-count'); if (countEl) countEl.textContent = `(${matches.length})`;
-      const qText = document.getElementById('search-query-text'); if (qText) qText.textContent = queryRaw;
-      const clearBtn = document.getElementById('clear-search'); if (clearBtn) clearBtn.style.display = '';
-    };
-    document.getElementById('clear-search').addEventListener('click', clearSearchView);
+      const qText = document.getElementById('search-query-text'); if (qText) qText.textContent = queryRaw || query;
+    }
+    window.handleSearch = handleSearch;
 
-    // ---- DATE FILTER (client-side, works with current cards) ----
+    // User Search Logic - Filter by public profile
+    async function handleUserSearch(query) {
+      const searchQuery = query.toLowerCase();
+      const auth = getAuth();
+      const currentUser = auth.currentUser;
+
+      if (!currentUser) {
+        console.error('User not authenticated');
+        return;
+      }
+
+      try {
+        // Get current user's following list
+        const currentUserRef = doc(db, 'users', currentUser.uid);
+        const currentUserSnap = await getDoc(currentUserRef);
+        const followingList = currentUserSnap.exists() ? (currentUserSnap.data().following || []) : [];
+
+        const usersRef = collection(db, 'users');
+        const snapshot = await getDocs(usersRef);
+        
+        const followedUsers = [];
+        const discoverUsers = [];
+        
+        snapshot.forEach(docSnap => {
+          const userData = docSnap.data();
+          
+          // Skip current user
+          if (docSnap.id === currentUser.uid) {
+            return;
+          }
+          
+          // Include private profiles in search results; actual profile display enforces privacy
+          
+          const fullname = (userData.fullname || '').toLowerCase();
+          const email = (userData.email || '').toLowerCase();
+          const school = (userData.school || userData.organization || '').toLowerCase();
+          
+          // Check if matches search query
+          if (fullname.includes(searchQuery) || email.includes(searchQuery) || school.includes(searchQuery)) {
+            const userObj = { id: docSnap.id, ...userData };
+            
+            // Separate into followed vs discover
+            if (followingList.includes(docSnap.id)) {
+              followedUsers.push(userObj);
+            } else {
+              discoverUsers.push(userObj);
+            }
+          }
+        });
+
+        console.log('Search results - Followed:', followedUsers.length, 'Discover:', discoverUsers.length);
+
+        displayUserResults(followedUsers, discoverUsers, query);
+        
+      } catch (error) {
+        console.error('Error searching users:', error);
+        const followedDiv = document.getElementById('followed-users-results');
+        const discoverDiv = document.getElementById('discover-users-results');
+        followedDiv.innerHTML = '<div class="no-user-results">Error searching users. Please try again.</div>';
+        discoverDiv.innerHTML = '<div class="no-user-results">Error searching users. Please try again.</div>';
+      }
+    }
+
+    function displayUserResults(followedUsers, discoverUsers, query) {
+      console.log('displayUserResults called with:', { 
+        followedCount: followedUsers.length, 
+        discoverCount: discoverUsers.length, 
+        query: query 
+      });
+
+      // Hide event sections and results
+      const main = document.querySelector('.main-content'); 
+      if (main) main.classList.add('collapsed');
+      
+      const eventResultsSection = document.getElementById('search-results-section');
+      if (eventResultsSection) {
+        eventResultsSection.classList.remove('show');
+        eventResultsSection.classList.add('is-hidden');
+      }
+
+      const followedContainer = document.getElementById('followed-users-container');
+      const discoverContainer = document.getElementById('discover-users-container');
+      const combinedContainer = document.getElementById('combined-search-results-container');
+      const followedDiv = document.getElementById('followed-users-results');
+      const discoverDiv = document.getElementById('discover-users-results');
+      const combinedDiv = document.getElementById('combined-users-results');
+      const resultsSection = document.getElementById('user-search-results-section');
+      const followedCountEl = document.getElementById('followed-users-count');
+      const discoverCountEl = document.getElementById('discover-users-count');
+      const combinedCountEl = document.getElementById('combined-users-count');
+      
+      console.log('User search results section exists:', !!resultsSection);
+      console.log('Containers exist:', {
+        followed: !!followedContainer,
+        discover: !!discoverContainer,
+        combined: !!combinedContainer
+      });
+
+      if (!resultsSection) {
+        console.error('user-search-results-section not found!');
+        return;
+      }
+
+      resultsSection.classList.add('show');
+      console.log('Added show class to results section');
+      
+      // If there's a search query, show combined results
+      if (query && query.trim()) {
+        console.log('Showing combined search results');
+        // Hide separate containers
+        if (followedContainer) followedContainer.classList.add('hidden');
+        if (discoverContainer) discoverContainer.classList.add('hidden');
+        if (combinedContainer) combinedContainer.classList.add('show');
+        
+        // Combine all users
+        const allUsers = [...followedUsers, ...discoverUsers];
+        const totalCount = allUsers.length;
+        
+        if (combinedCountEl) combinedCountEl.textContent = `(${totalCount})`;
+        
+        if (allUsers.length === 0) {
+          if (combinedDiv) combinedDiv.innerHTML = '<div class="no-user-results">No users found matching your search.</div>';
+        } else {
+          const combinedHtml = allUsers.map(user => createUserCard(user)).join('');
+          if (combinedDiv) combinedDiv.innerHTML = combinedHtml;
+        }
+      } else {
+        console.log('Showing separate followed/discover containers');
+        // Show separate containers (no search query)
+        if (followedContainer) followedContainer.classList.remove('hidden');
+        if (discoverContainer) discoverContainer.classList.remove('hidden');
+        if (combinedContainer) combinedContainer.classList.remove('show');
+        
+        // Update counts
+        if (followedCountEl) followedCountEl.textContent = `(${followedUsers.length})`;
+        if (discoverCountEl) discoverCountEl.textContent = `(${discoverUsers.length})`;
+
+        // Render followed users
+        if (followedUsers.length === 0) {
+          if (followedDiv) followedDiv.innerHTML = '<div class="no-user-results">No followed users found.</div>';
+        } else {
+          const followedHtml = followedUsers.map(user => createUserCard(user)).join('');
+          if (followedDiv) followedDiv.innerHTML = followedHtml;
+        }
+
+        // Render discover users
+        if (discoverUsers.length === 0) {
+          if (discoverDiv) discoverDiv.innerHTML = '<div class="no-user-results">No new users found.</div>';
+        } else {
+          const discoverHtml = discoverUsers.map(user => createUserCard(user)).join('');
+          if (discoverDiv) discoverDiv.innerHTML = discoverHtml;
+        }
+      }
+
+      try { resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+    }
+
+    function createUserCard(user) {
+      const initials = (user.fullname || 'User').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+      const roleClass = user.role === 'organizer' ? 'role-organizer' : user.role === 'admin' ? 'role-admin' : 'role-student';
+      
+      // Debug: Log original avatar data
+      console.log('Original avatar data:', {
+        name: user.fullname,
+        selectedAvatar: user.selectedAvatar,
+        avatarUrl: user.avatarUrl
+      });
+      
+      // Fix avatar path - try multiple approaches
+      let avatarUrl = user.selectedAvatar || user.avatarUrl;
+      if (avatarUrl) {
+        const originalUrl = avatarUrl;
+        
+        // Extract just the filename if it's a full path
+        if (avatarUrl.includes('avatar_')) {
+          const match = avatarUrl.match(/avatar_\d+\.png/);
+          if (match) {
+            // Build correct path from student dashboard
+            avatarUrl = `../../assets/avatars/${match[0]}`;
+          }
+        }
+        
+        console.log('Avatar URL conversion:', {
+          original: originalUrl,
+          fixed: avatarUrl,
+          currentPage: window.location.pathname
+        });
+      }
+      
+      const avatarHtml = avatarUrl 
+        ? `<img src="${avatarUrl}" alt="${user.fullname || 'User'}" onerror="console.error('Image failed to load. Tried URL:', '${avatarUrl}'); this.style.display='none'; this.parentElement.innerHTML='<span>${initials}</span>';">` 
+        : `<span>${initials}</span>`;
+        const privateBadgeHtml = (user.publicProfile === false) ? '<span class="private-badge" title="Private account">🔒 Private</span>' : '';
+      
+        return `
+          <div class="user-result-card" onclick="window.location.href='../Profile/public-profile.html?id=${user.id}'">
+            <div class="user-avatar">
+              ${avatarHtml}
+            </div>
+            <div class="user-info">
+              <div class="user-name">${user.fullname || 'Unknown User'} ${privateBadgeHtml}</div>
+              <div class="user-email">${user.email || ''}</div>
+              <div class="user-meta">
+                <span class="user-role-badge ${roleClass}">
+                  ${(user.role || 'student').toUpperCase()}
+                </span>
+                ${user.school || user.organization || ''}
+              </div>
+            </div>
+          </div>
+        `;
+    }
+
+    // Clear Unified Search
+    window.clearUnifiedSearch = function() {
+      // Reset input
+      document.getElementById('unified-search-input').value = '';
+      document.getElementById('clear-unified-search').style.display = 'none';
+
+      // Hide all search results
+      document.getElementById('search-results-section').classList.remove('show');
+      document.getElementById('search-results-section').classList.add('is-hidden');
+      document.getElementById('user-search-results-section').classList.remove('show');
+
+      // Show all event sections only if in events mode
+      const main = document.querySelector('.main-content'); 
+      if (main) {
+        if (currentSearchMode === 'events') {
+          main.classList.remove('collapsed');
+        } else {
+          main.classList.add('collapsed');
+        }
+      }
+
+      // Clear results
+      const eventResults = document.getElementById('search-results');
+      while (eventResults && eventResults.firstChild) {
+        eventResults.removeChild(eventResults.firstChild);
+      }
+
+      const followedResults = document.getElementById('followed-users-results');
+      while (followedResults && followedResults.firstChild) {
+        followedResults.removeChild(followedResults.firstChild);
+      }
+
+      const discoverResults = document.getElementById('discover-users-results');
+      while (discoverResults && discoverResults.firstChild) {
+        discoverResults.removeChild(discoverResults.firstChild);
+      }
+
+      const combinedResults = document.getElementById('combined-users-results');
+      while (combinedResults && combinedResults.firstChild) {
+        combinedResults.removeChild(combinedResults.firstChild);
+      }
+
+      const noResults = document.getElementById('no-results');
+      if (noResults) noResults.style.display = 'none';
+    };
+
+    // Allow Enter key to trigger search
+    document.getElementById('unified-search-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        executeUnifiedSearch();
+      }
+    });
+  </script>
+
+  <!-- Date Filter Logic -->
+  <script type="module">
     const form = document.getElementById("date-filter");
     const inputFrom = document.getElementById("df-from");
     const inputTo   = document.getElementById("df-to");
@@ -208,7 +662,7 @@
       if (key === "today") {
         inputFrom.valueAsDate = now; inputTo.valueAsDate = now;
       } else if (key === "week") {
-        const day = now.getDay(); // 0 Sun..6 Sat
+        const day = now.getDay();
         const diffToMon = (day + 6) % 7;
         const monday = new Date(now); monday.setDate(now.getDate() - diffToMon);
         const sunday = new Date(monday); sunday.setDate(monday.getDate() + 6);
@@ -238,7 +692,7 @@
       e.preventDefault();
       const from = inputFrom.value ? startOfDay(new Date(inputFrom.value)) : null;
       const to   = inputTo.value   ? endOfDay(new Date(inputTo.value))     : null;
-      if (from && to && from > to) { // swap if user reversed
+      if (from && to && from > to) {
         const tmp = from; (from = to), (to = tmp);
         inputFrom.valueAsDate = from; inputTo.valueAsDate = to;
       }
@@ -246,7 +700,6 @@
       filterVisibleByDate(from, to);
     });
 
-    // University filter select (choose a specific university or All)
     const filterUniversity = document.getElementById('filterUniversity');
     if (filterUniversity) {
       filterUniversity.addEventListener('change', () => {
@@ -256,7 +709,6 @@
       });
     }
 
-    // Category filter checkboxes (workshop, seminar, concert, sports, other)
     const categoryCheckboxes = Array.from(document.querySelectorAll('input[name="filterCategory"]'));
     if (categoryCheckboxes.length) {
       categoryCheckboxes.forEach(cb => cb.addEventListener('change', () => {
@@ -266,9 +718,7 @@
       }));
     }
 
-    // Annotate cards with timestamps and filter
     function parseEventStart(card) {
-      // prefer data-start (ms). If absent, try <time datetime>, else parse text
       const ds = card.getAttribute('data-start');
       if (ds) { const n = Number(ds); if (!Number.isNaN(n)) return n; }
 
@@ -276,15 +726,12 @@
       if (t && t.getAttribute('datetime')) {
         const n = Date.parse(t.getAttribute('datetime')); if (!Number.isNaN(n)) return n;
       }
-
-      // Heuristic: look for a child with class likely holding date text
       const maybe = card.querySelector('.event-date, .date, .text-sm, .meta');
       const text = (maybe?.textContent || card.textContent || '').trim();
       const n = Date.parse(text);
       return Number.isNaN(n) ? null : n;
     }
 
-    // Watches for new cards (rendered by your Firestore loaders)
     const mo = new MutationObserver(entries => {
       entries.forEach(e => {
         e.addedNodes.forEach(n => {
@@ -303,8 +750,6 @@
     });
 
     function filterVisibleByDate(from, to) {
-      // When any filter is active (from/to/university/category) collapse the main content
-      // and show a single results container. Otherwise restore full dashboard view.
       const lists = document.querySelectorAll('.events');
       const selectedUni = document.getElementById('filterUniversity')?.value || '';
       const selectedCategories = Array.from(document.querySelectorAll('input[name="filterCategory"]:checked')).map(n => n.value.toLowerCase());
@@ -348,9 +793,11 @@
       }
 
       if (!isFilteringActive) {
-        // restore normal view
         const main = document.querySelector('.main-content'); if (main) main.classList.remove('collapsed');
-        lists.forEach(list => { list.querySelectorAll('.event-card').forEach(card => card.style.display = ''); list.dispatchEvent(new Event('scroll')); });
+        lists.forEach(list => {
+          list.querySelectorAll('.event-card').forEach(card => card.style.display = '');
+          list.dispatchEvent(new Event('scroll'));
+        });
         if (sr) while (sr.firstChild) sr.removeChild(sr.firstChild);
         if (srSection) { srSection.classList.remove('show'); setTimeout(() => srSection.classList.add('is-hidden'), 380); }
         if (noResults) noResults.style.display = 'none';
@@ -359,7 +806,6 @@
         return;
       }
 
-      // collect matches
       const matches = []; const seen = new Set();
       lists.forEach(list => {
         list.querySelectorAll('.event-card').forEach(card => {
@@ -371,43 +817,52 @@
         });
       });
 
-      // populate results container (always visible when filtering)
       if (sr) {
         while (sr.firstChild) sr.removeChild(sr.firstChild);
         matches.forEach(card => {
           const clone = card.cloneNode(true);
           clone.style.display = 'block';
           const id = clone.getAttribute('data-event-id') || card.getAttribute('data-event-id');
-          if (id) { const target = document.body?.dataset?.eventPage || 'eventPageStu.html'; clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; }); clone.style.cursor = 'pointer'; }
+          if (id) {
+            const target = document.body?.dataset?.eventPage || 'eventPageStu.html';
+            clone.addEventListener('click', () => { window.location.href = `${target}?id=${id}`; });
+            clone.style.cursor = 'pointer';
+          }
           sr.appendChild(clone);
         });
       }
 
-      // show the results panel and collapse the main content
       const main = document.querySelector('.main-content'); if (main) main.classList.add('collapsed');
-  if (srSection) { srSection.classList.remove('is-hidden'); srSection.classList.add('show'); try { srSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} }
+      if (srSection) {
+        srSection.classList.remove('is-hidden');
+        srSection.classList.add('show');
+        try { srSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+      }
 
-      // update header count and query text to describe filters
       const countEl = document.getElementById('search-count'); if (countEl) countEl.textContent = `(${matches.length})`;
       const parts = [];
       if (selectedUni) parts.push(selectedUni);
       if (selectedCategories.length) parts.push(selectedCategories.join(', '));
-      if (from || to) { const fromStr = from ? new Date(+from).toLocaleDateString() : ''; const toStr = to ? new Date(+to).toLocaleDateString() : ''; parts.push(`${fromStr}${from && to ? ' – ' : ''}${toStr}`.trim()); }
+      if (from || to) {
+        const fromStr = from ? new Date(+from).toLocaleDateString() : '';
+        const toStr = to ? new Date(+to).toLocaleDateString() : '';
+        parts.push(`${fromStr}${from && to ? ' – ' : ''}${toStr}`.trim());
+      }
       const qText = document.getElementById('search-query-text'); if (qText) qText.textContent = parts.join(' | ') || 'filters applied';
-
       if (noResults) noResults.style.display = matches.length === 0 ? '' : 'none';
-
-      // recompute chevrons
       lists.forEach(list => list.dispatchEvent(new Event('scroll')));
     }
-  </script>
 
-  <!-- Your existing scripts -->
+    window.filterVisibleByDate = filterVisibleByDate;
+  </script>
 
   <script type="module" src="../../js/Registration/auth.js"></script>
   <script type="module" src="../../js/Events/LoadEvents.js"></script>
+
+  <!-- Personalized Recommended Feed with scoring logs -->
+  <script type="module" src="../../js/User/feed.js"></script>
+
   <script type="module" src="../../js/Shared/scroll-controls.js"></script>
 
 </body>
 </html>
-
