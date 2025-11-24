@@ -10,6 +10,7 @@ import {
   getFirestore, collection, query, where, orderBy,
   updateDoc, doc, serverTimestamp, getDoc, getDocs
 } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js';
+import { handleApproval as backendHandleApproval } from './adminApprovalBackend.js';
 
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -132,14 +133,16 @@ tbody?.addEventListener('click', async (ev) => {
   const approved = !!approve;
 
   try {
-    const user = auth.currentUser;
-    if (!user) return alert('You must be signed in.');
-    const ref = doc(db, ORG_COLLECTION, id);
-    await updateDoc(ref, {
+    // Delegate to backend helper (dependency-injected) so logic is testable headless
+    await backendHandleApproval({
+      id,
       approved,
-      status: approved ? 'approved' : 'disapproved',
-      approvedBy: user.uid,
-      approvedAt: serverTimestamp()
+      authInstance: auth,
+      dbInstance: db,
+      docFn: doc,
+      updateDocFn: updateDoc,
+      serverTimestampFn: serverTimestamp,
+      ORG_COLLECTION
     });
 
     // ✅ Just log success — no live move, handled next refresh
