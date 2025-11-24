@@ -556,7 +556,10 @@
           if (docSnap.id === currentUser.uid) {
             return;
           }
-          
+          // Organizers can only see public profiles
+          if (!userData.publicProfile) {
+            return;
+          }
           const userObj = { id: docSnap.id, ...userData };
           
           // Separate into followed vs discover
@@ -660,7 +663,10 @@
           if (docSnap.id === currentUser.uid) {
             return;
           }
-          
+          // Organizers can only see public profiles
+          if (!userData.publicProfile) {
+            return;
+          }
           const fullname = (userData.fullname || '').toLowerCase();
           const email = (userData.email || '').toLowerCase();
           const school = (userData.school || userData.organization || '').toLowerCase();

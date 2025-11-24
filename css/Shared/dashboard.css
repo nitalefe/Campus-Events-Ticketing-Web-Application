@@ -170,51 +170,47 @@ header p {
 	background: transparent
 }
 
-.events::-webkit-scrollbar-thumb {
-	background: rgba(0, 0, 0, 0.14);
-	border-radius: 8px
-}
-
 .event-card {
-	background: var(--card-bg);
-	padding: 16px;
-	border-radius: 10px;
-	cursor: pointer;
-	flex: 0 0 280px;
-	/* do not shrink/grow */
-	width: 280px;
-	min-width: 280px;
-	height: auto;
-	min-height: 320px;
-	display: flex;
-	flex-direction: column;
-	scroll-snap-align: start;
-	/* snap each card into view when scrolling */
-	box-sizing: border-box;
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  flex: 0 0 280px;
+  width: 280px;
+  min-width: 280px;
+  max-width: 280px;
+  height: 400px;
+  min-height: 400px;
+  max-height: 400px;
+  display: flex;
+  flex-direction: column;
+  scroll-snap-align: start;
+  box-sizing: border-box;
 }
 
 .event-card .event-banner {
-	width: 100%;
-	height: 160px;
-	object-fit: cover;
-	border-radius: 8px;
-	margin-bottom: 12px;
-	flex-shrink: 0;
+  width: 100%;
+  height: 160px;
+  min-height: 160px;
+  max-height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  flex-shrink: 0;
 }
 
 .event-title {
-	font-size: 1.15rem;
-	font-weight: 600;
-	margin: 0 0 8px;
-	color: #233241;
-	line-height: 1.3;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
-	max-height: 3.2em;
->>>>>>> profile
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: #233241;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  max-height: 3.2em;
 }
 
 .event-date,

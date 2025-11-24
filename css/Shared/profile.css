@@ -201,11 +201,9 @@ body {
   gap: 0.5rem;
 }
 
-/* Add extra spacing below the bio textarea so the Public Profile block sits further down */
 .form-group textarea#bio {
   margin-bottom: 1.5rem;
 }
-
 .form-group label {
   color: #334155;
   font-weight: 600;
@@ -383,14 +381,15 @@ body {
   transform: translateX(26px);
 }
 
+
 /* Danger Zone */
 .danger-zone {
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: none; /* removed red divider line */
+  border-top: 2px solid #fee2e2;
 }
 
-/* Make danger container visually consistent and compact */
+/* Make danger container visually consistent and compact (kept from HEAD) */
 .danger-container.form-section {
   /* match other form-section so width aligns with other cards */
   padding: 2rem;
@@ -964,7 +963,6 @@ body {
   letter-spacing: 0.5px;
   flex-shrink: 0;
   align-self: center;
-  margin-left: auto;
 }
 
 .unfollow-btn:hover { 
