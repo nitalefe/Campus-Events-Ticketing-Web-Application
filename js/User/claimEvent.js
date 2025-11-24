@@ -1,18 +1,32 @@
+// import {
+//   doc,
+//   query,
+//   where,
+//   getDoc,
+//   setDoc,
+//   getDocs,
+//   updateDoc,
+//   increment,
+//   collection,
+//   serverTimestamp,
+//   arrayUnion
+// } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+// import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+// import { auth, db } from "../../js/Shared/firebase-config.js";
+
 import {
+  auth,
+  db,
   doc,
   query,
   where,
   getDoc,
-  setDoc,
-  getDocs,
   updateDoc,
   increment,
   collection,
-  serverTimestamp,
-  arrayUnion
-} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { auth, db } from "../../js/Shared/firebase-config.js";
+  arrayUnion,
+  onAuthStateChanged
+} from "../Shared/firebase_import.js";
 import luhnCheck from "./luhnCheck.js";
 
 const params = new URLSearchParams(window.location.search);
