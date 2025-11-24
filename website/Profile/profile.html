@@ -478,7 +478,7 @@
           const isOrganizerUser = userData?.role === 'organizer';
           console.log('User role:', userData?.role);
 
-          // 2. If organizer, delete their events
+          // 2. If organizer, delete their events AND organizer document
           if (isOrganizerUser) {
             try {
               const organizerEventsQuery = query(
@@ -491,6 +491,39 @@
                 await deleteDoc(eventDoc.ref);
               }
               console.log('Organizer events deleted');
+              
+              // DELETE THE ORGANIZER DOCUMENT - NEW CODE
+              const organizerDocRef = doc(db, 'organizers', userId);
+              const organizerDocSnap = await getDoc(organizerDocRef);
+              
+              if (organizerDocSnap.exists()) {
+                await deleteDoc(organizerDocRef);
+                console.log('Organizer document deleted');
+              }
+              
+              // Also delete from approved/disapproved lists if they exist
+              try {
+                const approvedDocRef = doc(db, 'approvedOrganizer', userId);
+                const approvedSnap = await getDoc(approvedDocRef);
+                if (approvedSnap.exists()) {
+                  await deleteDoc(approvedDocRef);
+                  console.log('Removed from approved organizers list');
+                }
+              } catch (err) {
+                console.warn('Error removing from approved list:', err);
+              }
+              
+              try {
+                const disapprovedDocRef = doc(db, 'disapprovedOrganizer', userId);
+                const disapprovedSnap = await getDoc(disapprovedDocRef);
+                if (disapprovedSnap.exists()) {
+                  await deleteDoc(disapprovedDocRef);
+                  console.log('Removed from disapproved organizers list');
+                }
+              } catch (err) {
+                console.warn('Error removing from disapproved list:', err);
+              }
+              
             } catch (err) {
               console.warn('Error deleting organizer events:', err);
             }
