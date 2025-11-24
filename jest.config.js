@@ -31,6 +31,6 @@ module.exports = {
   setupFilesAfterEnv: [
     // This is where you would include a setup file if you created one 
     // for mocking global fetch (like `jest.setup.js` from earlier)
-    // "<rootDir>/jest.setup.js" 
+    "<rootDir>/jest.setup.js" 
   ]
 };
