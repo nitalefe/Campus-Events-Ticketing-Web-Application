@@ -31,18 +31,18 @@ describe('Claim Event (headless backend)', () => {
       });
 
       // require the test-only extraction which imports the shared shim
-      // path from this file: __tests__/integration -> ../Extractions/claimEventBackend.js
+      // path from this file: __tests__/integration -> ../../tests/helpers/claimEventBackend.js
       // the extraction uses '../../js/Shared/firebase_import.js' which we've mocked above
       // so when the extraction is required it will use our mock
       // eslint-disable-next-line global-require
-      const backend = require('../Extractions/claimEventBackend.js');
+      const backend = require('../../tests/helpers/claimEventBackend.js');
       // attach for assertions outside isolateModules
       fbMock.backend = backend;
     });
 
     // require the module again in test scope
     // eslint-disable-next-line global-require
-    const backend = require('../Extractions/claimEventBackend.js');
+    const backend = require('../../tests/helpers/claimEventBackend.js');
 
     const fakeUser = { uid: 'user1', email: 'test@example.com' };
     const fakeUserData = { firstname: 'Test', lastname: 'User', email: 'test@example.com' };
