@@ -2,7 +2,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: ["main", "Organizer", "Student", "Administrator", "github_action"]
+    branches: ["main", "Organizer", "Student", "Administrator", "github_action", "github_actions_ayan"]
   pull_request:
     branches: ["main", "Organizer", "Student", "Administrator"]
 
