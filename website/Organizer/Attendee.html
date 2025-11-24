@@ -8,28 +8,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Montserrat font from Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/Shared/dashboard.css" />
     <link rel="stylesheet" href="../../css/Organizer/Attendee.css">
     <link rel="stylesheet" href="../../css/Shared/toolbar.css">
 </head>
 
-<body>
+<body class="organizer-page">
     <!-- Toolbar -->
-  <div class="toolbar">
-    <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
-      onclick="location.href='organizer-dashboard.html'">
-
-    <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
-    <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
-    <button class="toolbar-btn" onclick="location.href='myEvents.html'">My Events</button>
-    <button class="toolbar-btn" onclick="location.href='broadcast.html'">Broadcast</button>
-    <button class="toolbar-btn" onclick="location.href='../Shared_Pages/inbox.html'">Inbox</button>
-    <button class="toolbar-btn" onclick="location.href='../Profile/following.html'">Following</button>
-    <div class="toolbar-spacer"></div>
-    <button class="toolbar-btn" onclick="location.href='../Profile/profile.html'">Profile</button>
-    <div id="authBtnContainer">
-      <button id="logout-btn" class="auth-btn">Log Out</button>
+    <div class="toolbar">
+        <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
+            onclick="location.href='organizer-dashboard.html'">
+        <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
+        <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
+        <button class="toolbar-btn" onclick="location.href='myEvents.html'">My Events</button>
+        <button class="toolbar-btn" onclick="location.href='broadcast.html'">Broadcast</button>
+        <button class="toolbar-btn" onclick="location.href='../Shared_Pages/inbox.html'">Inbox</button>
+        <button class="toolbar-btn" onclick="location.href='../Profile/following.html'">Following</button>
+        <div class="toolbar-spacer"></div>
+        <button id="profile-btn" class="toolbar-btn" onclick="location.href='../Profile/profile.html'">Profile</button>
+        <div id="authBtnContainer">
+            <button id="logout-btn" class="auth-btn">Log Out</button>
+        </div>
     </div>
-  </div>
+
     <div class="container">
         <div class="page-hero">
             <div>
@@ -50,7 +51,6 @@
                         <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
                         <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
                         <input type="email" id="email" name="email" placeholder="Email" required>
-                        <input type="text" id="eventID" name="eventID" placeholder="Event ID" required>
                         <div class="checkbox-group">
                             <input type="checkbox" id="isScanned" name="isScanned">
                             <label for="isScanned">Scan Status</label>
@@ -59,23 +59,6 @@
                     </form>
                 </div>
 
-                <h3>Attendee List</h3>
-                <div class="card">
-                    <input id="attendeeSearch" class="attendee-search" placeholder="Search by name or email…" />
-                    <table id="attendeeTable">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Email</th>
-                                <th>Scan Status</th>
-                                <th>Registered At</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
             </div>
 
             <aside class="card" id="statsPanel">
@@ -104,108 +87,43 @@
                     </div>
                 </div>
             </aside>
+
+            <!-- Full-width attendee list placed after the stats so it spans the entire grid -->
+            <div class="full-width">
+                <h3>Attendee List</h3>
+                <div class="card attendee-list-card">
+                    <input id="attendeeSearch" class="attendee-search" placeholder="Search by name or email…" />
+                    <table id="attendeeTable">
+                        <thead>
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Scan Status</th>
+                                <th>Registered At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
-    <script>
-        const logoutBtn = document.getElementById('logout-btn');
-        if (logoutBtn) logoutBtn.addEventListener('click', () => { localStorage.removeItem('userRole'); location.reload(); });
-    </script>
-    <script>
-        // Table formatting & search helper
-        (function () {
-            const tbody = document.querySelector('#attendeeTable tbody');
-            const searchInput = document.getElementById('attendeeSearch');
+    <script type="module" src="../../js/Registration/auth.js"></script>
+    <script type="module" src="../../js/User/attendeeList.js"></script>
 
-            function formatDateStr(raw) {
-                if (!raw) return '';
-                const d = new Date(raw);
-                if (isNaN(d)) return raw;
-                return d.toLocaleString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-            }
-
-            function formatRow(row) {
-                const cells = row.cells;
-                if (!cells || cells.length < 6) return;
-                // Combine first+last into first name cell, hide last name cell visually
-                const first = cells[1].textContent.trim();
-                const last = cells[2].textContent.trim();
-                cells[1].textContent = first + (last ? (' ' + last) : '');
-                cells[2].style.display = 'none';
-
-                // Email small
-                cells[3].style.fontSize = '0.95rem';
-                cells[3].style.color = '#0f1724';
-
-                // Scan status -> badge
-                const statusText = cells[4].textContent.trim().toLowerCase();
-                const span = document.createElement('span');
-                span.className = 'badge ' + (statusText.includes('true') || statusText.includes('yes') || statusText.includes('scanned') ? 'scanned' : 'not-scanned');
-                span.textContent = cells[4].textContent.trim();
-                cells[4].textContent = '';
-                cells[4].appendChild(span);
-
-                // Format date
-                cells[5].textContent = formatDateStr(cells[5].textContent.trim());
-            }
-
-            // Observe tbody for new rows and update stats
-            function updateStats() {
-                const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
-                const visibleRows = rows.filter(r => r.style.display !== 'none');
-                const total = visibleRows.length;
-                let scanned = 0;
-                visibleRows.forEach(r => {
-                    const statusCell = r.cells[4];
-                    if (!statusCell) return;
-                    const txt = statusCell.textContent.trim().toLowerCase();
-                    if (txt.includes('true') || txt.includes('yes') || txt.includes('scanned')) scanned++;
-                });
-                const notScanned = Math.max(0, total - scanned);
-                const pct = total === 0 ? 0 : Math.round((scanned / total) * 100);
-                const now = new Date().toLocaleString();
-                const elTotal = document.getElementById('statTotal');
-                const elScanned = document.getElementById('statScanned');
-                const elNot = document.getElementById('statNotScanned');
-                const elPct = document.getElementById('statPercent');
-                const elUpdated = document.getElementById('statUpdated');
-                if (elTotal) elTotal.textContent = total;
-                if (elScanned) elScanned.textContent = scanned;
-                if (elNot) elNot.textContent = notScanned;
-                if (elPct) elPct.textContent = pct + '%';
-                if (elUpdated) elUpdated.textContent = now;
-            }
-
-            const mo = new MutationObserver((mutations) => {
-                let changed = false;
-                mutations.forEach(m => {
-                    m.addedNodes.forEach(node => { if (node.nodeName === 'TR') { formatRow(node); changed = true; } });
-                });
-                if (changed) updateStats();
-            });
-            if (tbody) mo.observe(tbody, { childList: true, subtree: false });
-
-            // Format any existing rows now
-            document.addEventListener('DOMContentLoaded', () => {
-                const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
-                rows.forEach(r => formatRow(r));
-            });
-
-            // Search/filter
-            function filterRows(q) {
-                const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
-                const term = (q || '').toLowerCase();
-                rows.forEach(r => {
-                    const text = r.textContent.toLowerCase();
-                    r.style.display = text.includes(term) ? '' : 'none';
-                });
-                updateStats();
-            }
-            if (searchInput) {
-                searchInput.addEventListener('input', (e) => filterRows(e.target.value));
-            }
-        })();
-    </script>
-    <script type="module" src="../../js/Organizer/attendeeList.js"></script>
+    <!-- Confirmation Modal (hidden by default) -->
+    <div id="confirmModal" class="modal" aria-hidden="true">
+        <div class="modal-overlay" data-close></div>
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+            <h4 id="confirmTitle">Confirm action</h4>
+            <p id="confirmMessage">Are you sure?</p>
+            <div class="modal-actions">
+                <button id="confirmCancel" class="btn outline">Cancel</button>
+                <button id="confirmOk" class="btn">Remove</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

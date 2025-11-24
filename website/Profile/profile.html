@@ -112,6 +112,17 @@
             <textarea id="bio" name="bio" rows="4" placeholder="Tell us about yourself..."></textarea>
           </div>
 
+          <div class="setting-item" style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+            <div class="setting-info">
+              <h3 style="margin: 0 0 0.25rem 0; font-size: 1rem;">Public Profile</h3>
+              <p style="margin: 0; color: #64748b; font-size: 0.9rem;">Make your profile visible to other users</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="publicProfile">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
           <div class="form-actions">
             <button type="button" class="btn btn-secondary" onclick="cancelEdit()">Cancel</button>
             <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -160,32 +171,8 @@
         </form>
       </div>
 
-      <!-- Account Settings -->
-      <div class="form-section">
-        <h2>Account Settings</h2>
-        
-        <div class="setting-item">
-          <div class="setting-info">
-            <h3>Email Notifications</h3>
-            <p>Receive notifications about events and updates</p>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="emailNotifications" checked>
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-
-        <div class="setting-item">
-          <div class="setting-info">
-            <h3>Public Profile</h3>
-            <p>Make your profile visible to other users</p>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="publicProfile">
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-
+      <!-- Danger Zone -->
+      <div class="danger-container form-section">
         <div class="danger-zone">
           <h3>Danger Zone</h3>
           <button class="btn btn-danger" onclick="changePassword()">Change Password</button>
@@ -292,7 +279,6 @@
           }
 
           // Load settings
-          document.getElementById('emailNotifications').checked = userData.emailNotifications !== false;
           document.getElementById('publicProfile').checked = userData.publicProfile === true;
 
           // Set home button based on role
@@ -326,7 +312,6 @@
           fullname: document.getElementById('fullname').value,
           phone: document.getElementById('phone').value,
           bio: document.getElementById('bio').value,
-          emailNotifications: document.getElementById('emailNotifications').checked,
           publicProfile: document.getElementById('publicProfile').checked,
         };
 

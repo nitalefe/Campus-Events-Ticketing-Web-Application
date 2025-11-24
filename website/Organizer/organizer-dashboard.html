@@ -557,11 +557,6 @@
             return;
           }
           
-          // Organizers can only see public profiles
-          if (!userData.publicProfile) {
-            return;
-          }
-          
           const userObj = { id: docSnap.id, ...userData };
           
           // Separate into followed vs discover
@@ -663,11 +658,6 @@
           
           // Skip current user
           if (docSnap.id === currentUser.uid) {
-            return;
-          }
-          
-          // Organizers can only see public profiles
-          if (!userData.publicProfile) {
             return;
           }
           

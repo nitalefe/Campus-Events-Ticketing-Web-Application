@@ -60,11 +60,12 @@
     updateDoc,
     getDoc
   } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-  import { onAuthStateChanged, getIdTokenResult} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+  import { onAuthStateChanged, getIdTokenResult, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
   const usersTable = document.getElementById("usersTable");
   const filterRole = document.getElementById("filterRole");
   const refreshBtn = document.getElementById("refreshBtn");
+  const logoutBtn = document.getElementById("logout-btn");
 
   // 🧩 Step 1: Check if the current user is admin
   // 🧩 Step 1: Check if the current user is admin (using custom claim)
@@ -157,6 +158,19 @@ onAuthStateChanged(auth, async (user) => {
   // Filter and refresh
   filterRole.addEventListener("change", () => loadUsers(filterRole.value));
   refreshBtn.addEventListener("click", () => loadUsers(filterRole.value));
+
+  // Logout button
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+        window.location.href = "../Registration/SignIn.html";
+      } catch (error) {
+        console.error("Logout error:", error);
+        alert("Error logging out.");
+      }
+    });
+  }
 </script>
 
 </body>
