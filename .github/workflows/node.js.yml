@@ -2,7 +2,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: ["main", "Organizer", "Student", "Administrator", "github_action"]
+    branches: ["main", "Organizer", "Student", "Administrator", "github_action", "github_actions_ayan"]
   pull_request:
     branches: ["main", "Organizer", "Student", "Administrator"]
 
@@ -34,11 +34,19 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Start Firestore Emulator
+        run: |
+          firebase emulators:start --only firestore --project=evently-demo &
+          timeout 5
+
       - name: Check Node version
         run: node -v
 
       - name: Check NPM version
         run: npm -v
 
-      - name: Run tests
+      - name: Run Jest tests
         run: npm test

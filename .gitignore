@@ -81,3 +81,5 @@ firebaseConfig.js      # if this contains secrets
 firebase-config.js
 setAdmin.js
 serviceAccountKey.json
+firebase-debug.log
+firestore-debug.log
