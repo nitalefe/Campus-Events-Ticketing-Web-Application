@@ -86,3 +86,4 @@ firebase-config.js
 .DS_Store
 setAdmin.js
 serviceAccountKey.json
+coverage/
