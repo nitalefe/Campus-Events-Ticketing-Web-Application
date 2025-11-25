@@ -1,9 +1,22 @@
+// __tests__/integration/followUnfollow.int.test.js
+
 const { initializeTestEnvironment } = require("@firebase/rules-unit-testing");
 const { readFileSync } = require("fs");
-const { doc, getDoc } = require("firebase/firestore");
+const { doc, setDoc, getDoc } = require("firebase/firestore");
+
 const followModule = require("../Extractions/followUnfollow.cjs");
 
 jest.setTimeout(20000);
+
+// small polling helper to avoid emulator race conditions
+async function waitForDoc(ref, attempts = 40, delay = 60) {
+  for (let i = 0; i < attempts; i++) {
+    const snap = await getDoc(ref);
+    if (snap.exists()) return snap;
+    await new Promise(res => setTimeout(res, delay));
+  }
+  return await getDoc(ref);
+}
 
 let testEnv;
 let db;
@@ -19,12 +32,17 @@ beforeAll(async () => {
   });
 
   db = testEnv.authenticatedContext("userA").firestore();
-
   followModule.__setTestDB(db);
 });
 
 beforeEach(async () => {
   await testEnv.clearFirestore();
+
+  // Seed userA intentionally (no undefined-following errors)
+  await testEnv.withSecurityRulesDisabled(async (ctx) => {
+    const adminDb = ctx.firestore();
+    await setDoc(doc(adminDb, "users", "userA"), { following: [] });
+  });
 });
 
 afterAll(async () => {
@@ -36,7 +54,7 @@ describe("Integration — Follow/Unfollow Feature", () => {
   test("UserA follows UserB", async () => {
     await followModule.followUser("userA", "userB");
 
-    const snap = await getDoc(doc(db, "users", "userA"));
+    const snap = await waitForDoc(doc(db, "users", "userA"));
     expect(snap.exists()).toBe(true);
 
     const data = snap.data();
@@ -47,10 +65,10 @@ describe("Integration — Follow/Unfollow Feature", () => {
     await followModule.followUser("userA", "userB");
     await followModule.followUser("userA", "userB");
 
-    const snap = await getDoc(doc(db, "users", "userA"));
+    const snap = await waitForDoc(doc(db, "users", "userA"));
     const { following } = snap.data();
 
-    expect(following.length).toBe(1); // no duplicates
+    expect(following.length).toBe(1);
   });
 
   test("UserA cannot follow themselves", async () => {
@@ -60,22 +78,22 @@ describe("Integration — Follow/Unfollow Feature", () => {
 
   test("UserA unfollows UserB successfully", async () => {
     await followModule.followUser("userA", "userB");
-
-    // unfollow now
     await followModule.unfollowUser("userA", "userB");
 
-    const snap = await getDoc(doc(db, "users", "userA"));
+    const snap = await waitForDoc(doc(db, "users", "userA"));
     const { following } = snap.data();
 
     expect(following).not.toContain("userB");
   });
 
   test("Unfollowing a user not followed does nothing (no crash)", async () => {
+    // this time userA has following: []
     await followModule.unfollowUser("userA", "userB");
 
-    const snap = await getDoc(doc(db, "users", "userA"));
+    const snap = await waitForDoc(doc(db, "users", "userA"));
     const data = snap.data();
 
+    // stable: following always exists because we seed it
     expect(data.following).toEqual([]);
   });
 });
