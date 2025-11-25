@@ -324,11 +324,13 @@
     <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo"
       onclick="location.href='organizer-dashboard.html'">
     <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
-  <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
-  <button class="toolbar-btn" onclick="location.href='myEvents.html'">My Events</button>
-  <button class="toolbar-btn" onclick="location.href='broadcast.html'">Broadcast</button>
-  <button class="toolbar-btn" onclick="location.href='../Shared_Pages/inbox.html'">Inbox</button>
+    <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
+    <button class="toolbar-btn" onclick="location.href='myEvents.html'">My Events</button>
+    <button class="toolbar-btn" onclick="location.href='broadcast.html'">Broadcast</button>
+    <button class="toolbar-btn" onclick="location.href='../Shared_Pages/inbox.html'">Inbox</button>
     <div class="toolbar-spacer"></div>
+        <button class="toolbar-btn" onclick="location.href='../Profile/following.html'">Following</button>
+
     <button class="toolbar-btn" onclick="location.href='../Profile/profile.html'">Profile</button>
     <div id="authBtnContainer">
       <button id="logout-btn" class="auth-btn">Log Out</button>
@@ -555,12 +557,10 @@
           if (docSnap.id === currentUser.uid) {
             return;
           }
-          
           // Organizers can only see public profiles
           if (!userData.publicProfile) {
             return;
           }
-          
           const userObj = { id: docSnap.id, ...userData };
           
           // Separate into followed vs discover
@@ -664,12 +664,10 @@
           if (docSnap.id === currentUser.uid) {
             return;
           }
-          
           // Organizers can only see public profiles
           if (!userData.publicProfile) {
             return;
           }
-          
           const fullname = (userData.fullname || '').toLowerCase();
           const email = (userData.email || '').toLowerCase();
           const school = (userData.school || userData.organization || '').toLowerCase();

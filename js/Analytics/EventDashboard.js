@@ -36,7 +36,7 @@ function formatDate(date) {
 // ------------------------------
 // Display events (multi or single)
 // ------------------------------
-function displayEvents(events) {
+async function displayEvents(events) {
   console.log("[displayEvents] Received events:", events);
 
   const eventsList = document.getElementById("eventsList");
@@ -53,12 +53,37 @@ function displayEvents(events) {
     return;
   }
 
+  // Fetch organizer names and organizations for all events
+  const organizerCache = new Map();
+  const organizationCache = new Map();
+  for (const event of events) {
+    if (event.createdBy && !organizerCache.has(event.createdBy)) {
+      try {
+        const userDoc = await getDoc(doc(db, "users", event.createdBy));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          organizerCache.set(event.createdBy, userData.fullname || "Unknown");
+          organizationCache.set(event.createdBy, userData.organization || "No organization specified");
+        } else {
+          organizerCache.set(event.createdBy, "Unknown");
+          organizationCache.set(event.createdBy, "No organization specified");
+        }
+      } catch (error) {
+        console.error("Error fetching organizer info:", error);
+        organizerCache.set(event.createdBy, "Unknown");
+        organizationCache.set(event.createdBy, "No organization specified");
+      }
+    }
+  }
+
   // Render each event as an analytics card
   events.forEach((event) => {
     const capacity = event.capacity || 0;
     const sold = event.ticketsSold || 0;
     const available = Math.max(0, capacity - sold);
     const fillRate = capacity > 0 ? ((sold / capacity) * 100).toFixed(1) : 0;
+    const organizerName = organizerCache.get(event.createdBy) || "Unknown";
+    const organizerOrganization = organizationCache.get(event.createdBy) || "No organization specified";
 
     const div = document.createElement("div");
     div.className = "event-item";
@@ -69,12 +94,12 @@ function displayEvents(events) {
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
         <div>
           <p><strong>Category:</strong> ${event.eventCategory || "N/A"}</p>
-          <p><strong>Hosted By:</strong> ${event.school || "No school specified"}</p>
+          <p><strong>Hosted By:</strong> ${organizerOrganization}</p>
           <p><strong>Date:</strong> ${formatDate(event.eventDateTime)}</p>
         </div>
         <div>
           <p><strong>Location:</strong> ${event.eventLocation || "N/A"}</p>
-          <p><strong>Organizer:</strong> ${event.createdBy || "Unknown"}</p>
+          <p><strong>Organizer:</strong> ${organizerName}</p>
           <p><strong>Price:</strong> $${(event.ticketPrice || 0).toFixed(2)}</p>
         </div>
       </div>
@@ -133,7 +158,7 @@ async function applyFilters(user) {
       window.currentFilteredEvents = events;
       status.textContent = `Showing analytics for "${data.eventName}"`;
       status.className = "status success";
-      displayEvents(events);
+      await displayEvents(events);
       return;
     }
 
@@ -163,7 +188,7 @@ async function applyFilters(user) {
 
     // Store globally for export & render
     window.currentFilteredEvents = events;
-    displayEvents(events);
+    await displayEvents(events);
   } catch (error) {
     console.error("Error loading analytics:", error);
     status.textContent = "Error: " + error.message;

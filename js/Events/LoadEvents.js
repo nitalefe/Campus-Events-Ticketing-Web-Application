@@ -19,6 +19,7 @@ const discoverSection = document.getElementById("discover-events");
 const followingSection = document.getElementById("following-events");
 const savedSection = document.getElementById("saved-events"); // student only
 const myEventsSection = document.getElementById("myEventsSection"); // ✅ your updated ID
+const newEventsSection = document.getElementById("newEventsSection"); // admin dashboard
 
 // --------------------------------------------------
 // Helper: Create clickable event card
@@ -137,6 +138,26 @@ onAuthStateChanged(auth, async (user) => {
         discoverSection?.appendChild(createEventCard(data, eventId));
       }
     }); // ✅ closes snapshot.forEach
+
+    // --------------------------------------------------
+    // Admin Dashboard Logic (runs separately after forEach)
+    // --------------------------------------------------
+    if (newEventsSection) {
+      // Re-query to populate admin "New Events" section
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const eventId = docSnap.id;
+        const eventDate = data.eventDateTime?.toDate() || new Date();
+        
+        // Show recent events (last 30 days) or all upcoming events
+        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        const createdDate = data.createdAt?.toDate();
+        
+        if ((createdDate && createdDate > thirtyDaysAgo) || (!createdDate && eventDate > now)) {
+          newEventsSection.appendChild(createEventCard(data, eventId));
+        }
+      });
+    }
 
   } catch (err) {
     console.error("[loadEvents] Error fetching events:", err);

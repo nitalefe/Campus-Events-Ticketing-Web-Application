@@ -112,6 +112,17 @@
             <textarea id="bio" name="bio" rows="4" placeholder="Tell us about yourself..."></textarea>
           </div>
 
+          <div class="setting-item" style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+            <div class="setting-info">
+              <h3 style="margin: 0 0 0.25rem 0; font-size: 1rem;">Public Profile</h3>
+              <p style="margin: 0; color: #64748b; font-size: 0.9rem;">Make your profile visible to other users</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="publicProfile">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
           <div class="form-actions">
             <button type="button" class="btn btn-secondary" onclick="cancelEdit()">Cancel</button>
             <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -160,32 +171,8 @@
         </form>
       </div>
 
-      <!-- Account Settings -->
-      <div class="form-section">
-        <h2>Account Settings</h2>
-        
-        <div class="setting-item">
-          <div class="setting-info">
-            <h3>Email Notifications</h3>
-            <p>Receive notifications about events and updates</p>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="emailNotifications" checked>
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-
-        <div class="setting-item">
-          <div class="setting-info">
-            <h3>Public Profile</h3>
-            <p>Make your profile visible to other users</p>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="publicProfile">
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-
+      <!-- Danger Zone -->
+      <div class="danger-container form-section">
         <div class="danger-zone">
           <h3>Danger Zone</h3>
           <button class="btn btn-danger" onclick="changePassword()">Change Password</button>
@@ -292,7 +279,6 @@
           }
 
           // Load settings
-          document.getElementById('emailNotifications').checked = userData.emailNotifications !== false;
           document.getElementById('publicProfile').checked = userData.publicProfile === true;
 
           // Set home button based on role
@@ -326,7 +312,6 @@
           fullname: document.getElementById('fullname').value,
           phone: document.getElementById('phone').value,
           bio: document.getElementById('bio').value,
-          emailNotifications: document.getElementById('emailNotifications').checked,
           publicProfile: document.getElementById('publicProfile').checked,
         };
 
@@ -478,7 +463,7 @@
           const isOrganizerUser = userData?.role === 'organizer';
           console.log('User role:', userData?.role);
 
-          // 2. If organizer, delete their events AND organizer document
+          // 2. If organizer, delete their events
           if (isOrganizerUser) {
             try {
               const organizerEventsQuery = query(
@@ -491,39 +476,6 @@
                 await deleteDoc(eventDoc.ref);
               }
               console.log('Organizer events deleted');
-              
-              // DELETE THE ORGANIZER DOCUMENT - NEW CODE
-              const organizerDocRef = doc(db, 'organizers', userId);
-              const organizerDocSnap = await getDoc(organizerDocRef);
-              
-              if (organizerDocSnap.exists()) {
-                await deleteDoc(organizerDocRef);
-                console.log('Organizer document deleted');
-              }
-              
-              // Also delete from approved/disapproved lists if they exist
-              try {
-                const approvedDocRef = doc(db, 'approvedOrganizer', userId);
-                const approvedSnap = await getDoc(approvedDocRef);
-                if (approvedSnap.exists()) {
-                  await deleteDoc(approvedDocRef);
-                  console.log('Removed from approved organizers list');
-                }
-              } catch (err) {
-                console.warn('Error removing from approved list:', err);
-              }
-              
-              try {
-                const disapprovedDocRef = doc(db, 'disapprovedOrganizer', userId);
-                const disapprovedSnap = await getDoc(disapprovedDocRef);
-                if (disapprovedSnap.exists()) {
-                  await deleteDoc(disapprovedDocRef);
-                  console.log('Removed from disapproved organizers list');
-                }
-              } catch (err) {
-                console.warn('Error removing from disapproved list:', err);
-              }
-              
             } catch (err) {
               console.warn('Error deleting organizer events:', err);
             }

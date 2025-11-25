@@ -201,6 +201,9 @@ body {
   gap: 0.5rem;
 }
 
+.form-group textarea#bio {
+  margin-bottom: 1.5rem;
+}
 .form-group label {
   color: #334155;
   font-weight: 600;
@@ -378,11 +381,29 @@ body {
   transform: translateX(26px);
 }
 
+
 /* Danger Zone */
 .danger-zone {
   margin-top: 2rem;
   padding-top: 2rem;
   border-top: 2px solid #fee2e2;
+}
+
+/* Make danger container visually consistent and compact (kept from HEAD) */
+.danger-container.form-section {
+  /* match other form-section so width aligns with other cards */
+  padding: 2rem;
+}
+
+.danger-container .danger-zone {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.danger-zone .btn {
+  margin-right: 1rem;
+  margin-bottom: 0.5rem;
+  min-width: 180px;
 }
 
 .danger-zone h3 {
@@ -819,8 +840,8 @@ body {
 
 .following-list.grid { 
   display: grid; 
-  gap: 2rem; 
-  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); 
+  gap: 1.5rem; 
+  grid-template-columns: repeat(2, 1fr); 
   align-items: start; 
   margin-top: 2.5rem;
 }
@@ -830,8 +851,9 @@ body {
   border-radius: 16px; 
   padding: 1.5rem 2.5rem; 
   display: flex !important; 
+  flex-direction: row !important;
   align-items: center; 
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 2rem; 
   box-shadow: 0 8px 30px rgba(11,37,74,0.08);
   border: 2px solid rgba(102,126,234,0.08);
@@ -839,6 +861,7 @@ body {
   position: relative;
   overflow: visible;
   min-height: 110px;
+  width: auto;
 }
 
 .following-item.row::before {
@@ -893,9 +916,9 @@ body {
   display: flex !important;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.25rem;
-  text-align: center;
+  text-align: left;
 }
 
 .user-name { 
@@ -905,7 +928,7 @@ body {
   color: #0b254a;
   text-shadow: 0 1px 2px rgba(0,0,0,0.05);
   line-height: 1.2;
-  text-align: center;
+  text-align: left;
   width: 100%;
 }
 
@@ -921,7 +944,7 @@ body {
   border-radius: 12px;
   line-height: 1.2;
   width: fit-content;
-  text-align: center;
+  text-align: left;
 }
 
 .unfollow-btn { 

@@ -73,27 +73,37 @@ table {
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
-    background: linear-gradient(180deg, #fff, #f7fbff);
+    background: white;
 }
 
 thead th {
-    background: linear-gradient(90deg, var(--blue-1), var(--blue-2));
+    background: #367bfc;
     color: #fff;
-    padding: 12px 14px;
+    padding: 1.1rem 1.2rem;
     text-align: left;
     position: sticky;
     top: 0;
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 tr {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    border-bottom: 1px solid #e5e7eb;
+    transition: background-color 0.15s ease;
+}
+
+tbody tr:hover {
+    background-color: #f9fafb;
 }
 
 td {
-    padding: 12px 14px;
+    padding: 1rem 1.2rem;
     vertical-align: middle;
     color: #111;
     word-wrap: break-word;
+    font-size: 0.95rem;
 }
 
 td .main {

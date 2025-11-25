@@ -18,6 +18,7 @@
       onclick="location.href='student-dashboard.html'">
     <button class="toolbar-btn" onclick="location.href='student-dashboard.html'">Home</button>
     <button class="toolbar-btn" onclick="location.href='myTickets.html'">My Tickets</button>
+    <button class="toolbar-btn" onclick="location.href='../Shared_Pages/inbox.html'">Inbox</button>
     <button class="toolbar-btn" onclick="location.href='../Profile/following.html'">Following</button>
     <div class="toolbar-spacer"></div>
     <button class="toolbar-btn" onclick="location.href='../Profile/profile.html'">Profile</button>
@@ -109,17 +110,19 @@
        2️⃣ CONTACT ORGANIZER POPUP
     ======================================================= */
     async function showOrganizerEmail() {
-      let email =
-        loadedEventData.organizerEmail ||
-        loadedEventData.organizer_email ||
-        "";
+      let email = "";
 
-      if (!email) {
+      // Try to get organizer email from event data or users collection
+      if (!email && loadedEventData.createdBy) {
         try {
           const userRef = doc(db, "users", loadedEventData.createdBy);
           const userSnap = await getDoc(userRef);
-          if (userSnap.exists()) email = userSnap.data().email || "";
-        } catch { }
+          if (userSnap.exists()) {
+            email = userSnap.data().email || "";
+          }
+        } catch (e) {
+          console.error("Error fetching organizer email:", e);
+        }
       }
 
       const overlay = document.createElement("div");
@@ -201,7 +204,7 @@
       viewOrganizerBtn.style.display = "inline-block";
 
       viewOrganizerBtn.onclick = () => {
-        window.location.href = `../public-profile.html?id=${organizerID}`;
+        window.location.href = `../Profile/public-profile.html?id=${organizerID}`;
       };
     }
 
