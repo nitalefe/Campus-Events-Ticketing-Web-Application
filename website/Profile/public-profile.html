@@ -108,6 +108,34 @@
       loadUserProfile(userId);
     }
 
+    // Determine which event page to link to based on the current viewer's role
+    async function getViewerEventPage() {
+      try {
+        let viewer = auth.currentUser;
+        if (!viewer) {
+          // wait briefly for auth state (if page just loaded)
+          viewer = await new Promise((resolve) => {
+            const unsub = onAuthStateChanged(auth, (u) => {
+              unsub();
+              resolve(u);
+            });
+            // timeout fallback
+            setTimeout(() => resolve(null), 600);
+          });
+        }
+
+        if (!viewer) return '../Student/eventPageStu.html';
+
+        const snap = await getDoc(doc(db, 'users', viewer.uid));
+        const role = snap.exists() ? (snap.data().role || 'student') : 'student';
+        if (role === 'organizer') return '../Organizer/eventPage.html';
+        return '../Student/eventPageStu.html';
+      } catch (err) {
+        console.warn('Could not resolve viewer role for event links, defaulting to student page', err);
+        return '../Student/eventPageStu.html';
+      }
+    }
+
     async function loadUserProfile(userId) {
       try {
         const userDoc = await getDoc(doc(db, 'users', userId));
@@ -248,8 +276,9 @@
         const eventsDiv = document.getElementById('publicProfileEvents');
 
         // Display each event
+        const eventPageUrl = await getViewerEventPage();
         attendingEvents.forEach(event => {
-          const eventCard = createEventCard(event.id, event, 'eventPageStu.html');
+          const eventCard = createEventCard(event.id, event, eventPageUrl);
           eventsDiv.appendChild(eventCard);
         });
         
@@ -282,9 +311,10 @@
         const eventsDiv = document.getElementById('publicProfileEvents');
 
         // Display each event using the SAME createEventCard function
+        const eventPageUrl = await getViewerEventPage();
         eventsSnapshot.forEach(eventDoc => {
           const eventData = eventDoc.data();
-          const eventCard = createEventCard(eventDoc.id, eventData, '../Organizer/eventPageOrg.html');
+          const eventCard = createEventCard(eventDoc.id, eventData, eventPageUrl);
           eventsDiv.appendChild(eventCard);
         });
         
@@ -302,8 +332,10 @@
       const card = document.createElement('div');
       card.className = 'event-card';
       card.setAttribute('data-event-id', eventId);
-      // Remove cursor pointer style
-      // card.style.cursor = 'pointer'; // REMOVED
+  // Make card clickable and accessible
+  card.style.cursor = 'pointer';
+  card.setAttribute('tabindex', '0');
+  card.setAttribute('role', 'link');
 
       // Event image - use the banner selected during event creation
       const img = document.createElement('img');
@@ -381,10 +413,23 @@
       location.textContent = eventData.eventLocation || 'Location TBA';
       card.appendChild(location);
 
-      // Click handler REMOVED - cards are no longer clickable
-      // card.addEventListener('click', () => {
-      //   window.location.href = `${eventPageUrl}?id=${eventId}`;
-      // });
+      // Click handler - navigate to resolved event page URL
+      card.addEventListener('click', () => {
+        try {
+          const target = new URL(eventPageUrl, window.location.href);
+          target.searchParams.set('id', eventId);
+          window.location.href = target.href;
+        } catch (e) {
+          console.error('Failed to navigate to event page:', e);
+          window.location.href = `${eventPageUrl}?id=${encodeURIComponent(eventId)}`;
+        }
+      });
+      card.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter' || ev.key === ' ') {
+          ev.preventDefault();
+          card.click();
+        }
+      });
 
       return card;
     }

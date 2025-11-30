@@ -107,6 +107,7 @@ try {
   const userDoc = await getDoc(doc(db, "users", user.uid));
   if (userDoc.exists()) {
     const userData = userDoc.data();
+    console.log("User role detected:", userData.role); // Debug log
 
     // Only organizers require admin approval
     if (userData.role === "organizer") {
@@ -143,8 +144,12 @@ try {
       window.location.href = "../../website/Organizer/organizer-dashboard.html";
     } else if (userData.role === "student") {
       window.location.href = "../../website/Student/student-dashboard.html";
+    } else if (userData.role === "admin") {
+      window.location.href = "../../website/Administrator/admin-dashboard.html";
     } else {
-      window.location.href = "website.html";
+      // Fallback for unknown roles - redirect to student dashboard
+      console.warn("Unknown role:", userData.role, "- redirecting to student dashboard");
+      window.location.href = "../../website/Student/student-dashboard.html";
     }
   } else {
     errorMsg.textContent = "User record not found.";
@@ -156,22 +161,6 @@ try {
   await signOut(auth);
   return;
 }
-      // --- Get user role and redirect ---
-      const userDoc = await getDoc(doc(db, "users", user.uid));
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        localStorage.setItem("userRole", userData.role);
-
-        if (userData.role === "organizer") {
-          window.location.href = "../../website/Organizer/organizer-dashboard.html";
-        } else if (userData.role === "student") {
-          window.location.href = "../../website/Student/student-dashboard.html";
-        } else {
-          window.location.href = "website.html";
-        }
-      } else {
-        errorMsg.textContent = "User record not found.";
-      }
     } catch (error) {
       console.error("Login error:", error.code);
       if (
@@ -227,20 +216,84 @@ if (adminSigninForm) {
   });
 }
 
-/* ---------------- LOGOUT ---------------- */
-document.addEventListener("DOMContentLoaded", () => {
-  const logoutBtn = document.getElementById("logout-btn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", async () => {
-      try {
-        await signOut(auth);
-        window.location.href = "../Registration/SignIn.html";
-      } catch (error) {
-        alert("Error logging out. Please try again.");
-      }
-    });
+/* ---------------- LOGOUT & PROFILE HANDLERS ---------------- */
+function attachAuthHandlers() {
+  try {
+    const logoutBtn = document.getElementById("logout-btn");
+    const profileBtn = document.getElementById("profile-btn");
+
+    if (logoutBtn && !logoutBtn._authHandlerAttached) {
+      logoutBtn.addEventListener("click", async () => {
+        try {
+          await signOut(auth);
+          window.location.href = getSignInPath();
+        } catch (error) {
+          alert("Error logging out. Please try again.");
+        }
+      });
+      // mark to avoid double-attaching
+      logoutBtn._authHandlerAttached = true;
+    }
+
+    if (profileBtn && !profileBtn._authHandlerAttached) {
+      profileBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        // when on pages under /website/Organizer or /website/Student use ../Profile/
+        const path = window.location.pathname;
+        if (path.includes('/website/Organizer/') || path.includes('/website/Student/') || path.includes('/website/Administrator/') ) {
+          window.location.href = '../Profile/profile.html';
+        } else {
+          // fallback relative path
+          window.location.href = './Profile/profile.html';
+        }
+      });
+      profileBtn._authHandlerAttached = true;
+    }
+  } catch (e) {
+    // safe no-op if DOM not ready
+    console.warn('attachAuthHandlers error', e);
   }
-});
+}
+
+// Run immediately in case DOM is already ready, and also after DOMContentLoaded
+attachAuthHandlers();
+document.addEventListener('DOMContentLoaded', attachAuthHandlers);
+
+// Delegated logout handler: catches clicks on any `#logout-btn`, even if added later
+if (!window._logoutDelegationAttached) {
+  document.body.addEventListener('click', async (ev) => {
+    try {
+      const target = ev.target && ev.target.closest && ev.target.closest('#logout-btn');
+      if (!target) return;
+      ev.preventDefault();
+      // clear local role flags
+      try { localStorage.removeItem('userRole'); } catch(e) {}
+      try { localStorage.removeItem('isAdmin'); } catch(e) {}
+      await signOut(auth);
+      window.location.href = getSignInPath();
+    } catch (err) {
+      console.warn('Logout (delegated) failed', err);
+      alert('Error logging out. Please try again.');
+    }
+  }, { passive: false });
+  window._logoutDelegationAttached = true;
+}
+
+// Compute path to SignIn.html robustly based on current location
+function getSignInPath() {
+  try {
+    const p = window.location.pathname || '';
+    const idx = p.indexOf('/website/');
+    if (idx !== -1) {
+      const base = p.substring(0, idx + '/website'.length);
+      return base + '/Registration/SignIn.html';
+    }
+  } catch (e) {
+    // ignore
+  }
+  // fallback relative path
+  return '../Registration/SignIn.html';
+}
 
 /* ---------------- FORGOT PASSWORD ---------------- */
 const forgotPasswordLink = document.getElementById("forgotPassword");
@@ -272,7 +325,7 @@ onAuthStateChanged(auth, async (user) => {
       currentPage === "organizer-dashboard.html" ||
       currentPage === "admin-dashboard.html"
     ) {
-      window.location.href = "../Registration/SignIn.html";
+      window.location.href = getSignInPath();
     }
     return;
   }

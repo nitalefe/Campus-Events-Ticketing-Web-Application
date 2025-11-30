@@ -17,26 +17,31 @@
       onclick="location.href='organizer-dashboard.html'">
     <button class="toolbar-btn" onclick="location.href='organizer-dashboard.html'">Home</button>
     <button class="toolbar-btn" onclick="location.href='eventCreation.html'">Create New Event</button>
-    <button class="toolbar-btn" onclick="location.href='../Profile/following.html'">Following</button>
-    <div class="toolbar-spacer"></div>
-    <button class="toolbar-btn" onclick="location.href='../Profile/profile.html'">Profile</button>
-    <div id="authBtnContainer">
-      <button id="logout-btn" class="auth-btn">Log Out</button>
+      <button class="toolbar-btn" onclick="location.href='myEvents.html'">My Events</button>
+      <button class="toolbar-btn" onclick="location.href='broadcast.html'">Broadcast</button>
+      <button class="toolbar-btn" onclick="location.href='../Shared_Pages/inbox.html'">Inbox</button>
+      <button class="toolbar-btn" onclick="location.href='../Profile/following.html'">Following</button>
+      <div class="toolbar-spacer"></div>
+      <button class="toolbar-btn" onclick="location.href='../Profile/profile.html'">Profile</button>
+      <div id="authBtnContainer">
+        <button id="logout-btn" class="auth-btn">Log Out</button>
+      </div>
     </div>
-  </div>
 
   <div class="container">
     <img id="eventBanner" src="https://via.placeholder.com/900x340" class="event-image" alt="Event Banner">
     <h1 class="event-title">Loading...</h1>
     <div class="event-date-location"></div>
     <div class="event-description">Loading event details...</div>
-    <button class="buy-ticket-btn"
+    <button id="editBtn" class="buy-ticket-btn"
       onclick="location.href='eventEdit.html?id=' + new URLSearchParams(window.location.search).get('id')">
       Edit Event
     </button>
-    <button class="buy-ticket-btn" onclick="location.href='scanTicket.html'">Scan Ticket</button>
+    <button id="scanBtn" class="buy-ticket-btn" onclick="location.href='qrScanner.html?id=' + new URLSearchParams(window.location.search).get('id')">Scan Ticket</button>
 
-    <button class="buy-ticket-btn" onclick="location.href='EventDashboard.html'">View Analytics</button>
+    <button id="analyticsBtn" class="buy-ticket-btn" onclick="location.href='EventDashboard.html?id=' + new URLSearchParams(window.location.search).get('id')">View Analytics</button>
+
+    <button id="attendeesBtn" class="buy-ticket-btn" onclick="location.href='Attendee.html?id=' + new URLSearchParams(window.location.search).get('id')">Attendees</button>
 
     <!-- Firebase + Auth -->
     <script type="module" src="../../js/Registration/auth.js"></script>
@@ -54,9 +59,10 @@
       const descEl = document.querySelector(".event-description");
       const dateLocEl = document.querySelector(".event-date-location");
       const bannerEl = document.getElementById("eventBanner");
-      const editBtn = document.querySelector('.buy-ticket-btn:nth-of-type(1)');
-      const scanBtn = document.querySelector('.buy-ticket-btn:nth-of-type(2)');
-      const analyticsBtn = document.querySelector('.buy-ticket-btn:nth-of-type(3)');
+      const editBtn = document.getElementById('editBtn');
+      const scanBtn = document.getElementById('scanBtn');
+      const analyticsBtn = document.getElementById('analyticsBtn');
+      const attendeesBtn = document.getElementById('attendeesBtn');
 
       // ----------------------------
       // 3️⃣ Load event details
@@ -102,11 +108,13 @@
           editBtn.style.display = "none";
           scanBtn.style.display = "none";
           analyticsBtn.style.display = "none";
+          if (attendeesBtn) attendeesBtn.style.display = "none";
         } else {
-          // ✅ Organizer can edit, scan, view analytics
+          // ✅ Organizer can edit, scan, view analytics, view attendees
           editBtn.onclick = () => location.href = `eventEdit.html?id=${eventId}`;
           scanBtn.onclick = () => location.href = `qrScanner.html?id=${eventId}`;
           analyticsBtn.onclick = () => location.href = `EventDashboard.html?id=${eventId}`;
+          if (attendeesBtn) attendeesBtn.onclick = () => location.href = `Attendee.html?id=${eventId}`;
         }
       }
 

@@ -12,15 +12,16 @@
 </head>
 
 <body class="view-users-page">
-  <!-- Shared toolbar (copied from admin-dashboard) -->
+  <!-- Shared toolbar (standardized) -->
   <div class="toolbar">
     <img src="../../assets/images/evently_logo_DT.png" alt="Evently Logo" class="toolbar-logo" onclick="location.href='admin-dashboard.html'">
 
-  <button class="toolbar-btn" onclick="location.href='admin-dashboard.html'">Home</button>
-    <button class="toolbar-btn" onclick="location.href='../'">See Organizers</button>
+    <button class="toolbar-btn" onclick="location.href='admin-dashboard.html'">Home</button>
+    <button class="toolbar-btn" onclick="location.href='AdminAnalytics.html'">Analytics</button>
+    <button class="toolbar-btn" onclick="location.href='AdminApproval.html'">Approvals</button>
+    <button class="toolbar-btn" onclick="location.href='Adminbroadcast.html'">Broadcast</button>
     <button id="previewOrganizerBtn" class="toolbar-btn" onclick="location.href='Previewpage.html'">Preview</button>
     <div class="toolbar-spacer"></div>
-    <button class="toolbar-btn" onclick="location.href='../Registration/website.html'">Profile</button>
     <div id="authBtnContainer">
       <button id="logout-btn" class="auth-btn">Log Out</button>
     </div>
@@ -59,11 +60,12 @@
     updateDoc,
     getDoc
   } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-  import { onAuthStateChanged, getIdTokenResult} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+  import { onAuthStateChanged, getIdTokenResult, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
   const usersTable = document.getElementById("usersTable");
   const filterRole = document.getElementById("filterRole");
   const refreshBtn = document.getElementById("refreshBtn");
+  const logoutBtn = document.getElementById("logout-btn");
 
   // 🧩 Step 1: Check if the current user is admin
   // 🧩 Step 1: Check if the current user is admin (using custom claim)
@@ -156,6 +158,19 @@ onAuthStateChanged(auth, async (user) => {
   // Filter and refresh
   filterRole.addEventListener("change", () => loadUsers(filterRole.value));
   refreshBtn.addEventListener("click", () => loadUsers(filterRole.value));
+
+  // Logout button
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+        window.location.href = "../Registration/SignIn.html";
+      } catch (error) {
+        console.error("Logout error:", error);
+        alert("Error logging out.");
+      }
+    });
+  }
 </script>
 
 </body>

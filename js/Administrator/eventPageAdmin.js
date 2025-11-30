@@ -1,6 +1,6 @@
 import { auth, db } from "../../js/Shared/firebase-config.js";
 import { doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
 const params = new URLSearchParams(window.location.search);
 const eventID = params.get("id");
@@ -10,6 +10,9 @@ const titleEl = document.querySelector(".event-title");
 const descEl = document.querySelector(".event-description");
 const dateLocEl = document.querySelector(".event-date-location");
 const bannerEl = document.getElementById("eventBanner");
+
+// Store loaded event data globally
+let loadedEventData = null;
 
 // Pop up
 const input = document.getElementById("messageInput");
@@ -33,6 +36,7 @@ async function loadEventDetails(user) {
     }
 
     const data = snap.data();
+    loadedEventData = data; // Store for later use
     titleEl.textContent = data.eventName || "Untitled Event";
     descEl.innerHTML = data.eventDescription || "No description available.";
 
@@ -148,6 +152,66 @@ async function sendToOrganizer(message) {
 
 }
 
+// Show organizer email in modal
+async function showOrganizerEmail() {
+    if (!loadedEventData || !loadedEventData.createdBy) {
+        alert("Organizer information not available.");
+        return;
+    }
+
+    let email = "";
+    
+    try {
+        const organizerRef = doc(db, "users", loadedEventData.createdBy);
+        const organizerSnap = await getDoc(organizerRef);
+        
+        if (organizerSnap.exists()) {
+            const organizerData = organizerSnap.data();
+            email = organizerData.email || "";
+        }
+    } catch (error) {
+        console.error("Error fetching organizer email:", error);
+    }
+
+    const overlay = document.createElement("div");
+    overlay.style = `
+        position:fixed; inset:0; background:rgba(0,0,0,0.45);
+        display:flex; align-items:center; justify-content:center; z-index:9999;
+    `;
+
+    const modal = document.createElement("div");
+    modal.style = `
+        background:#fff; padding:16px 18px; border-radius:10px;
+        max-width:420px; width:92%; color:#0b254a;
+    `;
+
+    modal.innerHTML = `
+        <h3 style="margin:0 0 8px;">Contact Organizer</h3>
+        ${email
+            ? `<p style="margin:0 0 6px;font-weight:600;">Organizer Email:</p>
+               <a style="color:#1a56db;font-weight:600;word-break:break-all;" href="mailto:${email}">
+                 ${email}
+               </a>`
+            : `<p>Organizer contact not available.</p>`
+        }
+        <div style="text-align:right; margin-top:14px;">
+            <button id="closeModal" style="
+                padding:8px 12px; border:none; border-radius:8px;
+                background:linear-gradient(90deg,#e0e6ff,#cfe0ff); cursor:pointer;">
+                Close
+            </button>
+        </div>
+    `;
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    overlay.onclick = e => {
+        if (e.target === overlay) overlay.remove();
+    };
+    modal.querySelector("#closeModal").onclick = () => overlay.remove();
+}
+
 document.getElementById("deleteBtn").addEventListener("click", async (e) => {
     e.preventDefault();
 
@@ -168,8 +232,7 @@ document.getElementById("deleteBtn").addEventListener("click", async (e) => {
 // // open pop up
 document.getElementById("contactBtn").addEventListener("click", async (e) => {
     e.preventDefault();
-
-    showOrganizerPopup("Message Organizer", sendToOrganizer);
+    await showOrganizerEmail();
 })
 
 // document.getElementById("okBtn").addEventListener("click", () => {
@@ -197,3 +260,17 @@ document.getElementById("contactBtn").addEventListener("click", async (e) => {
 //     overlay.style.display = "none";
 //     input.value = "";
 // }
+
+// Logout button handler
+const logoutBtn = document.getElementById("logout-btn");
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+        try {
+            await signOut(auth);
+            window.location.href = "../Registration/SignIn.html";
+        } catch (error) {
+            console.error("Logout error:", error);
+            alert("Error logging out.");
+        }
+    });
+}
