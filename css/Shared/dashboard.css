@@ -171,6 +171,50 @@ header p {
 }
 
 .event-card {
+<<<<<<< HEAD
+	background: var(--card-bg);
+	padding: 20px;
+	border-radius: 10px;
+	cursor: pointer;
+	flex: 0 0 auto;
+	/* do not shrink/grow */
+	width: 280px;
+	min-width: 280px;
+	max-width: 280px;
+	height: 400px;
+	min-height: 400px;
+	max-height: 400px;
+	display: flex;
+	flex-direction: column;
+	scroll-snap-align: start;
+	/* snap each card into view when scrolling */
+	box-sizing: border-box;
+}
+
+.event-card .event-banner {
+	width: 100%;
+	height: 160px;
+	min-height: 160px;
+	max-height: 160px;
+	object-fit: cover;
+	border-radius: 8px;
+	margin-bottom: 12px;
+	flex-shrink: 0;
+}
+
+.event-title {
+	font-size: 1.2rem;
+	font-weight: 700;
+	margin: 0 0 8px;
+	color: #233241;
+	line-height: 1.3;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	max-height: 3.2em;
+=======
   background: var(--card-bg);
   padding: 20px;
   border-radius: 10px;
@@ -211,6 +255,7 @@ header p {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   max-height: 3.2em;
+>>>>>>> main
 }
 
 .event-date,

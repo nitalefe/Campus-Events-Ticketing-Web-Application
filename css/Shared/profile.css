@@ -201,9 +201,12 @@ body {
   gap: 0.5rem;
 }
 
+<<<<<<< HEAD
+=======
 .form-group textarea#bio {
   margin-bottom: 1.5rem;
 }
+>>>>>>> main
 .form-group label {
   color: #334155;
   font-weight: 600;
@@ -381,7 +384,10 @@ body {
   transform: translateX(26px);
 }
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> main
 /* Danger Zone */
 .danger-zone {
   margin-top: 2rem;
@@ -389,6 +395,8 @@ body {
   border-top: 2px solid #fee2e2;
 }
 
+<<<<<<< HEAD
+=======
 /* Make danger container visually consistent and compact (kept from HEAD) */
 .danger-container.form-section {
   /* match other form-section so width aligns with other cards */
@@ -406,6 +414,7 @@ body {
   min-width: 180px;
 }
 
+>>>>>>> main
 .danger-zone h3 {
   color: #dc2626;
   margin: 0 0 1rem 0;
@@ -840,8 +849,13 @@ body {
 
 .following-list.grid { 
   display: grid; 
+<<<<<<< HEAD
+  gap: 2rem; 
+  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); 
+=======
   gap: 1.5rem; 
   grid-template-columns: repeat(2, 1fr); 
+>>>>>>> main
   align-items: start; 
   margin-top: 2.5rem;
 }
@@ -851,9 +865,14 @@ body {
   border-radius: 16px; 
   padding: 1.5rem 2.5rem; 
   display: flex !important; 
+<<<<<<< HEAD
+  align-items: center; 
+  justify-content: space-between;
+=======
   flex-direction: row !important;
   align-items: center; 
   justify-content: flex-start;
+>>>>>>> main
   gap: 2rem; 
   box-shadow: 0 8px 30px rgba(11,37,74,0.08);
   border: 2px solid rgba(102,126,234,0.08);
@@ -861,7 +880,10 @@ body {
   position: relative;
   overflow: visible;
   min-height: 110px;
+<<<<<<< HEAD
+=======
   width: auto;
+>>>>>>> main
 }
 
 .following-item.row::before {
@@ -916,9 +938,15 @@ body {
   display: flex !important;
   flex-direction: column;
   justify-content: center;
+<<<<<<< HEAD
+  align-items: center;
+  gap: 0.25rem;
+  text-align: center;
+=======
   align-items: flex-start;
   gap: 0.25rem;
   text-align: left;
+>>>>>>> main
 }
 
 .user-name { 
@@ -928,7 +956,11 @@ body {
   color: #0b254a;
   text-shadow: 0 1px 2px rgba(0,0,0,0.05);
   line-height: 1.2;
+<<<<<<< HEAD
+  text-align: center;
+=======
   text-align: left;
+>>>>>>> main
   width: 100%;
 }
 
@@ -944,7 +976,11 @@ body {
   border-radius: 12px;
   line-height: 1.2;
   width: fit-content;
+<<<<<<< HEAD
+  text-align: center;
+=======
   text-align: left;
+>>>>>>> main
 }
 
 .unfollow-btn { 
