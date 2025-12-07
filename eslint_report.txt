@@ -1,0 +1,120 @@
+[0m[0m
+[0m[4mC:\Users\rakib\OneDrive\Desktop\SOEN 341\Campus-Events-Ticketing-Web-Application\js\AdminAnalytics\AdminEventDashboard.js[24m[0m
+[0m    [2m6:31[22m   [31merror[39m  'orderBy' is defined but never used               [2mno-unused-vars[22m[0m
+[0m   [2m11:7[22m    [31merror[39m  'windowTitle' is assigned a value but never used  [2mno-unused-vars[22m[0m
+[0m   [2m15:9[22m    [31merror[39m  'Chart' is not defined                            [2mno-undef[22m[0m
+[0m  [2m129:29[22m   [31merror[39m  'user' is defined but never used                  [2mno-unused-vars[22m[0m
+[0m  [2m166:82[22m   [31merror[39m  'e' is defined but never used                     [2mno-unused-vars[22m[0m
+[0m  [2m322:24[22m   [31merror[39m  'Chart' is not defined                            [2mno-undef[22m[0m
+[0m  [2m460:64[22m   [31merror[39m  'e' is defined but never used                     [2mno-unused-vars[22m[0m
+[0m  [2m462:23[22m   [31merror[39m  'Chart' is not defined                            [2mno-undef[22m[0m
+[0m  [2m560:68[22m   [31merror[39m  'e' is defined but never used                     [2mno-unused-vars[22m[0m
+[0m  [2m560:71[22m   [31merror[39m  Empty block statement                             [2mno-empty[22m[0m
+[0m  [2m562:25[22m   [31merror[39m  'Chart' is not defined                            [2mno-undef[22m[0m
+[0m  [2m610:49[22m   [31merror[39m  'e' is defined but never used                     [2mno-unused-vars[22m[0m
+[0m  [2m619:45[22m   [31merror[39m  'e' is defined but never used                     [2mno-unused-vars[22m[0m
+[0m  [2m645:39[22m   [31merror[39m  'e' is defined but never used                     [2mno-unused-vars[22m[0m
+[0m  [2m647:16[22m   [31merror[39m  'err' is defined but never used                   [2mno-unused-vars[22m[0m
+[0m  [2m648:72[22m   [31merror[39m  'e' is defined but never used                     [2mno-unused-vars[22m[0m
+[0m  [2m648:75[22m   [31merror[39m  Empty block statement                             [2mno-empty[22m[0m
+[0m  [2m649:72[22m   [31merror[39m  'e' is defined but never used                     [2mno-unused-vars[22m[0m
+[0m  [2m649:75[22m   [31merror[39m  Empty block statement                             [2mno-empty[22m[0m
+[0m  [2m653:109[22m  [31merror[39m  'e' is defined but never used                     [2mno-unused-vars[22m[0m
+[0m  [2m654:110[22m  [31merror[39m  'e' is defined but never used                     [2mno-unused-vars[22m[0m
+[0m  [2m655:108[22m  [31merror[39m  'e' is defined but never used                     [2mno-unused-vars[22m[0m
+[0m[0m
+[0m[4mC:\Users\rakib\OneDrive\Desktop\SOEN 341\Campus-Events-Ticketing-Web-Application\js\Administrator\AdminApproval.js[24m[0m
+[0m  [2m11:36[22m  [31merror[39m  'getDoc' is defined but never used  [2mno-unused-vars[22m[0m
+[0m[0m
+[0m[4mC:\Users\rakib\OneDrive\Desktop\SOEN 341\Campus-Events-Ticketing-Web-Application\js\Administrator\adminBroadcast.js[24m[0m
+[0m  [2m146:14[22m   [31merror[39m  'e' is defined but never used  [2mno-unused-vars[22m[0m
+[0m  [2m208:158[22m  [31merror[39m  'e' is defined but never used  [2mno-unused-vars[22m[0m
+[0m[0m
+[0m[4mC:\Users\rakib\OneDrive\Desktop\SOEN 341\Campus-Events-Ticketing-Web-Application\js\Administrator\eventPageAdmin.js[24m[0m
+[0m   [2m15:7[22m   [31merror[39m  'input' is assigned a value but never used  [2mno-unused-vars[22m[0m
+[0m   [2m20:33[22m  [31merror[39m  'user' is defined but never used            [2mno-unused-vars[22m[0m
+[0m   [2m81:15[22m  [31merror[39m  'role' is assigned a value but never used   [2mno-unused-vars[22m[0m
+[0m  [2m147:32[22m  [31merror[39m  'message' is defined but never used         [2mno-unused-vars[22m[0m
+[0m  [2m159:14[22m  [31merror[39m  'error' is defined but never used           [2mno-unused-vars[22m[0m
+[0m  [2m160:49[22m  [31merror[39m  'err' is not defined                        [2mno-undef[22m[0m
+[0m[0m
+[0m[4mC:\Users\rakib\OneDrive\Desktop\SOEN 341\Campus-Events-Ticketing-Web-Application\js\Analytics\formatDate.js[24m[0m
+[0m  [2m11:1[22m  [31merror[39m  'module' is not defined  [2mno-undef[22m[0m
+[0m[0m
+[0m[4mC:\Users\rakib\OneDrive\Desktop\SOEN 341\Campus-Events-Ticketing-Web-Application\js\Events\LoadEvents.js[24m[0m
+[0m  [2m79:13[22m  [31merror[39m  'organizerID' is assigned a value but never used  [2mno-unused-vars[22m[0m
+[0m[0m
+[0m[4mC:\Users\rakib\OneDrive\Desktop\SOEN 341\Campus-Events-Ticketing-Web-Application\js\Events\events.js[24m[0m
+[0m  [2m76:61[22m  [31merror[39m  'previewBanner' is not defined  [2mno-undef[22m[0m
+[0m  [2m87:18[22m  [31merror[39m  'updatePreview' is not defined  [2mno-undef[22m[0m
+[0m[0m
+[0m[4mC:\Users\rakib\OneDrive\Desktop\SOEN 341\Campus-Events-Ticketing-Web-Application\js\Organizer\broadcast.js[24m[0m
+[0m    [2m3:61[22m   [31merror[39m  'orderBy' is defined but never used            [2mno-unused-vars[22m[0m
+[0m    [2m3:79[22m   [31merror[39m  'doc' is defined but never used                [2mno-unused-vars[22m[0m
+[0m  [2m134:11[22m   [31merror[39m  'usersRef' is assigned a value but never used  [2mno-unused-vars[22m[0m
+[0m  [2m135:12[22m   [31merror[39m  'e' is defined but never used                  [2mno-unused-vars[22m[0m
+[0m  [2m244:14[22m   [31merror[39m  'e' is defined but never used                  [2mno-unused-vars[22m[0m
+[0m  [2m291:158[22m  [31merror[39m  'e' is defined but never used                  [2mno-unused-vars[22m[0m
+[0m[0m
+[0m[4mC:\Users\rakib\OneDrive\Desktop\SOEN 341\Campus-Events-Ticketing-Web-Application\js\QRcode\encryption.js[24m[0m
+[0m  [2m13:1[22m  [31merror[39m  'module' is not defined  [2mno-undef[22m[0m
+[0m[0m
+[0m[4mC:\Users\rakib\OneDrive\Desktop\SOEN 341\Campus-Events-Ticketing-Web-Application\js\QRcode\generator.js[24m[0m
+[0m   [2m1:10[22m  [31merror[39m  'auth' is defined but never used                 [2mno-unused-vars[22m[0m
+[0m   [2m1:16[22m  [31merror[39m  'db' is defined but never used                   [2mno-unused-vars[22m[0m
+[0m   [2m3:10[22m  [31merror[39m  'setDoc' is defined but never used               [2mno-unused-vars[22m[0m
+[0m   [2m3:18[22m  [31merror[39m  'doc' is defined but never used                  [2mno-unused-vars[22m[0m
+[0m   [2m3:23[22m  [31merror[39m  'getDoc' is defined but never used               [2mno-unused-vars[22m[0m
+[0m   [2m3:31[22m  [31merror[39m  'getDocs' is defined but never used              [2mno-unused-vars[22m[0m
+[0m   [2m3:40[22m  [31merror[39m  'collection' is defined but never used           [2mno-unused-vars[22m[0m
+[0m   [2m3:52[22m  [31merror[39m  'updateDoc' is defined but never used            [2mno-unused-vars[22m[0m
+[0m   [2m9:1[22m   [31merror[39m  'attendeeID' is assigned a value but never used  [2mno-unused-vars[22m[0m
+[0m  [2m47:7[22m   [31merror[39m  'QRCode' is not defined                          [2mno-undef[22m[0m
+[0m  [2m53:19[22m  [31merror[39m  'QRCode' is not defined                          [2mno-undef[22m[0m
+[0m[0m
+[0m[4mC:\Users\rakib\OneDrive\Desktop\SOEN 341\Campus-Events-Ticketing-Web-Application\js\QRcode\scanner.js[24m[0m
+[0m  [2m17:1[22m   [31merror[39m  'tus' is assigned a value but never used  [2mno-unused-vars[22m[0m
+[0m  [2m46:24[22m  [31merror[39m  'Html5Qrcode' is not defined              [2mno-undef[22m[0m
+[0m  [2m65:19[22m  [31merror[39m  'Html5Qrcode' is not defined              [2mno-undef[22m[0m
+[0m[0m
+[0m[4mC:\Users\rakib\OneDrive\Desktop\SOEN 341\Campus-Events-Ticketing-Web-Application\js\QRcode\ticket-validation.js[24m[0m
+[0m  [2m77:13[22m  [31merror[39m  Do not access Object.prototype method 'hasOwnProperty' from target object  [2mno-prototype-builtins[22m[0m
+[0m[0m
+[0m[4mC:\Users\rakib\OneDrive\Desktop\SOEN 341\Campus-Events-Ticketing-Web-Application\js\Registration\auth.js[24m[0m
+[0m  [2m238:16[22m  [31merror[39m  'error' is defined but never used  [2mno-unused-vars[22m[0m
+[0m[0m
+[0m[4mC:\Users\rakib\OneDrive\Desktop\SOEN 341\Campus-Events-Ticketing-Web-Application\js\Shared\nav.js[24m[0m
+[0m  [2m53:44[22m  [31merror[39m  'e' is defined but never used  [2mno-unused-vars[22m[0m
+[0m[0m
+[0m[4mC:\Users\rakib\OneDrive\Desktop\SOEN 341\Campus-Events-Ticketing-Web-Application\js\User\attendeeList.js[24m[0m
+[0m    [2m5:5[22m   [31merror[39m  'DEBUG' is assigned a value but never used  [2mno-unused-vars[22m[0m
+[0m   [2m80:28[22m  [31merror[39m  'eventName' is defined but never used       [2mno-unused-vars[22m[0m
+[0m  [2m147:11[22m  [31merror[39m  'id' is assigned a value but never used     [2mno-unused-vars[22m[0m
+[0m  [2m150:7[22m   [31merror[39m  'form' is assigned a value but never used   [2mno-unused-vars[22m[0m
+[0m  [2m150:91[22m  [31merror[39m  'e' is defined but never used               [2mno-unused-vars[22m[0m
+[0m  [2m152:5[22m   [31merror[39m  'loadAttendees' is not defined              [2mno-undef[22m[0m
+[0m  [2m162:46[22m  [31merror[39m  'testEventID' is not defined                [2mno-undef[22m[0m
+[0m[0m
+[0m[4mC:\Users\rakib\OneDrive\Desktop\SOEN 341\Campus-Events-Ticketing-Web-Application\js\User\claimEvent.js[24m[0m
+[0m  [2m297:33[22m  [31merror[39m  'getDocs' is not defined                        [2mno-undef[22m[0m
+[0m  [2m322:19[22m  [31merror[39m  'serverTimestamp' is not defined                [2mno-undef[22m[0m
+[0m  [2m326:9[22m   [31merror[39m  'timestamp' is assigned a value but never used  [2mno-unused-vars[22m[0m
+[0m  [2m327:9[22m   [31merror[39m  'random' is assigned a value but never used     [2mno-unused-vars[22m[0m
+[0m  [2m336:11[22m  [31merror[39m  'setDoc' is not defined                         [2mno-undef[22m[0m
+[0m[0m
+[0m[4mC:\Users\rakib\OneDrive\Desktop\SOEN 341\Campus-Events-Ticketing-Web-Application\js\User\feed.js[24m[0m
+[0m  [2m296:5[22m  [31merror[39m  '_activeUid' is assigned a value but never used  [2mno-unused-vars[22m[0m
+[0m[0m
+[0m[4mC:\Users\rakib\OneDrive\Desktop\SOEN 341\Campus-Events-Ticketing-Web-Application\js\User\inbox.js[24m[0m
+[0m   [2m83:10[22m   [31merror[39m  'escapeHtml' is defined but never used  [2mno-unused-vars[22m[0m
+[0m  [2m214:158[22m  [31merror[39m  'e' is defined but never used           [2mno-unused-vars[22m[0m
+[0m[0m
+[0m[4mC:\Users\rakib\OneDrive\Desktop\SOEN 341\Campus-Events-Ticketing-Web-Application\js\User\luhnCheck.js[24m[0m
+[0m  [2m16:1[22m  [31merror[39m  'module' is not defined  [2mno-undef[22m[0m
+[0m[0m
+[0m[4mC:\Users\rakib\OneDrive\Desktop\SOEN 341\Campus-Events-Ticketing-Web-Application\js\feature-follow\followUnfollow.js[24m[0m
+[0m  [2m11:68[22m  [31merror[39m  'arrayRemove' is assigned a value but never used  [2mno-unused-vars[22m[0m
+[0m  [2m64:56[22m  [31merror[39m  'arrayUnion' is assigned a value but never used   [2mno-unused-vars[22m[0m
+[0m[0m
+[0m[31m[1m✖ 77 problems (77 errors, 0 warnings)[22m[39m[0m
+[0m[31m[1m[22m[39m[0m
