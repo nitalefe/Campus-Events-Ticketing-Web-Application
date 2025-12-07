@@ -1,0 +1,402 @@
+<svg width="1400" height="1800" xmlns="http://www.w3.org/2000/svg">
+    <!-- Title -->
+    <rect x="50" y="20" width="1300" height="60" fill="#4A90E2" stroke="#2E5C8A" stroke-width="2" rx="5"/>
+    <text x="700" y="50" font-family="Arial, sans-serif" font-size="20" fill="white" text-anchor="middle" font-weight="bold">Campus Events Ticketing System - Class Diagram</text>
+    <text x="700" y="70" font-family="Arial, sans-serif" font-size="13" fill="#E8F4F8" text-anchor="middle">Domain Model & Service Layer Architecture</text>
+    
+    <!-- ===================== DOMAIN MODELS ===================== -->
+    <text x="700" y="110" font-family="Arial, sans-serif" font-size="18" fill="#333" text-anchor="middle" font-weight="bold">DOMAIN MODELS</text>
+    
+    <!-- User Class -->
+    <rect x="50" y="130" width="280" height="340" fill="#E8F4F8" stroke="#4A90E2" stroke-width="2" rx="3"/>
+    <rect x="50" y="130" width="280" height="35" fill="#4A90E2" stroke="#4A90E2" stroke-width="2" rx="3"/>
+    <text x="190" y="153" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="bold">User</text>
+    
+    <!-- User Attributes -->
+    <text x="60" y="185" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Attributes:</text>
+    <text x="60" y="203" font-family="Courier New, monospace" font-size="10" fill="#555">- userId: String</text>
+    <text x="60" y="218" font-family="Courier New, monospace" font-size="10" fill="#555">- email: String</text>
+    <text x="60" y="233" font-family="Courier New, monospace" font-size="10" fill="#555">- fullname: String</text>
+    <text x="60" y="248" font-family="Courier New, monospace" font-size="10" fill="#555">- role: String</text>
+    <text x="60" y="263" font-family="Courier New, monospace" font-size="10" fill="#555">- bio: String</text>
+    <text x="60" y="278" font-family="Courier New, monospace" font-size="10" fill="#555">- avatarURL: String</text>
+    <text x="60" y="293" font-family="Courier New, monospace" font-size="10" fill="#555">- interests: Array&lt;String&gt;</text>
+    <text x="60" y="308" font-family="Courier New, monospace" font-size="10" fill="#555">- followers: Array&lt;String&gt;</text>
+    <text x="60" y="323" font-family="Courier New, monospace" font-size="10" fill="#555">- following: Array&lt;String&gt;</text>
+    <text x="60" y="338" font-family="Courier New, monospace" font-size="10" fill="#555">- claimedEvents: Array&lt;String&gt;</text>
+    <text x="60" y="353" font-family="Courier New, monospace" font-size="10" fill="#555">- savedEvents: Array&lt;String&gt;</text>
+    <text x="60" y="368" font-family="Courier New, monospace" font-size="10" fill="#555">- createdAt: Timestamp</text>
+    
+    <!-- User Methods -->
+    <line x1="50" y1="380" x2="330" y2="380" stroke="#4A90E2" stroke-width="1"/>
+    <text x="60" y="398" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Methods:</text>
+    <text x="60" y="416" font-family="Courier New, monospace" font-size="10" fill="#555">+ followUser(targetUserId)</text>
+    <text x="60" y="431" font-family="Courier New, monospace" font-size="10" fill="#555">+ unfollowUser(targetUserId)</text>
+    <text x="60" y="446" font-family="Courier New, monospace" font-size="10" fill="#555">+ claimTicket(eventId)</text>
+    <text x="60" y="461" font-family="Courier New, monospace" font-size="10" fill="#555">+ saveEvent(eventId)</text>
+    
+    <!-- Student Class (inherits User) -->
+    <rect x="50" y="500" width="280" height="150" fill="#E8F4F8" stroke="#4A90E2" stroke-width="2" rx="3"/>
+    <rect x="50" y="500" width="280" height="35" fill="#4A90E2" stroke="#4A90E2" stroke-width="2" rx="3"/>
+    <text x="190" y="523" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="bold">Student</text>
+    
+    <text x="60" y="555" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Attributes:</text>
+    <text x="60" y="573" font-family="Courier New, monospace" font-size="10" fill="#555">- school: String</text>
+    <text x="60" y="588" font-family="Courier New, monospace" font-size="10" fill="#555">- tickets: Array&lt;Ticket&gt;</text>
+    
+    <line x1="50" y1="600" x2="330" y2="600" stroke="#4A90E2" stroke-width="1"/>
+    <text x="60" y="618" font-family="Courier New, monospace" font-size="11" fill="#333" fill font-weight="bold">Methods:</text>
+    <text x="60" y="636" font-family="Courier New, monospace" font-size="10" fill="#555">+ viewFeed()</text>
+    
+    <!-- Inheritance arrow Student -> User -->
+    <line x1="190" y1="500" x2="190" y2="470" stroke="#4A90E2" stroke-width="2" marker-end="url(#arrowInherit)"/>
+    
+    <!-- Organizer Class (inherits User) -->
+    <rect x="370" y="500" width="280" height="180" fill="#F0E8F8" stroke="#8B5FBF" stroke-width="2" rx="3"/>
+    <rect x="370" y="500" width="280" height="35" fill="#8B5FBF" stroke="#8B5FBF" stroke-width="2" rx="3"/>
+    <text x="510" y="523" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="bold">Organizer</text>
+    
+    <text x="380" y="555" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Attributes:</text>
+    <text x="380" y="573" font-family="Courier New, monospace" font-size="10" fill="#555">- organization: String</text>
+    <text x="380" y="588" font-family="Courier New, monospace" font-size="10" fill="#555">- approved: Boolean</text>
+    <text x="380" y="603" font-family="Courier New, monospace" font-size="10" fill="#555">- status: String</text>
+    <text x="380" y="618" font-family="Courier New, monospace" font-size="10" fill="#555">- createdEvents: Array&lt;Event&gt;</text>
+    
+    <line x1="370" y1="630" x2="650" y2="630" stroke="#8B5FBF" stroke-width="1"/>
+    <text x="380" y="648" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Methods:</text>
+    <text x="380" y="666" font-family="Courier New, monospace" font-size="10" fill="#555">+ createEvent(eventData)</text>
+    
+    <!-- Inheritance arrow Organizer -> User -->
+    <line x1="370" y1="520" x2="330" y2="450" stroke="#8B5FBF" stroke-width="2" marker-end="url(#arrowInherit2)"/>
+    
+    <!-- Administrator Class (inherits User) -->
+    <rect x="690" y="500" width="280" height="180" fill="#FFE8E8" stroke="#E85F5F" stroke-width="2" rx="3"/>
+    <rect x="690" y="500" width="280" height="35" fill="#E85F5F" stroke="#E85F5F" stroke-width="2" rx="3"/>
+    <text x="830" y="523" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="bold">Administrator</text>
+    
+    <text x="700" y="555" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Attributes:</text>
+    <text x="700" y="573" font-family="Courier New, monospace" font-size="10" fill="#555">- adminLevel: String</text>
+    <text x="700" y="588" font-family="Courier New, monospace" font-size="10" fill="#555">- permissions: Array&lt;String&gt;</text>
+    
+    <line x1="690" y1="600" x2="970" y2="600" stroke="#E85F5F" stroke-width="1"/>
+    <text x="700" y="618" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Methods:</text>
+    <text x="700" y="636" font-family="Courier New, monospace" font-size="10" fill="#555">+ approveOrganizer(userId)</text>
+    <text x="700" y="651" font-family="Courier New, monospace" font-size="10" fill="#555">+ rejectOrganizer(userId)</text>
+    <text x="700" y="666" font-family="Courier New, monospace" font-size="10" fill="#555">+ deleteEvent(eventId)</text>
+    
+    <!-- Inheritance arrow Admin -> User -->
+    <line x1="690" y1="520" x2="330" y2="400" stroke="#E85F5F" stroke-width="2" marker-end="url(#arrowInherit3)"/>
+    
+    <!-- Event Class -->
+    <rect x="370" y="130" width="280" height="340" fill="#F0E8F8" stroke="#8B5FBF" stroke-width="2" rx="3"/>
+    <rect x="370" y="130" width="280" height="35" fill="#8B5FBF" stroke="#8B5FBF" stroke-width="2" rx="3"/>
+    <text x="510" y="153" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="bold">Event</text>
+    
+    <text x="380" y="185" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Attributes:</text>
+    <text x="380" y="203" font-family="Courier New, monospace" font-size="10" fill="#555">- eventId: String</text>
+    <text x="380" y="218" font-family="Courier New, monospace" font-size="10" fill="#555">- eventName: String</text>
+    <text x="380" y="233" font-family="Courier New, monospace" font-size="10" fill="#555">- eventDescription: String</text>
+    <text x="380" y="248" font-family="Courier New, monospace" font-size="10" fill="#555">- eventLocation: String</text>
+    <text x="380" y="263" font-family="Courier New, monospace" font-size="10" fill="#555">- eventCategory: String</text>
+    <text x="380" y="278" font-family="Courier New, monospace" font-size="10" fill="#555">- eventDateTime: Timestamp</text>
+    <text x="380" y="293" font-family="Courier New, monospace" font-size="10" fill="#555">- banner: String</text>
+    <text x="380" y="308" font-family="Courier New, monospace" font-size="10" fill="#555">- capacity: Number</text>
+    <text x="380" y="323" font-family="Courier New, monospace" font-size="10" fill="#555">- ticketPrice: Number</text>
+    <text x="380" y="338" font-family="Courier New, monospace" font-size="10" fill="#555">- createdBy: String</text>
+    <text x="380" y="353" font-family="Courier New, monospace" font-size="10" fill="#555">- attendees: Array&lt;String&gt;</text>
+    <text x="380" y="368" font-family="Courier New, monospace" font-size="10" fill="#555">- tags: Array&lt;String&gt;</text>
+    <text x="380" y="383" font-family="Courier New, monospace" font-size="10" fill="#555">- status: String</text>
+    <text x="380" y="398" font-family="Courier New, monospace" font-size="10" fill="#555">- createdAt: Timestamp</text>
+    
+    <line x1="370" y1="410" x2="650" y2="410" stroke="#8B5FBF" stroke-width="1"/>
+    <text x="380" y="428" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Methods:</text>
+    <text x="380" y="446" font-family="Courier New, monospace" font-size="10" fill="#555">+ updateDetails(data)</text>
+    <text x="380" y="461" font-family="Courier New, monospace" font-size="10" fill="#555">+ addAttendee(userId)</text>
+    
+    <!-- Ticket Class -->
+    <rect x="690" y="130" width="280" height="280" fill="#E8F8E8" stroke="#5FA85F" stroke-width="2" rx="3"/>
+    <rect x="690" y="130" width="280" height="35" fill="#5FA85F" stroke="#5FA85F" stroke-width="2" rx="3"/>
+    <text x="830" y="153" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="bold">Ticket</text>
+    
+    <text x="700" y="185" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Attributes:</text>
+    <text x="700" y="203" font-family="Courier New, monospace" font-size="10" fill="#555">- ticketId: String</text>
+    <text x="700" y="218" font-family="Courier New, monospace" font-size="10" fill="#555">- eventId: String</text>
+    <text x="700" y="233" font-family="Courier New, monospace" font-size="10" fill="#555">- userId: String</text>
+    <text x="700" y="248" font-family="Courier New, monospace" font-size="10" fill="#555">- qrCode: String</text>
+    <text x="700" y="263" font-family="Courier New, monospace" font-size="10" fill="#555">- status: String</text>
+    <text x="700" y="278" font-family="Courier New, monospace" font-size="10" fill="#555">- claimedAt: Timestamp</text>
+    <text x="700" y="293" font-family="Courier New, monospace" font-size="10" fill="#555">- usedAt: Timestamp</text>
+    <text x="700" y="308" font-family="Courier New, monospace" font-size="10" fill="#555">- checkInTime: Timestamp</text>
+    
+    <line x1="690" y1="320" x2="970" y2="320" stroke="#5FA85F" stroke-width="1"/>
+    <text x="700" y="338" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Methods:</text>
+    <text x="700" y="356" font-family="Courier New, monospace" font-size="10" fill="#555">+ generateQRCode()</text>
+    <text x="700" y="371" font-family="Courier New, monospace" font-size="10" fill="#555">+ validateTicket()</text>
+    <text x="700" y="386" font-family="Courier New, monospace" font-size="10" fill="#555">+ markAsUsed()</text>
+    <text x="700" y="401" font-family="Courier New, monospace" font-size="10" fill="#555">+ checkIn()</text>
+    
+    <!-- Message Class -->
+    <rect x="1010" y="130" width="280" height="250" fill="#FFF4E8" stroke="#E8A75F" stroke-width="2" rx="3"/>
+    <rect x="1010" y="130" width="280" height="35" fill="#E8A75F" stroke="#E8A75F" stroke-width="2" rx="3"/>
+    <text x="1150" y="153" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="bold">Message</text>
+    
+    <text x="1020" y="185" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Attributes:</text>
+    <text x="1020" y="203" font-family="Courier New, monospace" font-size="10" fill="#555">- messageId: String</text>
+    <text x="1020" y="218" font-family="Courier New, monospace" font-size="10" fill="#555">- senderId: String</text>
+    <text x="1020" y="233" font-family="Courier New, monospace" font-size="10" fill="#555">- recipientId: String</text>
+    <text x="1020" y="248" font-family="Courier New, monospace" font-size="10" fill="#555">- eventId: String</text>
+    <text x="1020" y="263" font-family="Courier New, monospace" font-size="10" fill="#555">- content: String</text>
+    <text x="1020" y="278" font-family="Courier New, monospace" font-size="10" fill="#555">- isRead: Boolean</text>
+    <text x="1020" y="293" font-family="Courier New, monospace" font-size="10" fill="#555">- sentAt: Timestamp</text>
+    
+    <line x1="1010" y1="305" x2="1290" y2="305" stroke="#E8A75F" stroke-width="1"/>
+    <text x="1020" y="323" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Methods:</text>
+    <text x="1020" y="341" font-family="Courier New, monospace" font-size="10" fill="#555">+ send()</text>
+    <text x="1020" y="356" font-family="Courier New, monospace" font-size="10" fill="#555">+ markAsRead()</text>
+    <text x="1020" y="371" font-family="Courier New, monospace" font-size="10" fill="#555">+ broadcast(recipients)</text>
+    
+    <!-- Analytics Class -->
+    <rect x="1010" y="410" width="280" height="220" fill="#E8F4F8" stroke="#4A90E2" stroke-width="2" rx="3"/>
+    <rect x="1010" y="410" width="280" height="35" fill="#4A90E2" stroke="#4A90E2" stroke-width="2" rx="3"/>
+    <text x="1150" y="433" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="bold">Analytics</text>
+    
+    <text x="1020" y="465" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Attributes:</text>
+    <text x="1020" y="483" font-family="Courier New, monospace" font-size="10" fill="#555">- eventId: String</text>
+    <text x="1020" y="498" font-family="Courier New, monospace" font-size="10" fill="#555">- viewCount: Number</text>
+    <text x="1020" y="513" font-family="Courier New, monospace" font-size="10" fill="#555">- claimCount: Number</text>
+    <text x="1020" y="528" font-family="Courier New, monospace" font-size="10" fill="#555">- checkInCount: Number</text>
+    <text x="1020" y="543" font-family="Courier New, monospace" font-size="10" fill="#555">- lastUpdated: Timestamp</text>
+    
+    <line x1="1010" y1="555" x2="1290" y2="555" stroke="#4A90E2" stroke-width="1"/>
+    <text x="1020" y="573" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Methods:</text>
+    <text x="1020" y="591" font-family="Courier New, monospace" font-size="10" fill="#555">+ incrementViews()</text>
+    <text x="1020" y="606" font-family="Courier New, monospace" font-size="10" fill="#555">+ incrementClaims()</text>
+    <text x="1020" y="621" font-family="Courier New, monospace" font-size="10" fill="#555">+ incrementCheckIns()</text>
+    
+    <!-- ===================== SERVICE LAYER ===================== -->
+    <text x="700" y="730" font-family="Arial, sans-serif" font-size="18" fill="#333" text-anchor="middle" font-weight="bold">SERVICE LAYER</text>
+    
+    <!-- AuthenticationService -->
+    <rect x="50" y="750" width="320" height="250" fill="#E8F4F8" stroke="#4A90E2" stroke-width="2" rx="3"/>
+    <rect x="50" y="750" width="320" height="35" fill="#4A90E2" stroke="#4A90E2" stroke-width="2" rx="3"/>
+    <text x="210" y="773" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="bold">AuthenticationService</text>
+    
+    <text x="60" y="805" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Responsibilities:</text>
+    <text x="60" y="823" font-family="Courier New, monospace" font-size="10" fill="#555">- User registration &amp; login</text>
+    <text x="60" y="838" font-family="Courier New, monospace" font-size="10" fill="#555">- Email verification</text>
+    <text x="60" y="853" font-family="Courier New, monospace" font-size="10" fill="#555">- Password management</text>
+    <text x="60" y="868" font-family="Courier New, monospace" font-size="10" fill="#555">- Session management</text>
+    
+    <line x1="50" y1="880" x2="370" y2="880" stroke="#4A90E2" stroke-width="1"/>
+    <text x="60" y="898" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Methods:</text>
+    <text x="60" y="916" font-family="Courier New, monospace" font-size="10" fill="#555">+ signUp(email, password, role)</text>
+    <text x="60" y="931" font-family="Courier New, monospace" font-size="10" fill="#555">+ signIn(email, password)</text>
+    <text x="60" y="946" font-family="Courier New, monospace" font-size="10" fill="#555">+ signOut()</text>
+    <text x="60" y="961" font-family="Courier New, monospace" font-size="10" fill="#555">+ sendVerificationEmail(user)</text>
+    <text x="60" y="976" font-family="Courier New, monospace" font-size="10" fill="#555">+ resetPassword(email)</text>
+    <text x="60" y="991" font-family="Courier New, monospace" font-size="10" fill="#555">+ checkOrganizerApproval(user)</text>
+    
+    <!-- EventService -->
+    <rect x="400" y="750" width="320" height="280" fill="#F0E8F8" stroke="#8B5FBF" stroke-width="2" rx="3"/>
+    <rect x="400" y="750" width="320" height="35" fill="#8B5FBF" stroke="#8B5FBF" stroke-width="2" rx="3"/>
+    <text x="560" y="773" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="bold">EventService</text>
+    
+    <text x="410" y="805" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Responsibilities:</text>
+    <text x="410" y="823" font-family="Courier New, monospace" font-size="10" fill="#555">- Event CRUD operations</text>
+    <text x="410" y="838" font-family="Courier New, monospace" font-size="10" fill="#555">- Event search &amp; filtering</text>
+    <text x="410" y="853" font-family="Courier New, monospace" font-size="10" fill="#555">- Event categorization</text>
+    <text x="410" y="868" font-family="Courier New, monospace" font-size="10" fill="#555">- Attendee management</text>
+    
+    <line x1="400" y1="880" x2="720" y2="880" stroke="#8B5FBF" stroke-width="1"/>
+    <text x="410" y="898" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Methods:</text>
+    <text x="410" y="916" font-family="Courier New, monospace" font-size="10" fill="#555">+ createEvent(eventData)</text>
+    <text x="410" y="931" font-family="Courier New, monospace" font-size="10" fill="#555">+ updateEvent(eventId, data)</text>
+    <text x="410" y="946" font-family="Courier New, monospace" font-size="10" fill="#555">+ deleteEvent(eventId)</text>
+    <text x="410" y="961" font-family="Courier New, monospace" font-size="10" fill="#555">+ loadEvents(filters)</text>
+    <text x="410" y="976" font-family="Courier New, monospace" font-size="10" fill="#555">+ searchEvents(query)</text>
+    <text x="410" y="991" font-family="Courier New, monospace" font-size="10" fill="#555">+ filterByCategory(category)</text>
+    <text x="410" y="1006" font-family="Courier New, monospace" font-size="10" fill="#555">+ filterByInterests(interests)</text>
+    <text x="410" y="1021" font-family="Courier New, monospace" font-size="10" fill="#555">+ addAttendee(eventId, userId)</text>
+    
+    <!-- TicketService -->
+    <rect x="750" y="750" width="320" height="280" fill="#E8F8E8" stroke="#5FA85F" stroke-width="2" rx="3"/>
+    <rect x="750" y="750" width="320" height="35" fill="#5FA85F" stroke="#5FA85F" stroke-width="2" rx="3"/>
+    <text x="910" y="773" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="bold">TicketService</text>
+    
+    <text x="760" y="805" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Responsibilities:</text>
+    <text x="760" y="823" font-family="Courier New, monospace" font-size="10" fill="#555">- Ticket claiming</text>
+    <text x="760" y="838" font-family="Courier New, monospace" font-size="10" fill="#555">- QR code generation</text>
+    <text x="760" y="853" font-family="Courier New, monospace" font-size="10" fill="#555">- Ticket validation</text>
+    <text x="760" y="868" font-family="Courier New, monospace" font-size="10" fill="#555">- Check-in processing</text>
+    
+    <line x1="750" y1="880" x2="1070" y2="880" stroke="#5FA85F" stroke-width="1"/>
+    <text x="760" y="898" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Methods:</text>
+    <text x="760" y="916" font-family="Courier New, monospace" font-size="10" fill="#555">+ claimTicket(userId, eventId)</text>
+    <text x="760" y="931" font-family="Courier New, monospace" font-size="10" fill="#555">+ generateQRCode(ticketId)</text>
+    <text x="760" y="946" font-family="Courier New, monospace" font-size="10" fill="#555">+ scanQRCode(qrData)</text>
+    <text x="760" y="961" font-family="Courier New, monospace" font-size="10" fill="#555">+ validateTicket(ticketId)</text>
+    <text x="760" y="976" font-family="Courier New, monospace" font-size="10" fill="#555">+ markTicketUsed(ticketId)</text>
+    <text x="760" y="991" font-family="Courier New, monospace" font-size="10" fill="#555">+ checkInAttendee(ticketId)</text>
+    <text x="760" y="1006" font-family="Courier New, monospace" font-size="10" fill="#555">+ getUserTickets(userId)</text>
+    <text x="760" y="1021" font-family="Courier New, monospace" font-size="10" fill="#555">+ getEventTickets(eventId)</text>
+    
+    <!-- NotificationService -->
+    <rect x="50" y="1060" width="320" height="250" fill="#FFF4E8" stroke="#E8A75F" stroke-width="2" rx="3"/>
+    <rect x="1060" y="1060" width="320" height="35" fill="#E8A75F" stroke="#E8A75F" stroke-width="2" rx="3"/>
+    <text x="210" y="1083" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="bold">NotificationService</text>
+    
+    <text x="60" y="1115" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Responsibilities:</text>
+    <text x="60" y="1133" font-family="Courier New, monospace" font-size="10" fill="#555">- Inbox messaging</text>
+    <text x="60" y="1148" font-family="Courier New, monospace" font-size="10" fill="#555">- Event broadcasts</text>
+    <text x="60" y="1163" font-family="Courier New, monospace" font-size="10" fill="#555">- Admin announcements</text>
+    <text x="60" y="1178" font-family="Courier New, monospace" font-size="10" fill="#555">- Email notifications</text>
+    
+    <line x1="50" y1="1190" x2="370" y2="1190" stroke="#E8A75F" stroke-width="1"/>
+    <text x="60" y="1208" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Methods:</text>
+    <text x="60" y="1226" font-family="Courier New, monospace" font-size="10" fill="#555">+ sendMessage(senderId, recipientId)</text>
+    <text x="60" y="1241" font-family="Courier New, monospace" font-size="10" fill="#555">+ broadcastToAttendees(eventId)</text>
+    <text x="60" y="1256" font-family="Courier New, monospace" font-size="10" fill="#555">+ broadcastToAll()</text>
+    <text x="60" y="1271" font-family="Courier New, monospace" font-size="10" fill="#555">+ getInbox(userId)</text>
+    <text x="60" y="1286" font-family="Courier New, monospace" font-size="10" fill="#555">+ markAsRead(messageId)</text>
+    <text x="60" y="1301" font-family="Courier New, monospace" font-size="10" fill="#555">+ sendEmailNotification(email)</text>
+    
+    <!-- FollowService -->
+    <rect x="400" y="1060" width="320" height="250" fill="#E8F4F8" stroke="#4A90E2" stroke-width="2" rx="3"/>
+    <rect x="400" y="1060" width="320" height="35" fill="#4A90E2" stroke="#4A90E2" stroke-width="2" rx="3"/>
+    <text x="560" y="1083" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="bold">FollowService</text>
+    
+    <text x="410" y="1115" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Responsibilities:</text>
+    <text x="410" y="1133" font-family="Courier New, monospace" font-size="10" fill="#555">- Follow/Unfollow organizers</text>
+    <text x="410" y="1148" font-family="Courier New, monospace" font-size="10" fill="#555">- Feed generation</text>
+    <text x="410" y="1163" font-family="Courier New, monospace" font-size="10" fill="#555">- Follower management</text>
+    <text x="410" y="1178" font-family="Courier New, monospace" font-size="10" fill="#555">- Real-time updates</text>
+    
+    <line x1="400" y1="1190" x2="720" y2="1190" stroke="#4A90E2" stroke-width="1"/>
+    <text x="410" y="1208" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Methods:</text>
+    <text x="410" y="1226" font-family="Courier New, monospace" font-size="10" fill="#555">+ followUser(userId, targetId)</text>
+    <text x="410" y="1241" font-family="Courier New, monospace" font-size="10" fill="#555">+ unfollowUser(userId, targetId)</text>
+    <text x="410" y="1256" font-family="Courier New, monospace" font-size="10" fill="#555">+ getFollowers(userId)</text>
+    <text x="410" y="1271" font-family="Courier New, monospace" font-size="10" fill="#555">+ getFollowing(userId)</text>
+    <text x="410" y="1286" font-family="Courier New, monospace" font-size="10" fill="#555">+ generateFeed(userId)</text>
+    <text x="410" y="1301" font-family="Courier New, monospace" font-size="10" fill="#555">+ getOrganizerEvents(userId)</text>
+    
+    <!-- AnalyticsService -->
+    <rect x="750" y="1060" width="320" height="280" fill="#F0E8F8" stroke="#8B5FBF" stroke-width="2" rx="3"/>
+    <rect x="750" y="1060" width="320" height="35" fill="#8B5FBF" stroke="#8B5FBF" stroke-width="2" rx="3"/>
+    <text x="910" y="1083" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="bold">AnalyticsService</text>
+    
+    <text x="760" y="1115" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Responsibilities:</text>
+    <text x="760" y="1133" font-family="Courier New, monospace" font-size="10" fill="#555">- Event analytics tracking</text>
+    <text x="760" y="1148" font-family="Courier New, monospace" font-size="10" fill="#555">- Dashboard generation</text>
+    <text x="760" y="1163" font-family="Courier New, monospace" font-size="10" fill="#555">- Attendance reporting</text>
+    <text x="760" y="1178" font-family="Courier New, monospace" font-size="10" fill="#555">- Real-time statistics</text>
+    
+    <line x1="750" y1="1190" x2="1070" y2="1190" stroke="#8B5FBF" stroke-width="1"/>
+    <text x="760" y="1208" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Methods:</text>
+    <text x="760" y="1226" font-family="Courier New, monospace" font-size="10" fill="#555">+ trackEventView(eventId)</text>
+    <text x="760" y="1241" font-family="Courier New, monospace" font-size="10" fill="#555">+ trackTicketClaim(eventId)</text>
+    <text x="760" y="1256" font-family="Courier New, monospace" font-size="10" fill="#555">+ trackCheckIn(eventId)</text>
+    <text x="760" y="1271" font-family="Courier New, monospace" font-size="10" fill="#555">+ getEventAnalytics(eventId)</text>
+    <text x="760" y="1286" font-family="Courier New, monospace" font-size="10" fill="#555">+ generateDashboard(eventId)</text>
+    <text x="760" y="1301" font-family="Courier New, monospace" font-size="10" fill="#555">+ getSystemStats()</text>
+    <text x="760" y="1316" font-family="Courier New, monospace" font-size="10" fill="#555">+ exportReport(eventId)</text>
+    <text x="760" y="1331" font-family="Courier New, monospace" font-size="10" fill="#555">+ getRealTimeStats(eventId)</text>
+    
+    <!-- AdminService -->
+    <rect x="1100" y="750" width="250" height="280" fill="#FFE8E8" stroke="#E85F5F" stroke-width="2" rx="3"/>
+    <rect x="1100" y="750" width="250" height="35" fill="#E85F5F" stroke="#E85F5F" stroke-width="2" rx="3"/>
+    <text x="1225" y="773" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="bold">AdminService</text>
+    
+    <text x="1110" y="805" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Responsibilities:</text>
+    <text x="1110" y="823" font-family="Courier New, monospace" font-size="10" fill="#555">- Organizer approval</text>
+    <text x="1110" y="838" font-family="Courier New, monospace" font-size="10" fill="#555">- User management</text>
+    <text x="1110" y="853" font-family="Courier New, monospace" font-size="10" fill="#555">- Event moderation</text>
+    <text x="1110" y="868" font-family="Courier New, monospace" font-size="10" fill="#555">- System oversight</text>
+    
+    <line x1="1100" y1="880" x2="1350" y2="880" stroke="#E85F5F" stroke-width="1"/>
+    <text x="1110" y="898" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Methods:</text>
+    <text x="1110" y="916" font-family="Courier New, monospace" font-size="10" fill="#555">+ approveOrganizer(uid)</text>
+    <text x="1110" y="931" font-family="Courier New, monospace" font-size="10" fill="#555">+ rejectOrganizer(uid)</text>
+    <text x="1110" y="946" font-family="Courier New, monospace" font-size="10" fill="#555">+ getPendingApprovals()</text>
+    <text x="1110" y="961" font-family="Courier New, monospace" font-size="10" fill="#555">+ getAllUsers()</text>
+    <text x="1110" y="976" font-family="Courier New, monospace" font-size="10" fill="#555">+ deleteUser(userId)</text>
+    <text x="1110" y="991" font-family="Courier New, monospace" font-size="10" fill="#555">+ deleteEvent(eventId)</text>
+    <text x="1110" y="1006" font-family="Courier New, monospace" font-size="10" fill="#555">+ broadcastToAll(msg)</text>
+    <text x="1110" y="1021" font-family="Courier New, monospace" font-size="10" fill="#555">+ viewSystemLogs()</text>
+    
+    <!-- QRCodeService -->
+    <rect x="1100" y="1060" width="250" height="220" fill="#E8F8E8" stroke="#5FA85F" stroke-width="2" rx="3"/>
+    <rect x="1100" y="1060" width="250" height="35" fill="#5FA85F" stroke="#5FA85F" stroke-width="2" rx="3"/>
+    <text x="1225" y="1083" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="bold">QRCodeService</text>
+    
+    <text x="1110" y="1115" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Responsibilities:</text>
+    <text x="1110" y="1133" font-family="Courier New, monospace" font-size="10" fill="#555">- QR code generation</text>
+    <text x="1110" y="1148" font-family="Courier New, monospace" font-size="10" fill="#555">- QR code scanning</text>
+    <text x="1110" y="1163" font-family="Courier New, monospace" font-size="10" fill="#555">- Validation logic</text>
+    
+    <line x1="1100" y1="1175" x2="1350" y2="1175" stroke="#5FA85F" stroke-width="1"/>
+    <text x="1110" y="1193" font-family="Courier New, monospace" font-size="11" fill="#333" font-weight="bold">Methods:</text>
+    <text x="1110" y="1211" font-family="Courier New, monospace" font-size="10" fill="#555">+ generate(ticketId)</text>
+    <text x="1110" y="1226" font-family="Courier New, monospace" font-size="10" fill="#555">+ scan(qrData)</text>
+    <text x="1110" y="1241" font-family="Courier New, monospace" font-size="10" fill="#555">+ validate(qrCode)</text>
+    <text x="1110" y="1256" font-family="Courier New, monospace" font-size="10" fill="#555">+ decode(qrData)</text>
+    <text x="1110" y="1271" font-family="Courier New, monospace" font-size="10" fill="#555">+ checkValidity(ticket)</text>
+    
+    <!-- ===================== RELATIONSHIPS ===================== -->
+    
+    <!-- Event -> Organizer (creates) -->
+    <line x1="510" y1="470" x2="510" y2="500" stroke="#8B5FBF" stroke-width="2" stroke-dasharray="5,5"/>
+    <text x="520" y="485" font-family="Arial, sans-serif" font-size="10" fill="#666">creates</text>
+    
+    <!-- Ticket -> Event (belongs to) -->
+    <line x1="690" y1="280" x2="650" y2="280" stroke="#5FA85F" stroke-width="2" stroke-dasharray="5,5"/>
+    <text x="655" y="270" font-family="Arial, sans-serif" font-size="10" fill="#666">belongs to</text>
+    
+    <!-- Ticket -> Student (owned by) -->
+    <line x1="830" y1="410" x2="330" y2="570" stroke="#5FA85F" stroke-width="2" stroke-dasharray="5,5"/>
+    <text x="580" y="480" font-family="Arial, sans-serif" font-size="10" fill="#666">owned by</text>
+    
+    <!-- Message -> User (sent by/to) -->
+    <line x1="1010" y1="250" x2="330" y2="250" stroke="#E8A75F" stroke-width="2" stroke-dasharray="5,5"/>
+    <text x="670" y="240" font-family="Arial, sans-serif" font-size="10" fill="#666">sent by/to</text>
+    
+    <!-- Analytics -> Event (tracks) -->
+    <line x1="1010" y1="515" x2="650" y2="350" stroke="#4A90E2" stroke-width="2" stroke-dasharray="5,5"/>
+    <text x="830" y="430" font-family="Arial, sans-serif" font-size="10" fill="#666">tracks</text>
+    
+    <!-- ===================== LEGEND ===================== -->
+    <rect x="50" y="1380" width="1300" height="120" fill="#F9F9F9" stroke="#999" stroke-width="1" rx="3"/>
+    <text x="700" y="1405" font-family="Arial, sans-serif" font-size="14" fill="#333" text-anchor="middle" font-weight="bold">Legend &amp; Relationships</text>
+    
+    <text x="80" y="1430" font-family="Arial, sans-serif" font-size="11" fill="#333" font-weight="bold">Domain Models:</text>
+    <text x="80" y="1448" font-family="Arial, sans-serif" font-size="10" fill="#555">• User, Student, Organizer, Administrator - User hierarchy with role-based access</text>
+    <text x="80" y="1463" font-family="Arial, sans-serif" font-size="10" fill="#555">• Event - Core entity representing campus events</text>
+    <text x="80" y="1478" font-family="Arial, sans-serif" font-size="10" fill="#555">• Ticket - Represents claimed tickets with QR codes</text>
+    
+    <text x="700" y="1430" font-family="Arial, sans-serif" font-size="11" fill="#333" font-weight="bold">Service Layer:</text>
+    <text x="700" y="1448" font-family="Arial, sans-serif" font-size="10" fill="#555">• Business logic and data access separated from presentation</text>
+    <text x="700" y="1463" font-family="Arial, sans-serif" font-size="10" fill="#555">• Each service handles specific domain responsibilities</text>
+    <text x="700" y="1478" font-family="Arial, sans-serif" font-size="10" fill="#555">• Services interact with Firebase Firestore collections</text>
+    
+    <!-- Arrow markers -->
+    <defs>
+        <marker id="arrowInherit" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+            <polygon points="0,0 10,5 0,10" fill="white" stroke="#4A90E2" stroke-width="2"/>
+        </marker>
+        <marker id="arrowInherit2" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+            <polygon points="0,0 10,5 0,10" fill="white" stroke="#8B5FBF" stroke-width="2"/>
+        </marker>
+        <marker id="arrowInherit3" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+            <polygon points="0,0 10,5 0,10" fill="white" stroke="#E85F5F" stroke-width="2"/>
+        </marker>
+    </defs>
+    
+    <!-- Footer -->
+    <rect x="50" y="1520" width="1300" height="30" fill="#F0F0F0" stroke="#999" stroke-width="1" rx="3"/>
+    <text x="700" y="1540" font-family="Arial, sans-serif" font-size="11" fill="#555" text-anchor="middle">
+        <tspan font-weight="bold">Total Classes: 15</tspan> (6 Domain Models + 9 Services) | <tspan font-style="italic">Architecture: Firebase-based MVC with Service Layer</tspan>
+    </text>
+    
+    <!-- File reference -->
+    <text x="700" y="1575" font-family="Arial, sans-serif" font-size="10" fill="#999" text-anchor="middle">File: class_diagram.svg | Implementation: JavaScript ES6 Modules + Firebase Firestore</text>
+</svg>
